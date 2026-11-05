@@ -7,6 +7,7 @@
 | 任務 | 文件 | 狀態 |
 | --- | --- | --- |
 | 建立跨 AI 交接與修改前 checkpoint | [2026-11-06-ai-continuity.md](2026-11-06-ai-continuity.md) | 依文件內最新狀態判斷 |
+| 匯出 Claude Design 畫布原始檔到 docs/design | [2026-11-06-design-source-export.md](2026-11-06-design-source-export.md) | completed |
 
 新任務複製 [TEMPLATE.md](TEMPLATE.md)，使用 `YYYY-MM-DD-english-task-slug.md` 檔名。每份文件只追蹤一個需求，改方向或恢復工作時更新原文件，保留重要決策。
 
