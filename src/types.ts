@@ -37,6 +37,7 @@ export interface Item {
   /** 建議停留（分鐘） */
   stay?: number;
   order?: number;
+  address?: string;
   orderNumber?: string;
   cost?: number;
   cancelBefore?: string;
@@ -44,6 +45,9 @@ export interface Item {
   price?: string;
   /** 取消期限前提醒，預設開 */
   cancelRemind?: boolean;
+  imported?: boolean;
+  missingFields?: string[];
+  originalDate?: string;
   flight?: FlightDetails;
   hotel?: HotelDetails;
   ticket?: TicketDetails;

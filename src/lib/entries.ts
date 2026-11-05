@@ -35,7 +35,7 @@ export function flightItem(base: Item, f: FlightDetails, trip: Trip): Item {
   check(flightMinutes(f)>0 && flightMinutes(f)<=48*60, '請確認兩地時區與抵達時間，抵達必須晚於起飛。');
   check([f.bags,f.bagKg,f.carryKg,f.checkinMinutes].every(n=>number(n,0,300)), '請確認行李與報到時間。');
   const clean={...f,airline:f.airline.trim().toUpperCase(),flightNo:f.flightNo.trim().toUpperCase(),from:f.from.trim().toUpperCase(),to:f.to.trim().toUpperCase()};
-  return {...base,type:'flight',title:`${clean.airline} ${clean.flightNo} ${clean.from} → ${clean.to}`,date:f.departureDate,start:f.departureTime,end:f.arrivalTime,from:clean.from,to:clean.to,orderNumber:f.reference,price:f.price,note:f.rules,flight:clean};
+  return {...base,type:'flight',title:`${clean.airline} ${clean.flightNo} ${clean.from} → ${clean.to}`,date:f.departureDate,start:f.departureTime,end:f.arrivalTime,from:clean.from,to:clean.to,orderNumber:f.reference,price:f.price,flight:clean};
 }
 export function hotelItems(base: Item, h: HotelDetails, trip: Trip, checkoutId: string): Item[] {
   check(h.name.trim(), '請填住宿名稱。');

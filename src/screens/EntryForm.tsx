@@ -6,6 +6,8 @@ import { I, Skeleton, SK } from '../design';
 import { href } from '../lib/route';
 import { addDays, daysBetween, md, weekday } from '../lib/time';
 import { earlier, flightItem, flightMinutes, hotelItems, isEntryKind, ticketItem, transitEntry, type EntryKind, type TransitDraft } from '../lib/entries';
+import { DeleteEntry } from '../components/DeleteEntry';
+import { recoverEntry } from '../lib/importer';
 import { saveEntries } from '../lib/entryStore';
 import { TransitFields } from './TransitFields';
 
@@ -36,45 +38,51 @@ function routeForEditing(r:Route):Route {
   return {...r,legs:legs.map((l,k)=>({...l,...(!hasFares&&k===ride?{fare:r.fare??0}:{}),...(k===ride&&!l.place?{place:r.place}:{} )}))};
 }
 export function EntryForm({trip,kind,day,existing,routes}: {trip:Trip;kind:EntryKind;day?:string;existing?:Item;routes:Route[]}) {
-  const [base] = useState<Item>(()=>existing??{id:uid(),tripId:trip.id,type:kind,title:'',date:day&&day!=='pool'?day:trip.start,start:'',end:'',...(kind==='transit'?{}:{booking:'none' as const})});
+  const [base] = useState<Item>(()=>existing?recoverEntry(existing):{id:uid(),tripId:trip.id,type:kind,title:'',date:day&&day!=='pool'?day:trip.start,start:'',end:'',...(kind==='transit'?{}:{booking:'none' as const})});
   const date=base.date??trip.start;
   const [status,setStatus]=useState<BookingStatus>(base.booking??'none');
   const [flight,setFlight]=useState<FlightDetails>(()=>base.flight??{airline:'',flightNo:'',from:base.from??'',fromTerminal:'',departureDate:date,departureTime:base.start,departureZone:'Asia/Taipei',to:base.to??'',toTerminal:'',arrivalDate:date,arrivalTime:base.end,arrivalZone:trip.timezone??'Asia/Tokyo',reference:base.orderNumber??'',seat:'',cabin:'economy',bags:1,bagKg:23,carryKg:7,checkinMinutes:60,remind:true,price:base.price??'',rules:base.note??''});
   const [hotel,setHotel]=useState<HotelDetails>(()=>base.hotel??{name:existing?base.title.replace(/\s*入住$/,''):'',checkinDate:date,checkoutDate:date<trip.end?addDays(date,1):trip.end,checkinTime:base.start||'15:00',checkoutTime:'11:00',address:'',phone:'',reference:base.orderNumber??'',room:'',guests:trip.people,breakfast:false,total:base.price??'',payment:'later',cancelBy:base.cancelBefore??'',remind:base.cancelRemind??true,note:base.note??''});
   const [ticket,setTicket]=useState<TicketDetails>(()=>base.ticket??{name:existing?base.title:'',venue:'',date,time:base.start,early:30,kinds:[{label:'成人',price:0,quantity:trip.people},{label:'兒童',price:0,quantity:0}],pickup:'qr',place:'',reference:base.orderNumber??''});
   const [transit,setTransit]=useState<TransitDraft>(()=>({from:base.from??'',to:base.to??'',date,arriveBy:base.end,routes:routes.length?[...routes].sort((a,b)=>Number(b.primary)-Number(a.primary)).map(routeForEditing):[newRoute(base.id)]}));
+  const [missing,setMissing]=useState(base.missingFields??[]);
+  const confirmFields=(patch:Record<string,unknown>,labels:Record<string,string>)=>setMissing(previous=>previous.filter(label=>!Object.entries(patch).some(([key,value])=>labels[key]===label&&value!==''&&value!==undefined)));
+  const [note,setNote]=useState(base.note??'');
   const [pending,setPending]=useState<File[]>([]);
   const [error,setError]=useState(''); const [saving,setSaving]=useState(false);
   const file=useRef<HTMLInputElement>(null); const errorRef=useRef<HTMLParagraphElement>(null);
   const docs=useLiveQuery(()=>db.documents.where({tripId:trip.id}).filter(d=>d.itemId===base.id).toArray(),[base.id,trip.id])??[];
   useEffect(()=>{if(error)errorRef.current?.scrollIntoView({block:'center',behavior:'smooth'});},[error]);
-  const back=href('plan',existing?.date??day??trip.start);
+  const back=existing?href('item',existing.id):href('plan',day??trip.start);
   async function save(e:React.FormEvent) {
     e.preventDefault();if(saving)return;setSaving(true);setError('');
     try {
-      const b={...base,...(kind==='transit'?{}:{booking:status})};
+      const b={...base,note,missingFields:missing,...(kind==='transit'?{}:{booking:status})};
       let items:Item[]=[]; let updatedRoutes:Route[]|undefined;
       if(kind==='flight')items=[flightItem(b,flight,trip)];
       if(kind==='hotel')items=hotelItems(b,hotel,trip,base.hotel?.checkoutId??uid());
       if(kind==='ticket')items=[ticketItem(b,ticket,trip)];
       if(kind==='transit'){const result=transitEntry(b,transit,trip);items=[result.item];updatedRoutes=result.routes;}
       await saveEntries(items,updatedRoutes,pending);
-      location.hash=href('plan',items[0].date??trip.start);
+      location.hash=existing?href('item',items[0].id):href('plan',items[0].date??trip.start);
     }catch(e){setError(e instanceof Error?e.message:'沒存成功，請確認手機空間後再試一次。');setSaving(false);}
   }
   const attachmentLabel=kind==='flight'?'＋ 附上電子機票':kind==='hotel'?'＋ 附上訂房確認信':ticket.pickup==='qr'?'＋ 附上 QR code 截圖':'＋ 附上確認信或兌換券';
   return <form className="entry-page" onSubmit={save} noValidate>
     <header className="entry-header"><a href={back}>取消</a><h1>{existing?'編輯':'新增'}{NAMES[kind]}</h1><button type="submit" disabled={saving}>{saving?'儲存中…':'儲存'}</button></header>
     <main className="entry-body">
+      {!!missing.length&&<p className="entry-hint">訂單未提供：{missing.join('、')}。請核對訂單後補齊。</p>}
       {error&&<p className="error" ref={errorRef} role="alert">{error}</p>}
-      {kind==='flight'&&<FlightFields value={flight} set={p=>setFlight({...flight,...p})} status={status} setStatus={setStatus}/>}
-      {kind==='hotel'&&<HotelFields value={hotel} set={p=>setHotel({...hotel,...p})} status={status} setStatus={setStatus} trip={trip}/>}
+      {kind==='flight'&&<FlightFields value={flight} set={p=>{setFlight({...flight,...p});confirmFields(p,{airline:'航空公司',flightNo:'航班號碼',departureZone:'出發地時區',arrivalDate:'抵達日',arrivalZone:'抵達地時區',bags:'託運件數',bagKg:'託運重量',carryKg:'手提重量',checkinMinutes:'報到截止時間'});}} status={status} setStatus={setStatus}/>}
+      {kind==='hotel'&&<HotelFields value={hotel} set={p=>{setHotel({...hotel,...p});confirmFields(p,{address:'住宿地址',checkoutDate:'退房日',checkinTime:'入住時間',checkoutTime:'退房時間',room:'房型',guests:'入住人數',breakfast:'早餐'});}} status={status} setStatus={setStatus} trip={trip}/>}
       {kind==='ticket'&&<TicketFields value={ticket} set={p=>setTicket({...ticket,...p})} status={status} setStatus={setStatus} trip={trip}/>}
       {kind==='transit'&&<TransitFields value={transit} set={setTransit} itemId={base.id} trip={trip}/>}
+      {kind!=='hotel'&&<label className="entry-field">筆記<textarea rows={3} value={note} onChange={e=>setNote(e.target.value)}/></label>}
       {kind!=='transit'&&<><button type="button" className="entry-attach" onClick={()=>file.current?.click()}>{attachmentLabel}</button><input ref={file} type="file" multiple accept="image/*,application/pdf" className="visually-hidden" onChange={e=>{setPending([...pending,...Array.from(e.target.files??[])]);e.target.value='';}}/>
         {!!docs.length&&<p className="small muted">已儲存 {docs.length} 份附件，可在「旅途必備」查看。</p>}
         {pending.map((p,k)=><div className="between small" key={k}><span>{p.name}</span><button type="button" className="btn small" onClick={()=>setPending(pending.filter((_,j)=>j!==k))}>移除</button></div>)}
       </>}
+      {existing&&<DeleteEntry id={existing.id} title={existing.title} back={href('plan',existing.date??'pool')} paired={!!existing.hotel?.checkoutId}/>}
     </main>
   </form>;
 }

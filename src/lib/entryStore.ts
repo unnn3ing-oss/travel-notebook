@@ -1,7 +1,7 @@
 import { db, uid } from '../db';
 import type { Item, Route } from '../types';
 import { byTime } from './day';
-import { toMin } from './time';
+import { addDays, daysBetween, toMin } from './time';
 
 /** Manual order is retained; cards without one use their position by time. */
 export function orderedDay(items:Item[],date:string|null):Item[] {
@@ -53,5 +53,33 @@ export async function removeEntry(id:string) {
     await db.routes.bulkDelete(routes.map(r=>r.id));
     await db.documents.bulkDelete(documents.map(d=>d.id));
     return {items,routes,documents};
+  });
+}
+
+export interface ScheduleEdit { title:string; date:string|null; start:string; end:string; note:string }
+/** Edit the visible schedule without discarding any type-specific or imported fields. */
+export async function editEntrySchedule(id:string,patch:ScheduleEdit,trip:{id:string;start:string;end:string}) {
+  if(!patch.title.trim())throw new Error('請填行程名稱。');
+  if(patch.date && (patch.date<trip.start||patch.date>trip.end))throw new Error('日期要在旅程期間內。');
+  for(const t of [patch.start,patch.end])if(t&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(t))throw new Error('請確認時間。');
+  await db.transaction('rw',db.items,db.routes,db.documents,async()=>{
+    const selected=await db.items.get(id);if(!selected||selected.tripId!==trip.id)throw new Error('找不到這個行程。');
+    const main=selected.linkedStayId?await db.items.get(selected.linkedStayId):selected;
+    if(!main||main.tripId!==trip.id)throw new Error('找不到這個行程。');
+    if(main.hotel){
+      const checkout=main.hotel.checkoutId?await db.items.get(main.hotel.checkoutId):undefined;
+      const h={...main.hotel,name:patch.title.replace(/\s*(入住|退房)$/,'').trim(),note:patch.note};
+      if(selected.linkedStayId){h.checkoutDate=patch.date??h.checkoutDate;h.checkoutTime=patch.start;}
+      else{h.checkinDate=patch.date??h.checkinDate;h.checkinTime=patch.start;}
+      if(h.checkoutDate&&h.checkinDate&&h.checkoutDate<=h.checkinDate)throw new Error('退房日要比入住日晚。');
+      const updates:Item[]=[{...main,hotel:h,title:h.name+' 入住',note:patch.note,...(!selected.linkedStayId?{date:patch.date,start:patch.start,end:patch.start}:{})}];
+      if(checkout&&checkout.tripId===trip.id)updates.push({...checkout,title:h.name+' 退房',...(selected.linkedStayId?{date:patch.date,start:patch.start,end:patch.start}:{})});
+      await saveEntries(updates);return;
+    }
+    if(selected.type!=='flight'&&patch.start&&patch.end&&patch.end<patch.start)throw new Error('結束時間不能早於開始時間。');
+    const item={...selected,...patch,title:patch.title.trim()};
+    if(item.flight)item.flight={...item.flight,...(patch.date&&item.flight.departureDate&&item.flight.arrivalDate?{arrivalDate:addDays(item.flight.arrivalDate,daysBetween(item.flight.departureDate,patch.date))}:{}),departureDate:patch.date??item.flight.departureDate,departureTime:patch.start,arrivalTime:patch.end};
+    if(item.ticket)item.ticket={...item.ticket,name:patch.title.trim(),date:patch.date??item.ticket.date,time:patch.start};
+    await saveEntries([item]);
   });
 }

@@ -42,7 +42,7 @@ export function buildReminders(items: Item[], routes: Route[], rules: Rules, fro
           }
         }
       } else {
-        const lead=i.ticket?.early??rules.lead;
+        const lead=i.ticket&&!i.missingFields?.includes('提前抵達時間')?i.ticket.early:rules.lead;
         const t = toMin(i.start) - lead;
         const none = i.booking === 'none';
         out.push({ id: 'i-' + i.id, date: t < 0 ? addDays(i.date, -1) : i.date, time: fmt((t + 1440) % 1440), kind: 'item', warn: none,

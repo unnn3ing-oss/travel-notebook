@@ -36,3 +36,17 @@ it('removes both linked stay cards and their documents without deleting other tr
  expect(await db.items.toArray()).toMatchObject([{id:'keep'}]);
  expect(await db.documents.count()).toBe(0);
 });
+it('persists rich imported fields and keeps them while moving a flight to another date',async()=>{
+ await db.open();
+ const {parseImport,materializeImport}=await import('./importer');
+ const result=parseImport(JSON.stringify({version:2,items:[{type:'flight',title:'CI 0156',date:'2026-11-20',notes:'保留筆記',flight:{airline:'CI',flightNo:'0156',departureDate:'2026-11-20',departureTime:'23:00',arrivalDate:'2026-11-21',arrivalTime:'03:00',from:'TPE',to:'KIX',reference:'REF-DEMO'}}]}),['2026-11-20'],{});
+ if('error'in result)throw Error(result.error);let id=0;const bundle=materializeImport(result.rows,trip,()=>String(++id));await saveEntries(bundle.items,bundle.routes);
+ const {editEntrySchedule}=await import('./entryStore');await editEntrySchedule('1',{title:'CI 0156',date:'2026-11-21',start:'23:00',end:'03:00',note:'新的筆記'},trip);
+ const saved=(await db.items.get('1'))!;expect(saved.flight).toMatchObject({flightNo:'0156',reference:'REF-DEMO',departureDate:'2026-11-21',arrivalDate:'2026-11-22'});expect(saved.note).toBe('新的筆記');
+});
+it('changes checkout date through the bottom editor without losing stay information or adding duplicates',async()=>{
+ await db.open();await saveEntries(hotelItems(base,hotel,trip,'checkout'));
+ const {editEntrySchedule}=await import('./entryStore');await editEntrySchedule('checkout',{title:'京都飯店',date:'2026-11-24',start:'10:30',end:'10:30',note:'請寄放行李'},trip);
+ expect(await db.items.count()).toBe(2);expect(await db.items.get('stay')).toMatchObject({hotel:{address:'京都市',checkoutDate:'2026-11-24',checkoutTime:'10:30'},note:'請寄放行李'});
+ await expect(editEntrySchedule('checkout',{title:'京都飯店',date:'2026-11-20',start:'10:30',end:'10:30',note:''},trip)).rejects.toThrow('退房日');expect((await db.items.get('checkout'))?.date).toBe('2026-11-24');
+});

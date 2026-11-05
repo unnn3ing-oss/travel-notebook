@@ -17,6 +17,7 @@ import { NewTrip, PastTrips } from './screens/Trips';
 import { Bookings } from './screens/Bookings';
 import { Essentials } from './screens/Essentials';
 import { Library } from './screens/Library';
+import { ItemDetail } from './screens/ItemDetail';
 import { EntryPage } from './screens/EntryForm';
 import { PrintView, Settings } from './screens/Settings';
 import type { Trip } from './types';
@@ -42,6 +43,7 @@ export default function App() {
       {page==='today'&&during&&<Today trip={trip} clock={clock}/>}
       {(page==='overview'||(page==='today'&&!during))&&<Overview trip={trip} clock={clock}/>}
       {page==='add'&&<EntryPage trip={trip} kind={arg} day={arg2}/>}
+      {page==='item'&&arg&&<ItemDetail key={arg} trip={trip} itemId={arg}/>}
       {page==='entry'&&arg&&<EntryPage trip={trip} id={arg}/>}
       {page==='plan'&&<Plan key={trip.id} trip={trip} day={arg}/>}
       {page==='transit'&&arg&&<Transit trip={trip} clock={clock} itemId={arg}/>}
@@ -53,7 +55,7 @@ export default function App() {
       {page==='place'&&arg&&<Place trip={trip} itemId={arg}/>}
       {page==='reminders'&&<Reminders trip={trip} clock={clock}/>}
       {page==='print'&&<PrintView trip={trip}/>}
-      {!['today','overview','plan','transit','prep','bookings','essentials','library','settings','place','reminders','print','add','entry'].includes(page)&&<main className="screen"><h1>找不到這個頁面</h1><a className="btn primary" href={href('')}>回起始頁</a></main>}
+      {!['today','overview','plan','transit','prep','bookings','essentials','library','settings','place','reminders','print','add','entry','item'].includes(page)&&<main className="screen"><h1>找不到這個頁面</h1><a className="btn primary" href={href('')}>回起始頁</a></main>}
     </>:<main className="screen"><h1>還沒有旅程</h1><a className="btn primary" href={href('new')}>開始新旅程</a></main>}
     <UndoToastHost/>
     {showNav&&trip&&<Nav current={page==='today'&&!during?'overview':page==='overview'&&during?'today':page==='prep'?'essentials':page} during={!!during}/>}

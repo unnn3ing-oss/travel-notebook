@@ -390,3 +390,66 @@ input::-webkit-datetime-edit { padding: 0; }
 .plan-quick-add { position:fixed; bottom:calc(max(24px, env(safe-area-inset-bottom)) + 72px); right:max(20px, calc((100vw - 480px)/2 + 20px)); z-index:25; width:56px; height:56px; border:0; border-radius:50%; background:var(--ink); color:var(--on-ink); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px #1e2a4433; }
 .mobile-plan { padding-bottom:70px; }
 @media (min-width:900px) { .plan-quick-add { display:none; } }
+
+/* Read first: full itinerary information, with editing grouped at the bottom. */
+.item-detail { flex:1; min-width:0; display:flex; flex-direction:column; gap:20px; padding:calc(env(safe-area-inset-top) + 52px) 20px max(32px, env(safe-area-inset-bottom)); }
+.detail-heading { display:flex; flex-direction:column; gap:6px; }
+.detail-heading h1 { margin:0; font-size:28px; line-height:1.3; overflow-wrap:anywhere; }
+.detail-heading>.pill { align-self:flex-start; margin-top:4px; }
+.detail-map { display:flex; align-items:center; gap:6px; padding:0 14px; min-height:44px; background:var(--card); border-radius:22px; text-decoration:none; font-size:14px; }
+.detail-section { display:flex; flex-direction:column; gap:10px; min-width:0; }
+.detail-section>h2 { font-size:17px; margin:0; }
+.detail-card { padding:14px 16px; border-radius:16px; background:var(--card); min-width:0; }
+.detail-card dl { margin:0; }
+.detail-row { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; padding:12px 0; border-top:1px solid var(--line-2); font-size:14px; line-height:1.6; }
+.detail-row:first-child { border-top:0; padding-top:2px; }
+.detail-row:last-child { padding-bottom:2px; }
+.detail-row dt { flex:0 0 100px; color:var(--ink-2); }
+.detail-row dd { margin:0; flex:1; min-width:0; text-align:right; white-space:pre-wrap; overflow-wrap:anywhere; }
+.detail-note { white-space:pre-wrap; line-height:1.8; font-size:15px; overflow-wrap:anywhere; }
+.route-detail { display:flex; flex-direction:column; gap:12px; }
+.route-detail h3 { margin:0; font-size:16px; }
+.detail-legs,.detail-watch { list-style:none; margin:0; padding:0; }
+.detail-legs li { display:flex; gap:10px; padding:8px 0; }
+.detail-legs li b { font-size:14px; }
+.detail-watch li { display:flex; align-items:center; gap:10px; padding:8px 0; }
+.detail-watch li>span { color:var(--ok); font-size:18px; }
+.detail-alternatives { padding-left:20px; margin:0; }
+.detail-alternatives li { padding:8px 0; }
+.detail-edit { background:var(--card); border-radius:16px; overflow:hidden; }
+.detail-edit-toggle { width:100%; min-height:56px; padding:0 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; border:0; background:transparent; font-size:16px; font-weight:700; text-align:left; }
+.detail-edit-toggle>span { font-size:13px; font-weight:400; color:var(--ink-2); }
+.detail-edit-fields { display:flex; flex-direction:column; gap:14px; border-top:1px solid var(--line-2); padding:16px; }
+.delete-filled { min-height:52px; width:100%; padding:12px 16px; border:0; border-radius:14px; background:#B83A32; color:#fff; font-size:15px; font-weight:700; cursor:pointer; }
+.delete-filled:disabled { opacity:.5; }
+.detail-confirm-text { line-height:1.8; font-size:15px; }
+@media (max-width:359px) { .detail-row { gap:10px; } .detail-row dt { flex-basis:80px; } }
+
+/* Read and edit share the same section/card layout. */
+.detail-edit-layout { display:contents; }
+.detail-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:4px; }
+.detail-actions>.btn,.detail-actions>.delete-filled { min-height:52px; border-radius:14px; font-size:15px; }
+.is-editing .detail-row input,.is-editing .detail-row select,.is-editing .detail-row textarea,
+.is-editing .route-detail input,.is-editing .route-detail select { width:100%; min-width:0; max-width:100%; min-height:40px; border:1px solid var(--line); border-radius:10px; padding:8px 10px; font:inherit; font-size:16px; color:var(--ink); background:var(--card); }
+.is-editing .detail-row textarea { resize:vertical; line-height:1.6; }
+.is-editing .detail-heading h1>input { width:100%; min-height:44px; border:1px solid var(--line); border-radius:10px; padding:8px 10px; font:inherit; font-size:24px; background:var(--card); }
+.is-editing .detail-note>textarea { width:100%; min-height:100px; border:1px solid var(--line); border-radius:10px; padding:10px 12px; font:inherit; font-size:16px; line-height:1.8; color:var(--ink); background:var(--card); resize:vertical; }
+.detail-inline-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.detail-inline-grid>label { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--ink-2); text-align:left; }
+.detail-inline-wide { grid-column:1/-1; }
+.detail-booking-edit { display:flex; align-items:center; justify-content:space-between; gap:12px; color:var(--ink-2); font-size:13px; }
+.detail-booking-edit select { min-height:40px; max-width:65%; border:1px solid var(--line); border-radius:10px; padding:0 10px; font:inherit; font-size:16px; color:var(--ink); background:var(--card); }
+.is-editing .stay-dates { grid-template-columns:minmax(0,1fr) 62px minmax(0,1fr); }
+.is-editing .stay-dates input { width:100%; min-width:0; height:40px; border:1px solid var(--line); border-radius:8px; padding:0 4px; color:var(--ink); background:var(--card); font-size:16px; }
+.is-editing .stay-dates strong { min-width:0; font-size:16px; }
+.is-editing .detail-legs>li>div { min-width:0; flex:1; }
+.route-inline-edit { display:flex; flex-direction:column; gap:8px; }
+.is-editing .detail-row dd { text-align:left; }
+.is-editing .detail-watch input[type=text],.is-editing .detail-watch input:not([type]) { width:100%; min-width:0; height:40px; border:1px solid var(--line); border-radius:8px; padding:0 8px; font-size:16px; }
+.is-editing .detail-watch input[type=checkbox] { width:20px; height:20px; accent-color:var(--ok); flex-shrink:0; }
+@media (max-width:359px) {
+  .is-editing .stay-dates { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .is-editing .stay-dates>div:first-child { grid-column:1; grid-row:1; }
+  .is-editing .stay-dates>div:last-child { grid-column:2; grid-row:1; }
+  .is-editing .stay-dates>.pill { grid-column:1/-1; grid-row:2; justify-self:center; }
+}
