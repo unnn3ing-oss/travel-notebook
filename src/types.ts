@@ -1,7 +1,7 @@
 export type ItemType = 'place' | 'restaurant' | 'transit' | 'hotel' | 'flight' | 'ticket' | 'car' | 'other';
 /** 還沒訂 / 已訂購（付款了，還沒收到確認信）/ 訂單確認 */
 export type BookingStatus = 'none' | 'ordered' | 'confirmed';
-export type Mode = 'walk' | 'train' | 'bus' | 'car' | 'ferry' | 'plane';
+export type Mode = 'walk' | 'train' | 'bus' | 'car' | 'ferry' | 'rental' | 'plane';
 
 export interface Trip {
   id: string;
@@ -64,6 +64,12 @@ export interface Route {
   fare: number | null; // per person, local currency
   booking?: BookingStatus;
   primary: boolean;
+  /** 付款方式，例如 IC 卡 */
+  pay?: string;
+  /** 訂票資訊（有 booking 時才顯示） */
+  ticket?: { ref?: string; company?: string; pickup?: string; phone?: string; cancel?: string };
+  /** 不用訂票時的說明 */
+  noBookNote?: string;
 }
 
 export interface Task {

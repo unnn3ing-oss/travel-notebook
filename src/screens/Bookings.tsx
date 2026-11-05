@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db, uid } from '../db';
 import { daysBetween, md } from '../lib/time';
 import { href } from '../lib/route';
-import { css, DToast, I, PILL_NONE, PILL_ORDERED, ROUND_PLUS, TabPage } from '../design';
+import { css, DToast, I, PILL_NONE, PILL_ORDERED, ROUND_PLUS, TabPage, Skeleton, SK } from '../design';
 import type { Alternative, BookingStatus, Item, ItemType, Trip } from '../types';
 
 const FILTERS: [string, ItemType[]][] = [['全部', []], ['交通', ['flight', 'transit', 'car']], ['住宿', ['hotel']], ['餐廳', ['restaurant']], ['門票', ['ticket']]];
@@ -43,7 +43,7 @@ function BookingList({ trip }: { trip: Trip }) {
   const [toast, setToast] = useState<{ text: string; before: Item } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(timer.current), []);
-  if (!items) return <TabPage><span /></TabPage>;
+  if (!items) return <Skeleton blocks={SK.bookings} gap={14} />;
   const types = FILTERS.find((f) => f[0] === filter)![1];
   const list = items.filter((i) => i.booking && (!types.length || types.includes(i.type)))
     .sort((a, b) => (a.date ?? '9').localeCompare(b.date ?? '9') || a.start.localeCompare(b.start));
@@ -159,7 +159,7 @@ function BookingEdit({ trip, id }: { trip: Trip; id?: string }) {
     setF(existing ?? { id: uid(), tripId: trip.id, date: trip.start, start: '', end: '', title: '', type: 'hotel', booking: 'confirmed', alts: [], cancelRemind: true });
   }, [existing, f, trip]);
   if (id && existing === null) return <main style={css('padding: 52px 20px')}><a href={href('bookings')}>回預訂</a><p>找不到這筆預訂。</p></main>;
-  if (!f) return <main />;
+  if (!f) return <Skeleton blocks={SK.page} />;
   const set = (p: Partial<Item>) => { setF({ ...f, ...p }); setMsg(null); };
   const lbl = LBL[f.type] ?? ['日期', '時間'];
   const alts = f.alts ?? [];

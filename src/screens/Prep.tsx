@@ -5,7 +5,7 @@ import type { Trip } from '../types';
 import type { Clock } from '../lib/clock';
 import { dueInfo } from '../lib/checklist';
 import { md } from '../lib/time';
-import { BTN_PRIMARY, css, DSheet, FIELD_INPUT, FIELD_LABEL, I, ROUND_PLUS, TabPage } from '../design';
+import { BTN_PRIMARY, css, DSheet, FIELD_INPUT, FIELD_LABEL, I, ROUND_PLUS, TabPage, Skeleton, SK } from '../design';
 
 /** 設計稿「出發前準備」(Checklist) */
 export function Prep({ trip, clock }: { trip: Trip; clock: Clock }) {
@@ -14,7 +14,7 @@ export function Prep({ trip, clock }: { trip: Trip; clock: Clock }) {
   const [title, setTitle] = useState('');
   const [daysBefore, setDaysBefore] = useState('3');
   const [group, setGroup] = useState('');
-  if (!tasks) return <TabPage><span /></TabPage>;
+  if (!tasks) return <Skeleton blocks={SK.prep} gap={14} />;
   const groups = [...new Set(tasks.map((t) => t.group))];
   const done = tasks.filter((t) => t.done).length;
 
@@ -51,7 +51,7 @@ export function Prep({ trip, clock }: { trip: Trip; clock: Clock }) {
                 <label style={css('display: flex; align-items: center; gap: 10px; font-size: 15px; ' + (t.done ? 'color: #5B6578; text-decoration: line-through' : 'color: #1E2A44'))}>
                   <input type="checkbox" checked={t.done} onChange={() => db.tasks.update(t.id, { done: !t.done })} style={css('width: 20px; height: 20px; flex-shrink: 0; accent-color: #1F7A5C')} />{t.title}
                 </label>
-                <span style={css('margin-left: 30px; font-size: 13px; ' + (t.done ? 'color: #1F7A5C; font-weight: 700' : d.urgent ? 'font-weight: 700; color: #B83A32' : 'color: #5B6578'))}>{t.done ? '完成' : d.text}</span>
+                <span className="num" style={css('margin-left: 30px; font-size: 13px; ' + (t.done ? 'color: #1F7A5C; font-weight: 700' : d.urgent ? 'font-weight: 700; color: #B83A32' : 'color: #5B6578'))}>{t.done ? '完成' : d.text}</span>
               </div>
             );
           })}

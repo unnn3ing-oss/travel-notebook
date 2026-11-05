@@ -8,7 +8,7 @@ import { planTransit } from '../lib/plan';
 import { daysBetween, md, toMin, weekday } from '../lib/time';
 import { href } from '../lib/route';
 import { BOOKING_LABEL } from '../components/ui';
-import { css, I, pill, PILL_NONE, PILL_NOW, PILL_OK, TabPage } from '../design';
+import { css, I, pill, PILL_NONE, PILL_NOW, PILL_OK, TabPage, Skeleton, SK } from '../design';
 import { PlanB } from './PlanB';
 
 const mapsUrl = (q: string) => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
@@ -17,7 +17,7 @@ export function Today({ trip, clock }: { trip: Trip; clock: Clock }) {
   const items = useLiveQuery(() => db.items.where({ tripId: trip.id, date: clock.date }).toArray(), [trip.id, clock.date]);
   const routes = useLiveQuery(() => db.routes.toArray(), []);
   const [planB, setPlanB] = useState<Item | null>(null);
-  if (!items || !routes) return <TabPage><span /></TabPage>;
+  if (!items || !routes) return <Skeleton blocks={SK.today} pad="52px 20px 12px" gap={10} />;
 
   const dayNo = daysBetween(trip.start, clock.date) + 1;
   const total = daysBetween(trip.start, trip.end) + 1;
@@ -33,7 +33,7 @@ export function Today({ trip, clock }: { trip: Trip; clock: Clock }) {
   return (
     <TabPage pad="52px 20px 12px" gap={10}>
       <header>
-        <p style={css('margin: 0; font-size: 13px; color: #5B6578')}>第 {dayNo} 天，共 {total} 天</p>
+        <p className="num" style={css('margin: 0; font-size: 13px; color: #5B6578')}>第 {dayNo} 天，共 {total} 天</p>
         <h1 className="num" style={css('margin: 4px 0 0; font-size: 28px; font-weight: 700')}>{md(clock.date)} {weekday(clock.date)}</h1>
       </header>
 
@@ -105,7 +105,7 @@ export function Today({ trip, clock }: { trip: Trip; clock: Clock }) {
             </>}
             {!j && walkPrev && <p style={css('margin: 0; font-size: 14px; color: #5B6578')}>{walkPrev.title}</p>}
             {next.booking === 'none' && !!next.alts?.length && (
-              <button onClick={() => setPlanB(next)} style={{ ...PILL_NONE, border: 0, alignSelf: 'flex-start', cursor: 'pointer', font: 'inherit', fontSize: 12, fontWeight: 700 }}>還沒訂・有 {next.alts.length} 個備案</button>
+              <button onClick={() => setPlanB(next)} style={{ ...PILL_NONE, border: 0, alignSelf: 'flex-start', cursor: 'pointer', font: 'inherit', fontSize: 12, fontWeight: 700 }}>還沒訂・有 <span className="num">{next.alts.length}</span> 個備案</button>
             )}
           </section>
         );
@@ -121,7 +121,7 @@ export function Today({ trip, clock }: { trip: Trip; clock: Clock }) {
                   <button onClick={() => setPlanB(i)} style={css('width: 100%; display: flex; align-items: center; gap: 14px; min-height: 48px; padding: 0; border: 0; background: transparent; color: #1E2A44; font: inherit; text-align: left; cursor: pointer')}>
                     <span className="num" style={css('width: 44px; font-size: 14px; color: #5B6578')}>{i.start}</span>
                     <span style={css('flex: 1; font-size: 15px')}>{i.title}</span>
-                    <span style={PILL_NONE}>還沒訂・有 {i.alts.length} 個備案</span>
+                    <span style={PILL_NONE}>還沒訂・有 <span className="num">{i.alts.length}</span> 個備案</span>
                   </button>
                 ) : (
                   <a href={i.type === 'transit' ? href('transit', i.id) : href('place', i.id)} style={css('display: flex; align-items: center; gap: 14px; min-height: 48px; text-decoration: none; color: #1E2A44')}>

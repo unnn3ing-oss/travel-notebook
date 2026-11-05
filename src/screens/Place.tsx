@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { addDays, daysBetween, md, toMin, weekday } from '../lib/time';
 import { href } from '../lib/route';
-import { BackLink, css, I } from '../design';
+import { BackLink, css, I, Skeleton, SK } from '../design';
 import type { Trip } from '../types';
 
 export const TAGS = ['喜歡', '想去', '想看', '必去'];
@@ -16,7 +16,7 @@ export function Place({ trip, itemId }: { trip: Trip; itemId: string }) {
   const [adding, setAdding] = useState('');
   const [open, setOpen] = useState(false);
   const [moving, setMoving] = useState(false);
-  if (item === undefined) return <main />;
+  if (item === undefined) return <Skeleton blocks={SK.page} pad="52px 20px 32px" />;
   if (!item) return <main style={css('padding: 52px 20px')}><BackLink to={href('plan')} /><h1>找不到這個景點</h1></main>;
   const tags = item.tags ?? [];
   const days = Array.from({ length: daysBetween(trip.start, trip.end) + 1 }, (_, k) => addDays(trip.start, k));

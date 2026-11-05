@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { href } from '../lib/route';
 import { addDays, daysBetween, md, weekday } from '../lib/time';
-import { BackLink, css, I } from '../design';
+import { BackLink, css, I, Skeleton, SK } from '../design';
 import { dayCards, TYPE_LABEL } from './Plan';
 import type { Trip } from '../types';
 
@@ -141,14 +141,14 @@ export function PrintView({ trip }: { trip: Trip }) {
   const items = useLiveQuery(() => db.items.where({ tripId: trip.id }).toArray(), [trip.id]);
   const days = Array.from({ length: daysBetween(trip.start, trip.end) + 1 }, (_, k) => addDays(trip.start, k));
   useEffect(() => { if (items) setTimeout(() => window.print(), 400); }, [items]);
-  if (!items) return <main />;
+  if (!items) return <Skeleton blocks={SK.page} />;
   return (
     <main style={css('flex: 1; padding: 32px 20px; display: flex; flex-direction: column; gap: 18px; background: #fff; color: #1e2a44')}>
       <div className="noprint" style={css('display: flex; gap: 8px; align-items: center')}><BackLink to={href('settings')} /><button onClick={() => window.print()} style={css('height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700')}>列印／存成 PDF</button></div>
       <header><h1 style={css('margin: 0; font-size: 26px; font-weight: 700')}>{trip.name}</h1><p className="num" style={css('margin: 4px 0 0; font-size: 13px; color: #5b6578')}>{md(trip.start)} – {md(trip.end)}，{trip.people} 人</p></header>
       {days.map((d, k) => (
         <section key={d} style={css('break-inside: avoid')}>
-          <h2 style={css('margin: 0 0 6px; font-size: 16px; font-weight: 700')}>第 {k + 1} 天　{md(d)} {weekday(d)}</h2>
+          <h2 className="num" style={css('margin: 0 0 6px; font-size: 16px; font-weight: 700')}>第 {k + 1} 天　{md(d)} {weekday(d)}</h2>
           {dayCards(items, d).map((i) => (
             <div key={i.id} style={css('display: flex; gap: 12px; padding: 6px 0; border-top: 1px solid #dce1e8; font-size: 14px')}>
               <span className="num" style={css('width: 92px; flex-shrink: 0; color: #5b6578')}>{i.start ? i.start + (i.end ? ' – ' + i.end : '') : '未定'}</span>

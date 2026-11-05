@@ -140,3 +140,26 @@ export function DToast({ text, action, onAction, bottom = 100 }: { text: ReactNo
     </div>
   );
 }
+
+/**
+ * 骨架屏：資料還沒讀出來時先畫出版面輪廓。每格 [高度, 圓角?, 寬度?]，
+ * 尺寸照實際畫面量測，資料進來時版面不會跳。
+ */
+export type SkBlock = [number, number?, string?];
+export function Skeleton({ blocks, pad = '56px 20px 16px', gap = 16 }: { blocks: SkBlock[]; pad?: string; gap?: number }) {
+  return (
+    <main className="dmain" aria-busy="true" style={{ padding: pad.replace(/^(\d+)px/, 'calc(env(safe-area-inset-top) + $1px)'), display: 'flex', flexDirection: 'column', gap }}>
+      <span className="visually-hidden" role="status">載入中</span>
+      {blocks.map(([h, r = 16, w = '100%'], i) => <div key={i} aria-hidden="true" className="sk" style={{ height: h, borderRadius: r, width: w, flexShrink: 0 }} />)}
+    </main>
+  );
+}
+export const SK = {
+  overview: [[58, 12, '60%'], [121], [218], [252]] as SkBlock[],
+  today: [[58, 12, '60%'], [295, 18], [150], [219]] as SkBlock[],
+  plan: [[44, 12, '50%'], [64, 14], [88, 14], [88, 14], [88, 14], [88, 14]] as SkBlock[],
+  bookings: [[44, 12, '50%'], [36, 18], [73], [98], [150], [73]] as SkBlock[],
+  prep: [[44, 12, '50%'], [18, 4], [19, 6, '80%'], [176], [112], [176]] as SkBlock[],
+  transit: [[44, 22, '44px'], [92], [120, 14], [150, 14], [260]] as SkBlock[],
+  page: [[44, 22, '44px'], [72, 12, '70%'], [200], [160]] as SkBlock[],
+};

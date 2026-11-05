@@ -7,7 +7,7 @@ import { byTime } from '../lib/day';
 import { href } from '../lib/route';
 import { importPrompt, parseImport, sampleResult, type ImportRow } from '../lib/importer';
 import { BOOKING_LABEL } from '../components/ui';
-import { css, DSheet, DToast, FIELD_LABEL, I, pill, PILL_NONE, PILL_OK, PILL_ORDERED, TabPage } from '../design';
+import { css, DSheet, DToast, FIELD_LABEL, I, pill, PILL_NONE, PILL_OK, PILL_ORDERED, TabPage, Skeleton, SK } from '../design';
 import { PlanBoard } from './Planner';
 
 export const TYPE_LABEL: Record<ItemType, string> = { flight: '航班', transit: '交通', hotel: '住宿', ticket: '門票', restaurant: '餐廳', place: '景點', car: '租車', other: '其他' };
@@ -49,7 +49,7 @@ export function Plan({ trip, day }: { trip: Trip; day?: string }) {
   const [toast, setToast] = useState<{ text: string; undo?: Snap } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(timer.current), []);
-  if (!items || !routes) return <TabPage><span /></TabPage>;
+  if (!items || !routes) return <Skeleton blocks={SK.plan} pad="52px 20px 16px" gap={10} />;
 
   const say = (text: string, undo?: Snap) => { setToast({ text, undo }); clearTimeout(timer.current); timer.current = setTimeout(() => setToast(null), 6000); };
   const snap = (ids: string[]): Snap => ({ put: items.filter((i) => ids.includes(i.id)).map((i) => ({ ...i })), del: [] });
@@ -472,7 +472,7 @@ function Timeline({ days, sel, items, routes, pick, poolCount, onAdd }: { days: 
         })}
       </section>
     )}
-    {!!untimed.length && <p style={css('margin: 0; font-size: 13px; color: #5B6578')}>另有 {untimed.length} 張卡片還沒設定時間，切到清單可以編輯。</p>}
+    {!!untimed.length && <p style={css('margin: 0; font-size: 13px; color: #5B6578')}>另有 <span className="num">{untimed.length}</span> 張卡片還沒設定時間，切到清單可以編輯。</p>}
 
     <div style={css('position: fixed; left: 0; right: 0; bottom: calc(100px + env(safe-area-inset-bottom) * 0); z-index: 20; max-width: 480px; margin: 0 auto; padding: 0 20px; box-sizing: border-box; display: flex; gap: 10px; pointer-events: none')}>
       <a href={href('library')} style={css('flex: 1; height: 52px; box-sizing: border-box; border-radius: 26px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font-size: 15px; font-weight: 500; text-decoration: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(30,42,68,0.12); pointer-events: auto')}>{poolCount ? <>排入 <span className="num" style={{ margin: '0 4px' }}>{poolCount}</span> 個還沒排的景點</> : '打開景點庫'}</a>

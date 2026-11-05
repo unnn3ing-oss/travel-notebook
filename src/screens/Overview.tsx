@@ -5,7 +5,7 @@ import type { Clock } from '../lib/clock';
 import { dueInfo } from '../lib/checklist';
 import { daysBetween, md } from '../lib/time';
 import { href } from '../lib/route';
-import { css, I, PILL_NONE, TabPage } from '../design';
+import { css, I, PILL_NONE, TabPage, Skeleton, SK } from '../design';
 
 const ICON: Partial<Record<Item['type'], keyof typeof I>> = { flight: 'plane', hotel: 'bed', transit: 'train', restaurant: 'food', ticket: 'ticket' };
 
@@ -13,7 +13,7 @@ const ICON: Partial<Record<Item['type'], keyof typeof I>> = { flight: 'plane', h
 export function Overview({ trip, clock }: { trip: Trip; clock: Clock }) {
   const tasks = useLiveQuery(() => db.tasks.where({ tripId: trip.id }).toArray(), [trip.id]);
   const items = useLiveQuery(() => db.items.where({ tripId: trip.id }).toArray(), [trip.id]);
-  if (!tasks || !items) return <TabPage><span /></TabPage>;
+  if (!tasks || !items) return <Skeleton blocks={SK.overview} />;
   const left = daysBetween(clock.date, trip.start);
   const after = clock.date > trip.end;
   const open = tasks.filter((t) => !t.done).sort((a, b) => b.daysBefore - a.daysBefore).slice(0, 3);
@@ -58,7 +58,7 @@ export function Overview({ trip, clock }: { trip: Trip; clock: Clock }) {
       <section aria-labelledby="prep-h" style={css('padding: 4px 0 0; display: flex; flex-direction: column; gap: 12px')}>
         <div style={css('display: flex; justify-content: space-between; align-items: center')}>
           <h2 id="prep-h" style={css('margin: 0; font-size: 16px; font-weight: 700')}>出發前準備</h2>
-          <a href={href('prep')} style={css('font-size: 14px; font-weight: 500; padding: 10px 0')}>查看全部 {tasks.length} 項</a>
+          <a href={href('prep')} style={css('font-size: 14px; font-weight: 500; padding: 10px 0')}>查看全部 <span className="num">{tasks.length}</span> 項</a>
         </div>
         <div style={css('display: flex; align-items: center; gap: 12px')}>
           <div role="progressbar" aria-label="準備進度" aria-valuenow={done} aria-valuemin={0} aria-valuemax={tasks.length} style={css('flex: 1; height: 8px; border-radius: 4px; background: #DCE1E8; overflow: hidden')}>
@@ -72,7 +72,7 @@ export function Overview({ trip, clock }: { trip: Trip; clock: Clock }) {
             return (
               <li key={t.id} style={css('display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; border-top: 1px solid #DCE1E8')}>
                 <label style={css('display: flex; align-items: center; gap: 10px; font-size: 15px')}><input type="checkbox" checked={t.done} onChange={() => db.tasks.update(t.id, { done: !t.done })} style={css('width: 20px; height: 20px; flex-shrink: 0; accent-color: #1F7A5C')} /> {t.title}</label>
-                <span style={css('font-size: 13px; text-align: right; white-space: nowrap; ' + (d.urgent ? 'font-weight: 700; color: #B83A32' : 'color: #5B6578'))}>{d.text}</span>
+                <span className="num" style={css('font-size: 13px; text-align: right; white-space: nowrap; ' + (d.urgent ? 'font-weight: 700; color: #B83A32' : 'color: #5B6578'))}>{d.text}</span>
               </li>
             );
           })}

@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db, ensureSeed } from './db';
 import { useClock } from './lib/clock';
 import { href, useRoute } from './lib/route';
-import { Nav } from './design';
+import { Skeleton, SK, Nav } from './design';
 import { Place } from './screens/Place';
 import { Reminders, useNotifier } from './screens/Reminders';
 import { Today } from './screens/Today';
@@ -29,7 +29,7 @@ export default function App() {
   useNotifier(trips?.find(t=>t.id===selected)?.id??trips?.find(t=>t.end>=clock.date)?.id, clock);
   const select=(t:Trip)=>{localStorage.setItem('travel-selected-trip',t.id);setSelected(t.id);};
   if(failed)return <main className="screen"><h1>資料庫打不開</h1><p>{failed}</p><button className="btn primary" onClick={()=>location.reload()}>重新載入</button></main>;
-  if(!ready||!trips)return <main className="screen" role="status">正在開啟旅行手帳…</main>;
+  if(!ready||!trips)return <Skeleton blocks={SK.overview}/>;
   const trip=trips.find(t=>t.id===selected)??trips.find(t=>t.end>=clock.date)??trips[0];
   const during=trip&&trip.start<=clock.date&&clock.date<=trip.end;
   const landing=!page||page==='welcome';

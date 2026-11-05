@@ -38,7 +38,9 @@
   }
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); -webkit-text-size-adjust: 100%; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); -webkit-text-size-adjust: 100%; font-variant-numeric: tabular-nums; }
+/* 數字一律等寬：倒數、時間、金額變動時不左右跳動 */
+input, select, textarea, button { font-variant-numeric: tabular-nums; }
 body { min-height: 100dvh; }
 button, input, select, textarea { font: inherit; color: inherit; }
 a { color: inherit; }
@@ -274,3 +276,8 @@ svg { flex-shrink:0; }
 .noscrollbar { scrollbar-width: none; }
 .noscrollbar::-webkit-scrollbar { display: none; }
 @media print { .noprint { display: none !important; } }
+
+/* 骨架屏：載入時先顯示版面輪廓，尺寸與實際卡片相同，避免版面跳動 */
+.sk { background: linear-gradient(90deg, var(--line-2) 25%, var(--seg) 50%, var(--line-2) 75%); background-size: 200% 100%; border-radius: 12px; }
+@media (prefers-reduced-motion: no-preference) { .sk { animation: sk-shimmer 1.5s linear infinite; } }
+@keyframes sk-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
