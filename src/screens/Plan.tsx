@@ -8,9 +8,11 @@ import { isEntryKind } from '../lib/entries';
 import { byTime } from '../lib/day';
 import { href } from '../lib/route';
 import { importPrompt, parseImport, sampleResult, materializeImport, type ImportRow } from '../lib/importer';
-import { BOOKING_LABEL } from '../components/ui';
-import { css, DSheet, DToast, I, pill, TabPage, Skeleton, SK } from '../design';
+import { css, DSheet, DToast, I, TabPage, Skeleton, SK } from '../design';
 import { PlanBoard } from './Planner';
+import { DestinationHeader } from '../components/DestinationHeader';
+import { ItineraryCard } from '../components/ItineraryCard';
+import { EntryArt } from '../components/TravelArt';
 
 export const TYPE_LABEL: Record<ItemType, string> = { flight: '航班', transit: '交通', hotel: '住宿', ticket: '門票', restaurant: '餐廳', place: '景點', car: '租車', other: '其他' };
 const NEWNAME: Record<ItemType, string> = { place: '新的景點', restaurant: '新的餐廳', transit: '從哪裡到哪裡', hotel: '住宿', flight: '航班', ticket: '門票', car: '租車', other: '新的行程' };
@@ -33,7 +35,6 @@ function meta(i: Item, routes: Route[]) {
   if (i.type === 'transit') return routeMeta(i, routes);
   const bits: string[] = [];
   if (i.orderNumber) bits.push('訂單 ' + i.orderNumber);
-  else if (i.booking) bits.push(BOOKING_LABEL[i.booking]);
   if (i.alts?.length) bits.push(i.alts.length + ' 個備案');
   return bits.join('，');
 }
@@ -94,25 +95,11 @@ export function Plan({ trip, day }: { trip: Trip; day?: string }) {
 
   const tripEmpty = items.length === 0;
 
-  const header = view === 'timeline' && !tripEmpty ? (
-    <header style={css('display: flex; justify-content: space-between; align-items: center')}>
-      <h1 style={css('margin: 0; font-size: 28px; font-weight: 700')}>行程</h1>
-      <Segment view={view} setView={setV} tall />
-    </header>
-  ) : (
-    <header style={css('display: flex; justify-content: space-between; align-items: flex-start; gap: 12px')}>
-      <div>
-        <a href={href('')} style={css('font-size: 13px; color: #5B6578; text-decoration: none')}>所有旅程</a>
-        <h1 style={css('margin: 2px 0 0; font-size: 26px; font-weight: 700')}>{trip.name}</h1>
-        <p className="num" style={css('margin: 2px 0 0; font-size: 13px; color: #5B6578')}>{md(trip.start)} – {md(trip.end)}，{trip.people} 人</p>
-      </div>
-      {!tripEmpty && <Segment view={view} setView={setV} />}
-    </header>
-  );
+  const header = <><DestinationHeader trip={trip} items={items}/>{!tripEmpty && <div className="plan-view-bar"><Segment view={view} setView={setV}/></div>}</>;
 
   return (
     <TabPage pad="52px 20px 16px" gap={14}>
-      <div className="desktop-board"><PlanBoard trip={trip} days={days} items={items} edit={(i) => (i === 'new' ? setSheet('add') : location.hash=href('item',i.id))} /></div>
+      <div className="desktop-board"><DestinationHeader trip={trip} items={items}/><PlanBoard trip={trip} days={days} items={items} routes={routes} edit={(i) => (i === 'new' ? setSheet('add') : location.hash=href('item',i.id))} /></div>
       <div className="mobile-plan">
         {header}
         {view === 'timeline' && !tripEmpty
@@ -228,7 +215,7 @@ function CardList({ list, routes, pool, label, open, reorder }: { list: Item[]; 
         const rs = routes.filter((r) => r.itemId === it.id).length;
         const m = meta(it, routes);
         return (
-          <li className={it.type === 'transit' ? 'connected-transit' : 'connected-stop'} key={it.id} data-idx={i} tabIndex={0} role="button" aria-label={'查看 ' + it.title}
+          <li className={'itinerary-list-entry '+(it.type === 'transit' ? 'connected-transit' : 'connected-stop')} key={it.id} data-idx={i} tabIndex={0} role="button" aria-label={'查看 ' + it.title}
             onPointerDown={(e) => {
               if (e.button) return;
               p.current = { x: e.clientX, y: e.clientY };
@@ -238,16 +225,16 @@ function CardList({ list, routes, pool, label, open, reorder }: { list: Item[]; 
             onClick={() => { if (just.current) { just.current = false; return; } open(it); }}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(it); } }}
             onContextMenu={(e) => e.preventDefault()}
-            style={css('display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 14px; background: #FFFFFF; cursor: grab; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; transition: box-shadow 120ms, transform 120ms; ' +
-              (lifted ? 'box-shadow: 0 0 0 2px #1E2A44, 0 12px 24px rgba(30,42,68,0.22); transform: scale(1.02); position: relative; z-index: 2' : warn ? 'box-shadow: inset 0 0 0 1.5px #E8B4AF' : ''))}>
-            <span className="num" style={css('width: 48px; flex-shrink: 0; padding-top: 2px; font-size: 15px; font-weight: 700; ' + (it.start ? '' : 'color: #8A94A6; font-size: 13px'))}>{it.start || '未定'}</span>
-            <span style={css('flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px')}>
-              <span style={css('font-size: 16px; font-weight: 700; line-height: 1.35')}>{it.title}</span>
-              <span style={css('font-size: 12px; color: #5B6578')}>{TYPE_LABEL[it.type]}{m && '，' + m}</span>
-              {it.type === 'transit' && <a href={href('item', it.id)} onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()} style={css('align-self: flex-start; margin-top: 4px; padding: 6px 10px; border-radius: 8px; background: #EEF1F5; font-size: 12px; font-weight: 700; text-decoration: none')}>{rs ? rs + ' 條路線，看班次' : '加入交通方式與班次'}</a>}
-              {warn && <span style={css('font-size: 12px; font-weight: 700; color: #B83A32')}>時間比上一張早，改時間或換順序</span>}
+            style={lifted?{zIndex:2,transform:'scale(1.02)'}:undefined}>
+            <span className="itinerary-time num">{it.start || '時間未定'}{it.end && it.end!==it.start && <small> – {it.end}</small>}</span>
+            <span className={'itinerary-list-card'+(lifted?' is-lifted':'')+(warn?' has-time-warning':'')}>
+              <ItineraryCard item={it} routes={routes}/>
+              <span className="itinerary-card-grip" aria-hidden="true">{I.grip}</span>
+              <span className="itinerary-card-chevron" aria-hidden="true">{I.chev}</span>
             </span>
-            <span style={css('flex-shrink: 0; margin-top: 2px; color: #B8C0CC; display: flex')}>{I.grip}</span>
+            {(m || it.type==='transit') && <span className="itinerary-extra small muted">{it.type==='transit'?(rs?rs+' 條路線 · 查看班次':'加入交通方式與班次'):m}</span>}
+            {warn && <span className="itinerary-time-warning">時間比上一張早，改時間或換順序</span>}
+
           </li>
         );
       })}
@@ -375,7 +362,7 @@ function Timeline({ days, sel, items, routes, pick, poolCount, onAdd }: { days: 
             const rs = routes.filter((r) => r.itemId === it.id).length;
             return <div key={it.id}>{alert}
               <a href={href('item', it.id)} style={{ ...css('position: absolute; left: 52px; right: 0; height: 44px; display: flex; align-items: center; gap: 8px; padding-left: 12px; font-size: 12px; color: #5B6578; text-decoration: none'), top: top + Math.max(0, (h - 44) / 2) }}>
-                <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="13" cy="4" r="2" /><path d="M10 22l2-7 3 3v4M8 12l3-4 3 3 3 1" /></svg>
+                <EntryArt type="transit"/>
                 <span>{routeMeta(it, routes) || it.title}</span>
                 <span style={css('margin-left: auto; font-weight: 700; color: #1E2A44; background: #EEF1F5; padding: 3px 8px; border-radius: 10px')}>{rs ? rs + ' 條路線，看班次' : '加入交通方式'}</span>
               </a>
@@ -384,13 +371,8 @@ function Timeline({ days, sel, items, routes, pick, poolCount, onAdd }: { days: 
           const none = it.booking === 'none';
           const sub = [it.watch?.length ? '想看 ' + it.watch.length + ' 項' : '', it.note ? '筆記 1 則' : ''].filter(Boolean).join('，');
           return <div key={it.id}>{alert}
-            <a href={href('item', it.id)} style={{ ...css('position: absolute; left: 52px; right: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 12px; padding: 10px 12px; text-decoration: none; color: #1E2A44; display: flex; justify-content: space-between; gap: 8px; overflow: hidden; box-shadow: 0 1px 2px rgba(30,42,68,0.12)' + (none ? '; border: 1.5px solid #E8B4AF' : '')), top, height: h }}>
-              <span style={css('display: flex; flex-direction: column; gap: 4px; min-width: 0')}>
-                <span className="num" style={css('font-size: 12px; color: #5B6578')}>{it.start} – {it.end || fmt(e)}</span>
-                <span style={css('font-size: 16px; font-weight: 700')}>{it.title}</span>
-                {sub && h > 80 && <span style={css('font-size: 12px; color: #5B6578')}>{sub}</span>}
-              </span>
-              {it.booking && <span style={{ ...pill(none ? '#F9E1DF' : it.booking === 'ordered' ? '#FBE9C0' : '#DDF1E8', none ? '#B83A32' : it.booking === 'ordered' ? '#8A5A00' : '#1F7A5C'), fontSize: 11, padding: '3px 8px', borderRadius: 10, alignSelf: 'flex-start' }}>{none ? '還沒訂' + (it.alts?.length ? '・' + it.alts.length + ' 個備案' : '') : BOOKING_LABEL[it.booking]}</span>}
+            <a href={href('item', it.id)} style={{ ...css('position: absolute; left: 52px; right: 0; box-sizing: border-box; background: #FFFFFF; border-radius: 12px; padding: 0; text-decoration: none; color: #1E2A44; display: flex; justify-content: space-between; gap: 8px; overflow: hidden; box-shadow: 0 1px 2px rgba(30,42,68,0.12)' + (none ? '; border: 1.5px solid #E8B4AF' : '')), top, height: h }}>
+              <span className={'timeline-card-content'+(h<85?' is-short':'')}><ItineraryCard item={it} routes={routes} compact showTime/>{sub && h>150 && <span className="small muted">{sub}</span>}</span>
             </a>
           </div>;
         })}
