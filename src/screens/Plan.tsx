@@ -270,7 +270,7 @@ function ImportSheet({ trip, days, items, close, done }: { trip: Trip; days: str
     <DSheet title="用 AI 匯入訂單" onClose={close}>
       {failure&&<p className="error" role="alert">{failure}</p>}
       {!rows.length ? <>
-        <p style={css('margin: 0; font-size: 14px; line-height: 1.6; color: #5B6578')}>App 不會讀你的信箱。複製提示詞給能讀信箱的 AI，再把結果貼回來。</p>
+        <p style={css('margin: 0; font-size: 14px; line-height: 1.6; color: #5B6578')}>複製提示詞給已授權讀取信箱與 PDF 附件的 AI，核對座位等訂位資訊，再把結果貼回來。若 AI 無法開啟附件，請另行提供 PDF。</p>
         <button onClick={async () => { try { await navigator.clipboard.writeText(importPrompt(trip)); setCopied(true); } catch { setCopied(false); alert(importPrompt(trip)); } }} style={css('height: 48px; border-radius: 12px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 700')}>{copied ? '已複製提示詞' : '複製提示詞'}</button>
         <label htmlFor="raw-m" style={css('font-size: 14px; font-weight: 700')}>貼回 AI 的結果</label>
         <textarea id="raw-m" rows={5} value={raw} onChange={(e) => { setRaw(e.target.value); setRes(null); }} placeholder="長按貼上" className="num" style={css('font-size: 16px; line-height: 1.5; color: #1E2A44; border: 1px solid #DCE1E8; border-radius: 12px; padding: 10px 12px; resize: none; background: #FFFFFF')} />

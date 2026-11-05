@@ -66,6 +66,7 @@ describe('current form fields and legacy compatibility',()=>{
  });
  it('asks the AI for the exact current field names rather than the old title-only schema',()=>{
   const prompt=importPrompt(trip);for(const field of ['flightNo','airline','address','checkoutDate','room','kinds','routes','notes','不要猜'])expect(prompt).toContain(field);
+  for(const instruction of ['已獲授權','PDF 附件','不要只讀信件本文','起飛日期及旅客逐一核對','flight.seat','無法讀取 PDF 附件','缺少的欄位填 null','附件檔名','fromTerminal／toTerminal','大寫 T'])expect(prompt).toContain(instruction);
  });
 });
 it('accepts currency-formatted ticket prices without silently turning them into free tickets',()=>{

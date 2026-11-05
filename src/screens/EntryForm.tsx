@@ -8,6 +8,7 @@ import { addDays, daysBetween, md, weekday } from '../lib/time';
 import { earlier, flightItem, flightMinutes, hotelItems, isEntryKind, ticketItem, transitEntry, type EntryKind, type TransitDraft } from '../lib/entries';
 import { DeleteEntry } from '../components/DeleteEntry';
 import { recoverEntry } from '../lib/importer';
+import { formatTerminal } from '../lib/terminal';
 import { saveEntries } from '../lib/entryStore';
 import { TransitFields } from './TransitFields';
 
@@ -101,7 +102,7 @@ function FlightFields({value:f,set,status,setStatus}:{value:FlightDetails;set:(p
   const depart=f.departureTime&&f.departureDate?earlier(f.departureDate,f.departureTime,180):null;
   const duration=flightMinutes(f);
   return <>
-    <section className="flight-pass" aria-label="航班摘要"><div className="between"><b className="num">{f.airline||'航空公司'} {f.flightNo}</b><span className={'pill '+status}>{STATUS.find(([k])=>k===status)?.[1]}</span></div><div className="flight-airports"><span><strong className="num">{f.from||'———'}</strong><small className="num">{f.fromTerminal}・{f.departureTime||'—'} 起飛</small></span>{I.plane}<span><strong className="num">{f.to||'———'}</strong><small className="num">{f.arrivalTime||'—'} 抵達・{f.toTerminal}</small></span></div><dl><div><dt>日期</dt><dd className="num">{f.departureDate?md(f.departureDate):'—'}</dd></div><div><dt>報到截止</dt><dd className="num">{checkin?.time??'—'}</dd></div><div><dt>座位</dt><dd>{f.seat||'—'}</dd></div><div><dt>行李</dt><dd className="num">{f.bags?`${f.bags}×${f.bagKg}`:'無'}</dd></div></dl></section>
+    <section className="flight-pass" aria-label="航班摘要"><div className="between"><b className="num">{f.airline||'航空公司'} {f.flightNo}</b><span className={'pill '+status}>{STATUS.find(([k])=>k===status)?.[1]}</span></div><div className="flight-airports"><span><strong className="num">{f.from||'———'}</strong><small className="num">{formatTerminal(f.fromTerminal)||'航廈未提供'}・{f.departureTime||'—'} 起飛</small></span>{I.plane}<span><strong className="num">{f.to||'———'}</strong><small className="num">{f.arrivalTime||'—'} 抵達・{formatTerminal(f.toTerminal)||'航廈未提供'}</small></span></div><dl><div><dt>日期</dt><dd className="num">{f.departureDate?md(f.departureDate):'—'}</dd></div><div><dt>報到截止</dt><dd className="num">{checkin?.time??'—'}</dd></div><div><dt>座位</dt><dd>{f.seat||'—'}</dd></div><div><dt>行李</dt><dd className="num">{f.bags?`${f.bags}×${f.bagKg}`:'無'}</dd></div></dl></section>
     <Status value={status} set={setStatus}/>
     <Section title="航班"><div className="entry-grid"><Field label="航空公司代碼" value={f.airline} onChange={v=>set({airline:v.toUpperCase()})} placeholder="CI"/><Field label="航班號碼" value={f.flightNo} onChange={v=>set({flightNo:v})} placeholder="156"/></div>
       <div className="flight-direction"><h3>出發</h3><div className="entry-grid"><Field label="出發機場代碼" value={f.from} onChange={v=>set({from:v.toUpperCase(),...(AIRPORTS[v.toUpperCase()]?{departureZone:AIRPORTS[v.toUpperCase()]}:{})})} placeholder="TPE"/><Field label="出發航廈" value={f.fromTerminal} onChange={v=>set({fromTerminal:v})} placeholder="T2"/><Field label="起飛日" type="date" value={f.departureDate} onChange={v=>set({departureDate:v})}/><Field label="起飛時間（當地）" type="time" value={f.departureTime} onChange={v=>set({departureTime:v})}/></div><Zone label="出發地時區" value={f.departureZone} set={v=>set({departureZone:v})}/></div>
