@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { db } from '../db';
 import type { Item, ItemType, Trip } from '../types';
-import { md, toMin, weekday } from '../lib/time';
-import { byTime } from '../lib/day';
+import { md, weekday } from '../lib/time';
+import { orderedDay } from '../lib/entryStore';
 import { href } from '../lib/route';
 import { BookingPill, Icon } from '../components/ui';
 
@@ -13,7 +13,7 @@ const typeLabel = (t: ItemType) => TYPES.find((x) => x[0] === t)![1];
 export function PlanBoard({trip,days,items,edit}: {trip:Trip;days:string[];items:Item[];edit:(item:Item|'new')=>void}) {
   const [drag,setDrag] = useState<string|null>(null);
   const [error,setError] = useState('');
-  const sorted=(d:string|null)=>items.filter(i=>i.date===d).sort((a,b)=>(a.order??toMin(a.start||'23:59'))-(b.order??toMin(b.start||'23:59'))||byTime(a,b));
+  const sorted=(d:string|null)=>orderedDay(items,d);
   async function drop(date:string|null,before?:string) {
     if(!drag)return; const item=items.find(i=>i.id===drag);if(!item)return;
     const list=sorted(date).filter(i=>i.id!==drag);const at=before?list.findIndex(i=>i.id===before):-1;list.splice(at<0?list.length:at,0,item);

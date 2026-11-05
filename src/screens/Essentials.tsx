@@ -17,7 +17,7 @@ export function Essentials({ trip, clock }: { trip: Trip; clock: Clock }) {
   const expenses = useLiveQuery(() => db.expenses.where({ tripId: trip.id, date: clock.date }).toArray(), [trip.id, clock.date]) ?? [];
   const documents = useLiveQuery(() => db.documents.where({ tripId: trip.id }).toArray(), [trip.id]) ?? [];
   const details = useLiveQuery(() => db.details.get(trip.id), [trip.id]);
-  const hotels = useLiveQuery(() => db.items.where({ tripId: trip.id }).filter((i) => i.type === 'hotel' && !!i.date && i.date <= clock.date && !/退房/.test(i.title)).toArray(), [trip.id, clock.date]) ?? [];
+  const hotels = useLiveQuery(() => db.items.where({ tripId: trip.id }).filter((i) => i.type === 'hotel' && !!i.date && i.date <= clock.date && !/退房/.test(i.title) && (!i.hotel || i.hotel.checkoutDate > clock.date)).toArray(), [trip.id, clock.date]) ?? [];
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
   const [card, setCard] = useState(false);
@@ -25,15 +25,16 @@ export function Essentials({ trip, clock }: { trip: Trip; clock: Clock }) {
   const [err, setErr] = useState('');
   const file = useRef<HTMLInputElement>(null);
   const label = useRef<string>('');
-  const value: TripDetails = details ?? { id: trip.id, address: '', rate: trip.currency === 'TWD' ? 1 : 0, contacts: ['', '', ''] };
-  const save = (p: Partial<TripDetails>) => db.details.put({ ...value, ...p });
+  const storedValue: TripDetails = details ?? { id: trip.id, address: '', rate: trip.currency === 'TWD' ? 1 : 0, contacts: ['', '', ''] };
   const japan = trip.timezone === 'Asia/Tokyo' || (!trip.timezone && trip.currency === 'JPY');
   const total = expenses.reduce((n, e) => n + e.amount, 0);
   const sym = ({ JPY: '¥', KRW: '₩', THB: '฿', TWD: 'NT$', EUR: '€' } as Record<string, string>)[trip.currency] ?? '';
   const money = (n: number, s = sym) => s + Math.round(n).toLocaleString('en-US');
   const tonight = hotels.sort((a, b) => b.date!.localeCompare(a.date!))[0];
+  const value:TripDetails={...storedValue,address:storedValue.address||tonight?.hotel?.address||'',hotelName:storedValue.hotelName||tonight?.hotel?.name,hotelPhone:storedValue.hotelPhone||tonight?.hotel?.phone};
+  const save = (p: Partial<TripDetails>) => db.details.put({ ...value, ...p });
   const suggested = ['護照資料頁', '電子機票', ...(japan ? ['Visit Japan Web 入境 QR Code'] : []), '旅平險保單'];
-  const extra = documents.filter((d) => !suggested.includes(d.name) && !d.itemId);
+  const extra = documents.filter((d) => !suggested.includes(d.name));
 
   async function upload(files: FileList | null) {
     if (!files?.length) return;

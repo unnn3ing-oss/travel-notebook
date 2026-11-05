@@ -1,7 +1,7 @@
 export type ItemType = 'place' | 'restaurant' | 'transit' | 'hotel' | 'flight' | 'ticket' | 'car' | 'other';
 /** 還沒訂 / 已訂購（付款了，還沒收到確認信）/ 訂單確認 */
 export type BookingStatus = 'none' | 'ordered' | 'confirmed';
-export type Mode = 'walk' | 'train' | 'bus' | 'car' | 'ferry' | 'rental' | 'plane';
+export type Mode = 'walk' | 'train' | 'bus' | 'car' | 'ferry' | 'rental' | 'plane' | 'subway' | 'tram';
 
 export interface Trip {
   id: string;
@@ -44,6 +44,11 @@ export interface Item {
   price?: string;
   /** 取消期限前提醒，預設開 */
   cancelRemind?: boolean;
+  flight?: FlightDetails;
+  hotel?: HotelDetails;
+  ticket?: TicketDetails;
+  linkedStayId?: string;
+  cancelLead?: number;
   // transit cards
   from?: string;
   to?: string;
@@ -59,7 +64,7 @@ export interface Route {
   walk: number;
   /** where you board; '' when unknown */
   place: string;
-  legs: { mode: Mode; label: string; minutes: number }[];
+  legs: { mode: Mode; label: string; minutes: number; fare?: number; place?: string }[];
   departures: { dep: string; arr: string; info: string }[];
   fare: number | null; // per person, local currency
   booking?: BookingStatus;
@@ -84,3 +89,22 @@ export interface Task {
 export interface Expense { id: string; tripId: string; date: string; title: string; amount: number }
 export interface Document { id: string; tripId: string; name: string; file: Blob; itemId?: string }
 export interface TripDetails { id: string; address: string; rate: number; contacts: string[]; hotelName?: string; hotelPhone?: string; policy?: string }
+
+/** Details captured by the dedicated design forms; existing cards remain valid. */
+export interface FlightDetails {
+  airline: string; flightNo: string; from: string; fromTerminal: string;
+  departureDate: string; departureTime: string; departureZone: string;
+  to: string; toTerminal: string; arrivalDate: string; arrivalTime: string; arrivalZone: string;
+  reference: string; seat: string; cabin: string; bags: number; bagKg: number; carryKg: number;
+  checkinMinutes: number; remind: boolean; price: string; rules: string;
+}
+export interface HotelDetails {
+  name: string; checkinDate: string; checkoutDate: string; checkinTime: string; checkoutTime: string;
+  address: string; phone: string; reference: string; room: string; guests: number; breakfast: boolean;
+  total: string; payment: string; cancelBy: string; remind: boolean; note: string; checkoutId?: string;
+}
+export interface TicketDetails {
+  name: string; venue: string; date: string; time: string; early: number;
+  kinds: { label: string; price: number; quantity: number }[];
+  pickup: 'qr' | 'counter' | 'voucher'; place: string; reference: string;
+}

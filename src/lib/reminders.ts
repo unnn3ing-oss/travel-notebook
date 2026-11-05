@@ -1,4 +1,5 @@
 import type { Item, Route } from '../types';
+import { earlier, zonedEpoch } from './entries';
 import { departuresOf } from './plan';
 import { addDays, fmt, md, toMin } from './time';
 
@@ -10,9 +11,20 @@ const TYPE: Record<string, string> = { flight: '航班', hotel: '住宿', restau
 const leadText = (m: number) => (m >= 60 && m % 60 === 0 ? m / 60 + ' 小時' : m + ' 分鐘');
 
 /** 依行程、交通、預訂排出提醒（由早到晚） */
-export function buildReminders(items: Item[], routes: Route[], rules: Rules, from: string): Reminder[] {
+export function buildReminders(items: Item[], routes: Route[], rules: Rules, from: string, timezone?: string): Reminder[] {
   const out: Reminder[] = [];
   for (const i of items) {
+    if (i.flight?.remind) {
+      const f=i.flight;
+      const instant=zonedEpoch(f.departureDate,f.departureTime,f.departureZone)-180*60000;
+      let when=earlier(f.departureDate,f.departureTime,180);
+      if(timezone && Number.isFinite(instant)) {
+        const parts=new Intl.DateTimeFormat('en-CA',{timeZone:timezone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(instant);
+        const part=(key:string)=>parts.find(p=>p.type===key)!.value;
+        when={date:`${part('year')}-${part('month')}-${part('day')}`,time:`${part('hour')}:${part('minute')}`};
+      }
+      if(Number.isFinite(instant))out.push({id:'f-'+i.id,...when,text:'出發去機場：'+f.airline+' '+f.flightNo,why:'航班起飛前 3 小時'+(timezone?'（'+timezone+'）':''),kind:'item'});
+    }
     if (i.date && i.start) {
       if (i.type === 'transit') {
         const rs = routes.filter((r) => r.itemId === i.id);
@@ -30,16 +42,17 @@ export function buildReminders(items: Item[], routes: Route[], rules: Rules, fro
           }
         }
       } else {
-        const t = toMin(i.start) - rules.lead;
+        const lead=i.ticket?.early??rules.lead;
+        const t = toMin(i.start) - lead;
         const none = i.booking === 'none';
         out.push({ id: 'i-' + i.id, date: t < 0 ? addDays(i.date, -1) : i.date, time: fmt((t + 1440) % 1440), kind: 'item', warn: none,
           text: i.title + ' ' + i.start,
-          why: none ? TYPE[i.type] + '：還沒訂' + (i.alts?.length ? '，有 ' + i.alts.length + ' 個備案' : '') : '行程開始前 ' + leadText(rules.lead) });
+          why: none ? TYPE[i.type] + '：還沒訂' + (i.alts?.length ? '，有 ' + i.alts.length + ' 個備案' : '') : i.ticket ? '門票：提前 ' + leadText(lead) + ' 到' + (i.ticket.venue||'現場') : '行程開始前 ' + leadText(lead) });
       }
     }
-    if (i.cancelBefore && /^\d{4}-\d{2}-\d{2}$/.test(i.cancelBefore)) {
-      out.push({ id: 'c-' + i.id, date: addDays(i.cancelBefore, -rules.cancelLead), time: '09:00', kind: 'cancel',
-        text: i.title + ' 免費取消到 ' + md(i.cancelBefore), why: '預訂的免費取消期限前 ' + rules.cancelLead + ' 天' });
+    if (i.cancelRemind !== false && i.cancelBefore && /^\d{4}-\d{2}-\d{2}$/.test(i.cancelBefore)) {
+      out.push({ id: 'c-' + i.id, date: addDays(i.cancelBefore, -(i.cancelLead??rules.cancelLead)), time: '09:00', kind: 'cancel',
+        text: i.title + ' 免費取消到 ' + md(i.cancelBefore), why: '預訂的免費取消期限前 ' + (i.cancelLead??rules.cancelLead) + ' 天' });
     }
   }
   return out.filter((r) => r.date >= from).sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));

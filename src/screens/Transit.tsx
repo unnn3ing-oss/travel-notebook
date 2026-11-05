@@ -9,9 +9,9 @@ import { toMin, md } from '../lib/time';
 import { href } from '../lib/route';
 import { BackLink, BTN_PRIMARY, css, DSheet, DToast, FIELD_INPUT, FIELD_LABEL, I, pill, PILL_NONE, PILL_OK, PILL_ORDERED, Skeleton, SK } from '../design';
 
-const MODES: [Mode, string][] = [['walk', '步行'], ['train', '電車'], ['bus', '巴士'], ['car', '計程車'], ['ferry', '渡輪'], ['rental', '租車'], ['plane', '飛機']];
+const MODES: [Mode, string][] = [['walk', '步行'], ['train', '電車'], ['subway', '地鐵'], ['tram', '路面電車'], ['bus', '巴士'], ['car', '計程車'], ['ferry', '渡輪'], ['rental', '租車'], ['plane', '飛機']];
 const CUR: Record<string, string> = { JPY: '¥', KRW: '₩', THB: '฿', TWD: 'NT$', EUR: '€', USD: '$' };
-const DOT: Record<Mode, string> = { walk: '#B8C0CC', train: '#1E2A44', bus: '#2F6FB0', car: '#F2C14E', rental: '#F2C14E', ferry: '#2F6FB0', plane: '#1E2A44' };
+const DOT: Record<Mode, string> = { walk: '#B8C0CC', train: '#1E2A44', subway: '#1E2A44', tram: '#2F6FB0', bus: '#2F6FB0', car: '#F2C14E', rental: '#F2C14E', ferry: '#2F6FB0', plane: '#1E2A44' };
 const STATUS: [BookingStatus, string][] = [['none', '還沒訂'], ['ordered', '已訂購'], ['confirmed', '訂單確認']];
 const STATUS_PILL: Record<BookingStatus, React.CSSProperties> = { none: PILL_NONE, ordered: PILL_ORDERED, confirmed: PILL_OK };
 const DEP_PILL = { ok: pill('#DDF1E8', '#1F7A5C'), hurry: css('font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 12px; background: var(--ticket); color: var(--on-ticket)'), late: pill('#F9E1DF', '#B83A32'), miss: pill('#F9E1DF', '#B83A32'), gone: pill('#EEF1F5', '#5B6578') };

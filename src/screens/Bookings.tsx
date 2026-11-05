@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { removeEntry, saveEntries } from '../lib/entryStore';
+import { hotelItems } from '../lib/entries';
 import { db, uid } from '../db';
 import { daysBetween, md } from '../lib/time';
 import { href } from '../lib/route';
@@ -26,7 +28,7 @@ function when(i: Item, trip: Trip) {
   if (!i.date) return '還沒排日期';
   const t = md(i.date) + (i.start ? ' ' + i.start : '');
   if (i.type === 'flight') return t + ' 起飛';
-  if (i.type === 'hotel') { const n = daysBetween(i.date, trip.end); return t + ' 入住' + (n > 0 ? '，' + n + ' 晚' : ''); }
+  if (i.type === 'hotel') { const n = daysBetween(i.date, i.hotel?.checkoutDate ?? trip.end); return t + ' 入住' + (n > 0 ? '，' + n + ' 晚' : ''); }
   if (i.type === 'car') return t + ' 取車';
   return t;
 }
@@ -45,7 +47,7 @@ function BookingList({ trip }: { trip: Trip }) {
   useEffect(() => () => clearTimeout(timer.current), []);
   if (!items) return <Skeleton blocks={SK.bookings} gap={14} />;
   const types = FILTERS.find((f) => f[0] === filter)![1];
-  const list = items.filter((i) => i.booking && (!types.length || types.includes(i.type)))
+  const list = items.filter((i) => !i.linkedStayId && i.booking && (!types.length || types.includes(i.type)))
     .sort((a, b) => (a.date ?? '9').localeCompare(b.date ?? '9') || a.start.localeCompare(b.start));
   const use = async (i: Item, k: number) => {
     const p = swapAlt(i, k);
@@ -59,7 +61,7 @@ function BookingList({ trip }: { trip: Trip }) {
     <TabPage gap={14}>
       <header style={css('display: flex; justify-content: space-between; align-items: center')}>
         <h1 style={css('margin: 0; font-size: 28px; font-weight: 700')}>預訂</h1>
-        <a href={href('bookings', 'new')} aria-label="新增預訂" style={css(ROUND_PLUS)}>{I.plus}</a>
+        <a href={href('add')} aria-label="新增預訂" style={css(ROUND_PLUS)}>{I.plus}</a>
       </header>
 
       <div role="group" aria-label="篩選類別" className="noscrollbar" style={css('display: flex; gap: 8px; overflow-x: auto; margin: 0 -20px; padding: 0 20px')}>
@@ -164,22 +166,23 @@ function BookingEdit({ trip, id }: { trip: Trip; id?: string }) {
   const lbl = LBL[f.type] ?? ['日期', '時間'];
   const alts = f.alts ?? [];
   const remind = f.cancelRemind ?? true;
-  const lead = (() => { try { return JSON.parse(localStorage.getItem('travel-reminder-rules') || '{}').cancelLead ?? 2; } catch { return 2; } })();
+  const lead = f.cancelLead ?? (() => { try { return JSON.parse(localStorage.getItem('travel-reminder-rules') || '{}').cancelLead ?? 2; } catch { return 2; } })();
 
   const save = async () => {
     if (!f.title.trim()) return setMsg({ text: '請填名稱。', ok: false });
     if (!f.date) return setMsg({ text: '請填' + lbl[0] + '。', ok: false });
     if (f.cancelBefore && f.cancelBefore > f.date) return setMsg({ text: '免費取消期限晚於' + lbl[0] + '，請再確認。', ok: false });
     try {
-      await db.items.put({ ...f, title: f.title.trim(), end: f.end || f.start });
-      for (const p of pending) await db.documents.add({ id: uid(), tripId: trip.id, name: p.name, file: p, itemId: f.id });
+      const saved = { ...f, title: f.title.trim(), end: f.end || f.start };
+      const entries = f.hotel ? hotelItems(saved, {...f.hotel,name:f.title.replace(/\s*入住$/, '').trim(),checkinDate:f.date,checkinTime:f.start,reference:f.orderNumber??'',cancelBy:f.cancelBefore??'',remind:f.cancelRemind??true,total:f.price??'',note:f.note??''},trip,f.hotel.checkoutId??uid()) : [saved];
+      await saveEntries(entries, undefined, pending);
       setPending([]);
       setMsg({ text: '已儲存，' + alts.length + ' 個備案' + (remind && f.cancelBefore ? '，取消期限前 ' + lead + ' 天會提醒你' : ''), ok: true });
     } catch { setMsg({ text: '沒存成功，請確認手機空間後再試一次。', ok: false }); }
   };
   const remove = async () => {
-    if (!id || !confirm('刪除「' + f.title + '」這筆預訂？')) return;
-    await db.items.delete(id);
+    if (!id || !confirm('刪除「' + f.title + '」這筆預訂？' + (f.hotel ? '入住、退房卡片會一起刪除。' : ''))) return;
+    await removeEntry(id);
     location.hash = href('bookings');
   };
 
@@ -194,6 +197,7 @@ function BookingEdit({ trip, id }: { trip: Trip; id?: string }) {
       <main style={css('flex: 1; padding: 8px 20px 32px; display: flex; flex-direction: column; gap: 22px')}>
         {msg && <p role="status" style={css('margin: 0; padding: 12px 14px; border-radius: 12px; font-size: 14px; font-weight: 700; ' + (msg.ok ? 'background: #DDF1E8; color: #1F7A5C' : 'background: #F9E1DF; color: #B83A32'))}>{msg.text}</p>}
 
+        {id && ['flight','hotel','ticket','transit'].includes(f.type) && <a href={href('entry',f.id)} className="menu-link">航班／住宿／票券與路線詳細內容{I.chev}</a>}
         <fieldset style={css('border: 0; margin: 0; padding: 0')}>
           <legend style={css('font-size: 13px; color: #5B6578; padding: 0; margin-bottom: 8px')}>類型</legend>
           <div style={css('display: flex; flex-wrap: wrap; gap: 8px')}>

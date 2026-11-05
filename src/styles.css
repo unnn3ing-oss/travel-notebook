@@ -295,3 +295,98 @@ input[type='date'], input[type='time'], input[type='datetime-local'] {
 }
 input::-webkit-date-and-time-value { text-align: left; margin: 0; line-height: 1.25; }
 input::-webkit-datetime-edit { padding: 0; }
+
+/* Dedicated entry forms from the Claude handoff boards. */
+.entry-page { flex:1; display:flex; flex-direction:column; min-width:0; }
+.entry-header { padding:calc(env(safe-area-inset-top) + 52px) 20px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.entry-header h1 { margin:0; font-size:17px; font-weight:700; }
+.entry-header>a { min-height:44px; display:flex; align-items:center; font-size:15px; text-decoration:none; }
+.entry-header>button { min-height:40px; padding:0 16px; border-radius:10px; border:0; background:var(--ink); color:var(--on-ink); font-size:15px; font-weight:700; }
+.entry-header>button:disabled { opacity:.5; }
+.entry-body { flex:1; padding:8px 20px max(32px,env(safe-area-inset-bottom)); display:flex; flex-direction:column; gap:20px; min-width:0; }
+.entry-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.entry-field { display:flex; flex-direction:column; gap:6px; font-size:13px; color:var(--ink-2); min-width:0; }
+.entry-field input,.entry-field select,.entry-field textarea { width:100%; min-width:0; max-width:100%; min-height:48px; border:1px solid var(--line); border-radius:12px; padding:0 12px; font-size:16px; color:var(--ink); background:var(--card); }
+.entry-field textarea { padding:12px 14px; resize:vertical; line-height:1.5; }
+.entry-field output { min-height:48px; display:flex; align-items:center; padding:0 12px; border-radius:12px; background:var(--line-2); color:var(--ink); font-size:16px; font-weight:700; }
+.entry-title-field input { min-height:52px; font-size:17px; font-weight:700; }
+.entry-section { display:flex; flex-direction:column; gap:12px; min-width:0; }
+.entry-section>h2 { font-size:17px; margin:0; }
+.entry-choice { border:0; padding:0; margin:0; min-width:0; }
+.entry-choice legend { font-size:13px; color:var(--ink-2); padding:0; margin-bottom:8px; }
+.entry-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.entry-chips button { min-height:40px; padding:0 14px; border-radius:20px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:14px; }
+.entry-chips button[aria-pressed=true] { background:var(--ink); color:var(--on-ink); border-color:transparent; font-weight:700; }
+.entry-white { background:var(--card); border-radius:16px; padding:14px; display:flex; flex-direction:column; gap:12px; min-width:0; }
+.entry-stepper { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:60px; font-size:15px; }
+.entry-stepper>div { display:flex; align-items:center; gap:4px; }
+.entry-stepper button { width:40px; height:40px; border-radius:10px; border:1px solid var(--line); background:var(--card); font-size:18px; }
+.entry-stepper button:disabled { opacity:.4; }
+.entry-stepper b { min-width:52px; text-align:center; font-size:16px; }
+.entry-check { display:flex; align-items:center; gap:10px; min-height:44px; font-size:15px; color:var(--ink); }
+.entry-check input { width:22px; height:22px; flex-shrink:0; accent-color:var(--ink); }
+.entry-hint { margin:0; padding:10px 12px; background:var(--line-2); border-radius:10px; color:var(--ink-2); font-size:13px; line-height:1.6; }
+.entry-attach { min-height:48px; padding:8px 12px; border-radius:12px; border:1px dashed var(--ink-4); background:transparent; color:var(--ink); font-size:15px; }
+.flight-pass { background:#1e2a44; color:#fff; border-radius:18px; overflow:hidden; padding-top:16px; position:relative; }
+.flight-pass>.between { padding:0 18px; }
+.flight-airports { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:18px; }
+.flight-airports>span { display:flex; flex-direction:column; gap:4px; }
+.flight-airports>span:last-child { text-align:right; }
+.flight-airports strong { font-size:32px; color:#F2C14E; }
+.flight-airports small { color:#C9D1DE; font-size:12px; }
+.flight-airports>svg { color:#F2C14E; stroke:currentColor; }
+.flight-pass dl { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; border-top:2px dashed #ffffff55; margin:0 14px; padding:14px 4px; }
+.flight-pass dt { font-size:11px; color:#C9D1DE; }
+.flight-pass dd { margin:4px 0 0; font-size:13px; font-weight:700; overflow-wrap:anywhere; }
+.flight-direction { display:flex; flex-direction:column; gap:12px; }
+.flight-direction h3 { font-size:13px; color:var(--ink-2); margin:0; }
+.stay-dates { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); gap:6px; align-items:center; }
+.stay-dates>div { display:flex; flex-direction:column; gap:2px; }
+.stay-dates>div:last-child { text-align:right; }
+.stay-dates strong { font-size:24px; }
+.stay-dates small { font-size:12px; color:var(--ink-2); }
+.stay-summary>.entry-grid { gap:8px; }
+.stay-summary .entry-field input { min-height:44px; height:44px; border-radius:10px; padding:0 8px; }
+.ticket-kind { display:flex; justify-content:space-between; align-items:center; gap:10px; border-bottom:1px solid var(--line-2); padding-bottom:12px; }
+.ticket-kind>div:first-child { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
+.ticket-kind .entry-field input { height:36px; min-height:36px; padding:0 8px; }
+.ticket-kind .entry-stepper>span { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+.transit-endpoints { position:relative; }
+.transit-endpoints .entry-grid { gap:36px; }
+.swap-endpoints { position:absolute; left:50%; top:29px; transform:translateX(-50%); padding:0; width:30px; height:32px; border:0; background:transparent; color:var(--ink-2); font-size:24px; }
+.entry-routes { display:flex; gap:8px; overflow-x:auto; padding:2px 0; }
+.entry-routes>button { flex:0 0 auto; min-width:120px; min-height:84px; padding:10px 12px; border-radius:14px; border:1px solid var(--line); background:var(--card); text-align:left; display:flex; flex-direction:column; gap:4px; }
+.entry-routes>button[aria-selected=true] { background:var(--ink); color:var(--on-ink); border-color:transparent; }
+.entry-routes small { font-size:12px; }
+.entry-routes .route-role { align-self:flex-start; font-size:11px; font-weight:700; padding:2px 8px; border-radius:8px; background:var(--line-2); color:var(--ink-2); }
+.entry-routes .route-role.primary { background:var(--ok-soft); color:var(--ok); }
+.route-totals { display:flex; gap:16px; margin:0; padding:12px 0; border-top:1px solid var(--line-2); border-bottom:1px solid var(--line-2); }
+.route-totals dt { font-size:12px; color:var(--ink-2); }
+.route-totals dd { margin:4px 0 0; font-size:16px; font-weight:700; }
+.entry-legs { list-style:none; margin:0; padding:0; }
+.entry-legs>li { position:relative; display:flex; gap:10px; padding-bottom:20px; }
+.entry-legs>li:before { content:''; position:absolute; left:6px; top:14px; bottom:0; border-left:2px solid var(--line); }
+.entry-legs>li:last-child:before { display:none; }
+.leg-dot { width:14px; height:14px; border-radius:7px; margin-top:2px; background:var(--ink); flex-shrink:0; z-index:1; }
+.leg-dot.walk { border:3px solid var(--ink-4); background:var(--card); }
+.leg-dot.bus,.leg-dot.tram,.leg-dot.ferry { background:#2F6FB0; }
+.leg-dot.car,.leg-dot.rental { background:#F2C14E; }
+.entry-leg-content { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
+.entry-leg-content>div { display:flex; gap:6px; align-items:flex-start; }
+.entry-leg-content b { font-size:14px; }
+.leg-mode { font-size:11px; padding:2px 6px; background:var(--ink); color:var(--on-ink); border-radius:6px; white-space:nowrap; }
+.transfer-label { font-size:11px; color:var(--ink-2); }
+.entry-leg-actions { display:flex; gap:4px; }
+.entry-leg-actions button { width:28px; height:32px; border:0; background:var(--bg); border-radius:8px; font-size:18px; }
+.entry-leg-actions button:disabled { opacity:.3; }
+.entry-leg-form { display:flex; flex-direction:column; gap:12px; background:var(--bg); border-radius:12px; padding:12px; }
+/* Connected itinerary rail, with transport shown one level inward. */
+.connected-plan { position:relative; padding-left:18px !important; }
+.connected-plan:before { content:''; position:absolute; top:18px; bottom:18px; left:5px; border-left:2px solid var(--line); pointer-events:none; }
+.connected-plan>li { position:relative; }
+.connected-plan>li:before { content:''; position:absolute; width:10px; height:10px; left:-18px; top:18px; background:var(--bg); border:2px solid var(--ink-3); border-radius:50%; box-sizing:border-box; }
+.connected-plan>li.connected-transit { margin-left:16px; background:var(--line-2) !important; padding:12px !important; }
+.connected-plan>li.connected-transit:before { left:-34px; width:8px; height:8px; background:var(--line); border:0; }
+.plan-quick-add { position:fixed; bottom:calc(max(24px, env(safe-area-inset-bottom)) + 72px); right:max(20px, calc((100vw - 480px)/2 + 20px)); z-index:25; width:56px; height:56px; border:0; border-radius:50%; background:var(--ink); color:var(--on-ink); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px #1e2a4433; }
+.mobile-plan { padding-bottom:70px; }
+@media (min-width:900px) { .plan-quick-add { display:none; } }

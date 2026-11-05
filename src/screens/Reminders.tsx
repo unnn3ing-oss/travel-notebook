@@ -19,7 +19,7 @@ export function Reminders({ trip, clock }: { trip: Trip; clock: Clock }) {
   const [rules, setRules] = useState<Rules>(loadRules);
   const [perm, setPerm] = useState(() => (typeof Notification === 'undefined' ? 'unsupported' : Notification.permission));
   const set = (p: Partial<Rules>) => { const r = { ...rules, ...p }; setRules(r); saveRules(r); };
-  const list = buildReminders(items, routes, rules, clock.date).filter((r) => r.date > clock.date || r.time >= clock.time);
+  const list = buildReminders(items, routes, rules, clock.date, trip.timezone).filter((r) => r.date > clock.date || r.time >= clock.time);
   const tomorrow = addDays(clock.date, 1);
   const groups: { title: string; items: typeof list }[] = [];
   for (const r of list) {
@@ -94,6 +94,7 @@ export function Reminders({ trip, clock }: { trip: Trip; clock: Clock }) {
 
 /** App 開著時，到點用系統通知提醒（同一則只跳一次） */
 export function useNotifier(tripId: string | undefined, clock: Clock) {
+  const trip = useLiveQuery(() => tripId ? db.trips.get(tripId) : undefined,[tripId]);
   const items = useLiveQuery(() => (tripId ? db.items.where({ tripId }).toArray() : []), [tripId]);
   const routes = useLiveQuery(() => db.routes.toArray(), []);
   useEffect(() => {
@@ -101,11 +102,11 @@ export function useNotifier(tripId: string | undefined, clock: Clock) {
     const rules = loadRules();
     let fired: string[] = [];
     try { fired = JSON.parse(localStorage.getItem('travel-fired') || '[]'); } catch { /* ignore */ }
-    const due = buildReminders(items, routes, rules, clock.date).filter((r) => r.date === clock.date && r.time <= clock.time && isOn(r, rules) && !quiet(r.time) && !fired.includes(r.date + r.id));
+    const due = buildReminders(items, routes, rules, clock.date, trip?.timezone).filter((r) => r.date === clock.date && r.time <= clock.time && isOn(r, rules) && !quiet(r.time) && !fired.includes(r.date + r.id));
     for (const r of due) {
       try { new Notification(r.text, { body: r.why, tag: r.id }); } catch { /* iOS 需透過 service worker，失敗就略過 */ }
       fired.push(r.date + r.id);
     }
     if (due.length) try { localStorage.setItem('travel-fired', JSON.stringify(fired.slice(-200))); } catch { /* ignore */ }
-  }, [items, routes, clock.date, clock.time, clock.simulated]);
+  }, [items, routes, clock.date, clock.time, clock.simulated, trip?.timezone]);
 }

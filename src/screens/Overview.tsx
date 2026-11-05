@@ -47,9 +47,9 @@ export function Overview({ trip, clock }: { trip: Trip; clock: Clock }) {
         <div style={css('width: 132px; box-sizing: border-box; padding: 20px 16px; border-left: 2px dashed rgba(255,255,255,0.35); display: flex; flex-direction: column; justify-content: center; gap: 4px')}>
           <p style={css('margin: 0; font-size: 12px; color: #c9d1de')}>去程航班</p>
           {flight
-            ? <><p className="num" style={css('margin: 0; font-size: 20px; font-weight: 700')}>{flight.title.replace(/^去程\s*/, '')}</p>
+            ? <><p className="num" style={css('margin: 0; font-size: 20px; font-weight: 700')}>{flight.flight ? flight.flight.from + ' → ' + flight.flight.to : flight.title.replace(/^去程\s*/, '')}</p>
               <p className="num" style={css('margin: 0; font-size: 12px; color: #c9d1de')}>{md(flight.date!)} {flight.start} 起飛</p></>
-            : <a href={href('bookings')} style={css('margin: 0; font-size: 15px; font-weight: 700; color: var(--ticket)')}>加入航班</a>}
+            : <a href={href('add','flight',trip.start)} style={css('margin: 0; font-size: 15px; font-weight: 700; color: var(--ticket)')}>加入航班</a>}
         </div>
         <span aria-hidden="true" style={css('position: absolute; top: -10px; right: 122px; width: 20px; height: 20px; border-radius: 10px; background: #F4F6F9')} />
         <span aria-hidden="true" style={css('position: absolute; bottom: -10px; right: 122px; width: 20px; height: 20px; border-radius: 10px; background: #F4F6F9')} />

@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, uid } from '../db';
-import type { Item, ItemType, Route, Trip } from '../types';
+import type { Item, ItemType, Route, Trip, Document } from '../types';
 import { addDays, daysBetween, fmt, md, toMin, weekday } from '../lib/time';
+import { orderedDay, saveEntries, removeEntry } from '../lib/entryStore';
+import { isEntryKind } from '../lib/entries';
 import { byTime } from '../lib/day';
 import { href } from '../lib/route';
 import { importPrompt, parseImport, sampleResult, type ImportRow } from '../lib/importer';
@@ -14,13 +16,11 @@ export const TYPE_LABEL: Record<ItemType, string> = { flight: '航班', transit:
 const NEWNAME: Record<ItemType, string> = { place: '新的景點', restaurant: '新的餐廳', transit: '從哪裡到哪裡', hotel: '住宿', flight: '航班', ticket: '門票', car: '租車', other: '新的行程' };
 const MODE: Record<string, string> = { walk: '步行', train: '電車', bus: '巴士', car: '計程車', ferry: '渡輪', plane: '飛機' };
 const POOL = 'pool';
-type Snap = { put: Item[]; del: string[]; routes?: Route[] };
+type Snap = { put: Item[]; del: string[]; routes?: Route[]; documents?: Document[] };
 
 /** 一天的卡片：手動排過（order）就照手動順序，否則照時間 */
 export function dayCards(items: Item[], key: string) {
-  const list = items.filter((i) => (key === POOL ? i.date === null : i.date === key)).sort(byTime);
-  const idx = new Map(list.map((x, k) => [x.id, k]));
-  return list.sort((a, b) => (a.order ?? idx.get(a.id)!) - (b.order ?? idx.get(b.id)!) || idx.get(a.id)! - idx.get(b.id)!);
+  return orderedDay(items,key === POOL ? null : key);
 }
 
 function routeMeta(i: Item, routes: Route[]) {
@@ -54,10 +54,11 @@ export function Plan({ trip, day }: { trip: Trip; day?: string }) {
   const say = (text: string, undo?: Snap) => { setToast({ text, undo }); clearTimeout(timer.current); timer.current = setTimeout(() => setToast(null), 6000); };
   const snap = (ids: string[]): Snap => ({ put: items.filter((i) => ids.includes(i.id)).map((i) => ({ ...i })), del: [] });
   const undo = async (s: Snap) => {
-    await db.transaction('rw', db.items, db.routes, async () => {
+    await db.transaction('rw', db.items, db.routes, db.documents, async () => {
       if (s.del.length) await db.items.bulkDelete(s.del);
       await db.items.bulkPut(s.put);
       if (s.routes?.length) await db.routes.bulkPut(s.routes);
+      if (s.documents?.length) await db.documents.bulkPut(s.documents);
     });
     say('已復原');
   };
@@ -90,21 +91,20 @@ export function Plan({ trip, day }: { trip: Trip; day?: string }) {
     say('已移到 ' + label(to), before);
   };
   const remove = async (it: Item) => {
-    const rs = await db.routes.where({ itemId: it.id }).toArray();
-    await db.transaction('rw', db.items, db.routes, async () => { await db.items.delete(it.id); await db.routes.where({ itemId: it.id }).delete(); });
+    const removed = await removeEntry(it.id);
     setSheet(null);
-    say('已刪除「' + it.title + '」', { put: [it], del: [], routes: rs });
+    say('已刪除「' + it.title + '」' + (removed.items.length > 1 ? '及關聯卡片' : ''), { put: removed.items, del: [], routes: removed.routes, documents: removed.documents });
   };
   const add = async (type: ItemType) => {
-    const it: Item = { id: uid(), tripId: trip.id, date: sel === POOL ? null : sel, start: '', end: '', title: NEWNAME[type], type, order: list.length, ...(type !== 'place' && type !== 'other' && type !== 'transit' ? { booking: 'none' as const } : {}) };
-    if (type === 'transit') await db.routes.add({ id: uid(), itemId: it.id, name: '步行', mode: 'walk', minutes: 10, walk: 0, place: '', legs: [], departures: [], fare: 0, primary: true });
-    await db.items.add(it);
+    if (isEntryKind(type)) { location.hash=href('add',type,sel); setSheet(null); return; }
+    const it: Item = { id: uid(), tripId: trip.id, date: sel === POOL ? null : sel, start: '', end: '', title: NEWNAME[type], type, order: list.length, ...(type !== 'place' && type !== 'other' ? { booking: 'none' as const } : {}) };
+    await saveEntries([it]);
     setSheet({ edit: it.id });
   };
   const doImport = async (rows: ImportRow[]) => {
     const made: Item[] = rows.map((r, k) => ({ id: uid() + k, tripId: trip.id, date: r.target, start: r.start, end: r.end, title: r.title, type: r.type, orderNumber: r.orderNumber || undefined,
       ...(r.type !== 'other' ? { booking: 'confirmed' as const } : {}), ...(r.place ? { note: r.place } : {}) }));
-    await db.items.bulkAdd(made);
+    await saveEntries(made);
     setSheet(null);
     if (made[0]) pick(made[0].date ?? POOL);
     say('已加入 ' + made.length + ' 張卡片', { put: [], del: made.map((m) => m.id) });
@@ -155,6 +155,7 @@ export function Plan({ trip, day }: { trip: Trip; day?: string }) {
           </>}
       </div>
 
+      {(view === 'list' || tripEmpty) && <button type="button" className="plan-quick-add" aria-label="快速新增行程" onClick={()=>setSheet('add')}>{I.plus}</button>}
       {toast && <DToast text={toast.text} action={toast.undo ? '復原' : undefined} onAction={() => { const u = toast.undo!; setToast(null); undo(u); }} bottom={view === 'timeline' ? 164 : 100} />}
 
       {editItem && <EditSheet key={editItem.id} item={editItem} list={dayCards(items, editItem.date ?? POOL)} days={days} label={label} routes={routes}
@@ -239,7 +240,7 @@ function CardList({ list, routes, pool, label, open, reorder }: { list: Item[]; 
   };
   let prev: number | null = null;
   return (
-    <ol ref={ol} aria-label={label + ' 的行程'} style={css('list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; ' + (drag ? 'touch-action: none' : ''))}
+    <ol className="connected-plan" ref={ol} aria-label={label + ' 的行程'} style={css('list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; ' + (drag ? 'touch-action: none' : ''))}
       onPointerMove={(e) => {
         if (!p.current) return;
         if (!dragRef.current) { if (Math.abs(e.clientX - p.current.x) + Math.abs(e.clientY - p.current.y) > 8) { clearTimeout(t.current); p.current = null; } return; }
@@ -256,7 +257,7 @@ function CardList({ list, routes, pool, label, open, reorder }: { list: Item[]; 
         const rs = routes.filter((r) => r.itemId === it.id).length;
         const m = meta(it, routes);
         return (
-          <li key={it.id} data-idx={i} tabIndex={0} role="button" aria-label={'編輯 ' + it.title}
+          <li className={it.type === 'transit' ? 'connected-transit' : 'connected-stop'} key={it.id} data-idx={i} tabIndex={0} role="button" aria-label={'編輯 ' + it.title}
             onPointerDown={(e) => {
               if (e.button) return;
               p.current = { x: e.clientX, y: e.clientY };
@@ -289,7 +290,7 @@ function EditSheet({ item, list, days, label, routes, close, moveTo, remove, swa
   const save = () => { if (title.trim() && title.trim() !== item.title) db.items.update(item.id, { title: title.trim() }); };
   const retime = (v: string) => {
     const dur = toMin(item.end) - toMin(item.start);
-    db.items.update(item.id, { start: v, end: v && dur > 0 ? fmt(Math.min(toMin(v) + dur, 1439)) : item.end && v && toMin(item.end) > toMin(v) ? item.end : v ? fmt(Math.min(toMin(v) + 60, 1439)) : '' });
+    saveEntries([{ ...item, start: v, end: v && dur > 0 ? fmt(Math.min(toMin(v) + dur, 1439)) : item.end && v && toMin(item.end) > toMin(v) ? item.end : v ? fmt(Math.min(toMin(v) + 60, 1439)) : '' }]);
   };
   const sel = 'height: 48px; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 10px; font: inherit; font-size: 16px; color: #1E2A44; background: #FFFFFF';
   const arrow = 'width: 48px; height: 44px; flex-shrink: 0; border-radius: 10px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; display: flex; align-items: center; justify-content: center';
@@ -317,6 +318,7 @@ function EditSheet({ item, list, days, label, routes, close, moveTo, remove, swa
             </select>
           </label>
         </div>
+        {isEntryKind(item.type) && <a className="menu-link" href={href('entry',item.id)} onClick={save}>編輯{TYPE_LABEL[item.type]}詳細內容{I.chev}</a>}
         {item.type === 'transit'
           ? <a href={href('transit', item.id)} onClick={save} style={css('min-height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #EEF1F5; text-decoration: none; display: flex; align-items: center; justify-content: space-between; font-size: 15px; font-weight: 700')}>交通方式、路線與班次{rs ? '（' + rs + ' 條）' : ''}{I.chev}</a>
           : <a href={href('place', item.id)} onClick={save} style={css('min-height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #EEF1F5; text-decoration: none; display: flex; align-items: center; justify-content: space-between; font-size: 15px; font-weight: 700')}>筆記、想看清單與標籤{I.chev}</a>}
