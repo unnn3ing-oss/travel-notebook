@@ -8,7 +8,7 @@
 - 網站：https://travel-notebook-chi.vercel.app/
 - 最近一次應用程式發布基準：[`cfb10e4`](https://github.com/unnn3ing-oss/travel-notebook/commit/cfb10e41ee0b17df5a7dcaf4b12a375c2fb28b5f)。之後若已有新 commit，以實際遠端與使用者需求為準，別退回這個 SHA。
 - 此基準包含新版 AI 匯入、先看資訊再同頁編輯、左右「編輯／刪除」、取消／儲存、刪除確認。發布前有 60 個測試通過，TypeScript／Vite／PWA 建置成功；發布後已實測正式網站。這是歷史基準，不等於下一次修改已驗證。
-- 目前沒有尚未實作的使用者應用功能需求。新的需求開始前，先查 [任務索引](handoffs/README.md) 和遠端 `handoff/*`，辨認是否有進行中的交接。
+- 航廈 T 標示與 PDF 訂位資訊提示詞已在本機完成，等待使用者確認截圖，尚未推送程式／部署；見 [本次任務](handoffs/2026-11-06-flight-terminal-pdf.md)。新的需求開始前，先查 [任務索引](handoffs/README.md) 和遠端 `handoff/*`，辨認是否有進行中的交接。
 - 本文件是專案記憶，不是執行紀錄；每個任務的最新狀態在獨立的 `docs/handoffs/*.md`。
 
 接手時先看工作區差異與 Git 歷史，再看原始需求、最新交接和已確認截圖。不要把舊的「尚未部署」狀態蓋回後來已發布的版本。
@@ -116,4 +116,4 @@ Hash route 目前包括 `#/plan/<date>`、`#/item/<id>`（先查看／同頁編�
 
 `main` 連接 Vercel，自動部署網址如上。得到對應授權後，先 fetch 並整合新 main，再提交／推送；不 force-push。部署成功要看對應 commit 的 Vercel status 和正式網站，而不是只看 git push 成功。文件 checkpoint 不是部署。
 
-目前沒有已授權的待做應用變更；下一個 AI 應先讀最新需求及最新任務，不要自行擴充功能。
+下一個 AI 應先讀最新需求及最新任務；本機尚待確認的實作不能當成已合併／部署的正式版，也不要自行擴充功能。
