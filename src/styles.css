@@ -287,9 +287,11 @@ html, body { overflow-x: clip; touch-action: manipulation; }
 /* iOS 的日期／時間欄位有內建最小寬度，會撐破格線而重疊；一律收在欄位寬度內 */
 label { min-width: 0; }
 input[type='date'], input[type='time'], input[type='datetime-local'] {
-  -webkit-appearance: none; appearance: none; display: block;
+  -webkit-appearance: none; appearance: none;
+  /* 拿掉原生外觀後 iOS 不再垂直置中，改用 flex 讓日期文字置中 */
+  display: flex; align-items: center; justify-content: flex-start;
   width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box;
-  line-height: normal;
+  line-height: 1.25;
 }
-input::-webkit-date-and-time-value { text-align: left; margin: 0; min-height: 1.2em; }
+input::-webkit-date-and-time-value { text-align: left; margin: 0; line-height: 1.25; }
 input::-webkit-datetime-edit { padding: 0; }
