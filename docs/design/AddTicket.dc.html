@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>新增門票</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1E2A44}a:hover{color:#000000}
+.num{font-family:'Space Grotesk',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 1320px; position: relative; display: flex; flex-direction: column; background: #F4F6F9; color: #1E2A44; font-family: 'Noto Sans TC', system-ui, sans-serif; overflow: hidden">
+<header style="padding: 52px 20px 12px; display: flex; justify-content: space-between; align-items: center">
+  <a href="PlanList.dc.html" style="height: 44px; display: flex; align-items: center; font-size: 15px; text-decoration: none">取消</a>
+  <h1 style="margin: 0; font-size: 17px; font-weight: 700">新增門票</h1>
+  <button onClick="{{save}}" style="height: 40px; padding: 0 16px; border-radius: 10px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 700">儲存</button>
+</header>
+
+<main style="flex: 1; padding: 8px 20px 32px; display: flex; flex-direction: column; gap: 20px">
+  <sc-if value="{{hasMsg}}" hint-placeholder-val="{{false}}">
+    <p role="status" style="{{msgStyle}}">{{msg}}</p>
+  </sc-if>
+
+  <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">活動或景點名稱
+    <input type="text" value="{{t.name}}" onChange="{{setName}}" placeholder="例如 日本環球影城" style="height: 52px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 14px; font: inherit; font-size: 17px; font-weight: 700; color: #1E2A44; background: #FFFFFF">
+  </label>
+  <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">場館或入口
+    <input type="text" value="{{t.venue}}" onChange="{{setVenue}}" placeholder="例如 主要入口" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font: inherit; font-size: 16px; color: #1E2A44; background: #FFFFFF">
+  </label>
+
+  <fieldset style="border: 0; margin: 0; padding: 0">
+    <legend style="font-size: 13px; color: #5B6578; padding: 0; margin-bottom: 8px">訂購狀態</legend>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px">
+      <sc-for list="{{statuses}}" as="s" hint-placeholder-count="3">
+        <button aria-pressed="{{s.pressed}}" onClick="{{s.pick}}" style="{{s.style}}">{{s.label}}</button>
+      </sc-for>
+    </div>
+  </fieldset>
+
+  <section aria-labelledby="time-h" style="display: flex; flex-direction: column; gap: 12px">
+    <h2 id="time-h" style="margin: 0; font-size: 17px; font-weight: 700">日期與場次</h2>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">日期<input type="date" value="{{t.date}}" onChange="{{setDate}}" class="num" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 8px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">入場時間<input type="time" value="{{t.time}}" onChange="{{setTime}}" class="num" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 8px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+    </div>
+    <label style="display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 15px">要提前幾分鐘到
+      <select value="{{t.early}}" onChange="{{setEarly}}" class="num" style="height: 44px; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 10px; font-size: 16px; color: #1E2A44; background: #FFFFFF"><option value="0">不用</option><option value="15">15 分</option><option value="30">30 分</option><option value="60">60 分</option></select>
+    </label>
+    <p style="margin: 0; padding: 10px 12px; border-radius: 10px; background: #FBE9C0; color: #8A5A00; font-size: 13px; font-weight: 700">{{arriveNote}}</p>
+  </section>
+
+  <section aria-labelledby="qty-h" style="display: flex; flex-direction: column; gap: 10px">
+    <h2 id="qty-h" style="margin: 0; font-size: 17px; font-weight: 700">票種與張數</h2>
+    <div style="background: #FFFFFF; border-radius: 16px; padding: 4px 14px">
+      <sc-for list="{{kinds}}" as="k" hint-placeholder-count="2">
+        <div style="display: flex; justify-content: space-between; align-items: center; min-height: 64px; border-bottom: 1px solid #EEF1F5">
+          <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+            <span style="font-size: 15px; font-weight: 700">{{k.label}}</span>
+            <span style="display: flex; align-items: center; gap: 4px; font-size: 12px; color: #5B6578">單價<input type="number" inputmode="numeric" min="0" value="{{k.price}}" onChange="{{k.setPrice}}" aria-label="{{k.priceLabel}}" class="num" style="width: 84px; height: 32px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 8px; padding: 0 8px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></span>
+          </span>
+          <span style="display: flex; align-items: center; gap: 4px">
+            <button onClick="{{k.minus}}" aria-label="{{k.minusLabel}}" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 18px">−</button>
+            <span class="num" style="width: 44px; text-align: center; font-size: 16px; font-weight: 700">{{k.qty}} 張</span>
+            <button onClick="{{k.plus}}" aria-label="{{k.plusLabel}}" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 18px">＋</button>
+          </span>
+        </div>
+      </sc-for>
+      <div style="display: flex; justify-content: space-between; align-items: center; min-height: 52px">
+        <span style="font-size: 14px; color: #5B6578">小計</span>
+        <span class="num" style="font-size: 18px; font-weight: 700">{{subtotal}}</span>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="pick-h" style="display: flex; flex-direction: column; gap: 12px">
+    <h2 id="pick-h" style="margin: 0; font-size: 17px; font-weight: 700">取票方式</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px">
+      <sc-for list="{{picks}}" as="p" hint-placeholder-count="3">
+        <button aria-pressed="{{p.pressed}}" onClick="{{p.pick}}" style="{{p.style}}">{{p.label}}</button>
+      </sc-for>
+    </div>
+    <p style="margin: 0; font-size: 13px; color: #5B6578">{{pickHint}}</p>
+    <sc-if value="{{needPlace}}" hint-placeholder-val="{{false}}">
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">{{placeLabel}}<input type="text" value="{{t.place}}" onChange="{{setPlace}}" placeholder="例如 售票處 3 號窗口" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font: inherit; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+    </sc-if>
+    <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">訂單編號<input type="text" value="{{t.ref}}" onChange="{{setRef}}" placeholder="購票網站的編號" class="num" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+    <button style="height: 48px; border-radius: 12px; border: 1px dashed #B8C0CC; background: transparent; color: #1E2A44; font: inherit; font-size: 15px">{{attachLabel}}</button>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1320}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const t = st.t || { name: '日本環球影城', venue: '主要入口', status: 'none', date: '2026-11-22', time: '09:00', early: '30', kinds: [{ k: 'adult', label: '成人', price: 9800, qty: 2 }, { k: 'child', label: '兒童（4–11 歲）', price: 6300, qty: 0 }], pick: 'qr', place: '', ref: '' };
+const set = (p) => this.setState({ t: { ...t, ...p }, msg: '' });
+const md = (d) => (d ? d.slice(5).replace('-', '/') : '—');
+const toMin = (s) => { const m = /^(\d{2}):(\d{2})$/.exec(s || ''); return m ? +m[1] * 60 + +m[2] : NaN; };
+const fmt = (n) => { n = ((n % 1440) + 1440) % 1440; return String(Math.floor(n / 60)).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0'); };
+const ST = [['none', '還沒訂'], ['ordered', '已訂購'], ['confirmed', '訂單確認']];
+const PK = [['qr', '電子票 QR'], ['counter', '現場取票'], ['voucher', '兌換券']];
+const HINT = { qr: '入場時出示 QR code 就好，建議先截圖，沒網路也能用。', counter: '到現場報訂單編號或出示確認信換票。', voucher: '先拿兌換券到指定地點換成正式門票。' };
+const chip = (on) => 'height: 40px; padding: 0 14px; border-radius: 20px; font: inherit; font-size: 14px; ' + (on ? 'border: 0; background: #1E2A44; color: #FFFFFF; font-weight: 700' : 'border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44');
+const setKind = (i, p) => set({ kinds: t.kinds.map((x, j) => (j === i ? { ...x, ...p } : x)) });
+const total = t.kinds.reduce((a, x) => a + (+x.price || 0) * x.qty, 0);
+const count = t.kinds.reduce((a, x) => a + x.qty, 0);
+const start = toMin(t.time), early = +t.early || 0;
+return {
+t,
+statuses: ST.map(([k, l]) => ({ label: l, pressed: String(t.status === k), pick: () => set({ status: k }), style: chip(t.status === k) })),
+picks: PK.map(([k, l]) => ({ label: l, pressed: String(t.pick === k), pick: () => set({ pick: k }), style: chip(t.pick === k) })),
+kinds: t.kinds.map((x, i) => ({ label: x.label, qty: x.qty, price: x.price, priceLabel: x.label + '單價', minusLabel: '減少' + x.label + '張數', plusLabel: '增加' + x.label + '張數', setPrice: (e) => setKind(i, { price: e.target.value }), minus: () => setKind(i, { qty: Math.max(0, x.qty - 1) }), plus: () => setKind(i, { qty: Math.min(20, x.qty + 1) }) })),
+subtotal: count ? '¥' + total.toLocaleString('en-US') + '・' + count + ' 張' : '—',
+pickHint: HINT[t.pick],
+needPlace: t.pick !== 'qr', placeLabel: t.pick === 'voucher' ? '兌換地點' : '取票地點',
+attachLabel: t.pick === 'qr' ? '＋ 附上 QR code 截圖' : '＋ 附上確認信或兌換券',
+arriveNote: isNaN(start) ? '填好入場時間後，會算出最晚抵達時間。' : early ? md(t.date) + ' ' + fmt(start - early) + ' 前要到' + (t.venue ? t.venue : '現場') + (t.pick !== 'qr' ? '，取票要再多抓一點時間。' : '。') : md(t.date) + ' ' + t.time + ' 入場。',
+setName: (e) => set({ name: e.target.value }), setVenue: (e) => set({ venue: e.target.value }),
+setDate: (e) => set({ date: e.target.value }), setTime: (e) => set({ time: e.target.value }), setEarly: (e) => set({ early: e.target.value }),
+setPlace: (e) => set({ place: e.target.value }), setRef: (e) => set({ ref: e.target.value }),
+hasMsg: !!st.msg, msg: st.msg || '',
+msgStyle: 'margin: 0; padding: 12px 14px; border-radius: 12px; font-size: 14px; font-weight: 700; ' + (st.msgOk ? 'background: #DDF1E8; color: #1F7A5C' : 'background: #F9E1DF; color: #B83A32'),
+save: () => {
+if (!t.name.trim()) return this.setState({ msg: '請填活動或景點名稱。', msgOk: false });
+if (!t.date) return this.setState({ msg: '請填日期。', msgOk: false });
+if (!count) return this.setState({ msg: '至少要有 1 張票。', msgOk: false });
+if (t.pick !== 'qr' && !t.place.trim()) return this.setState({ msg: '請填' + (t.pick === 'voucher' ? '兌換地點' : '取票地點') + '。', msgOk: false });
+this.setState({ msg: '已加入 ' + md(t.date) + ' 的行程，共 ' + count + ' 張票。', msgOk: true });
+}
+};
+}
+}
+</script>
+</body>
+</html>

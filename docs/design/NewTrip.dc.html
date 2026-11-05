@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>開始新旅程</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1E2A44}a:hover{color:#000000}
+.num{font-family:'Space Grotesk',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; display: flex; flex-direction: column; background: #F4F6F9; color: #1E2A44; font-family: 'Noto Sans TC', system-ui, sans-serif; overflow: hidden">
+<main style="flex: 1; overflow-y: auto; padding: 52px 20px 24px; display: flex; flex-direction: column; gap: 20px">
+  <a href="Welcome.dc.html" aria-label="返回" style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #1E2A44">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+  </a>
+  <h1 style="margin: 0; font-size: 28px; font-weight: 700">開始新旅程</h1>
+
+  <div style="display: flex; flex-direction: column; gap: 6px">
+    <label for="dest" style="font-size: 14px; font-weight: 700">要去哪裡</label>
+    <input id="dest" type="text" value="{{dest}}" onChange="{{setDest}}" placeholder="例如：京都、首爾、曼谷" style="height: 52px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 14px; font: inherit; font-size: 17px; color: #1E2A44; background: #FFFFFF">
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <label for="start" style="font-size: 14px; font-weight: 700">出發日</label>
+      <input id="start" type="date" value="{{start}}" onChange="{{setStart}}" class="num" style="height: 52px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 10px; font-size: 15px; color: #1E2A44; background: #FFFFFF">
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <label for="end" style="font-size: 14px; font-weight: 700">回程日</label>
+      <input id="end" type="date" value="{{end}}" min="{{start}}" onChange="{{setEnd}}" class="num" style="height: 52px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 10px; font-size: 15px; color: #1E2A44; background: #FFFFFF">
+    </div>
+  </div>
+  <p role="status" style="{{daysStyle}}">{{daysText}}</p>
+
+  <div style="display: flex; align-items: center; justify-content: space-between">
+    <span id="ppl-l" style="font-size: 14px; font-weight: 700">幾個人</span>
+    <div role="group" aria-labelledby="ppl-l" style="display: flex; align-items: center; gap: 4px; background: #FFFFFF; border: 1px solid #DCE1E8; border-radius: 12px; padding: 4px">
+      <button aria-label="減少一人" onClick="{{minus}}" disabled="{{atMin}}" style="width: 44px; height: 40px; border: 0; border-radius: 8px; background: #F4F6F9; color: #1E2A44; font: inherit; font-size: 20px">−</button>
+      <span class="num" aria-live="polite" style="min-width: 40px; text-align: center; font-size: 18px; font-weight: 700">{{ppl}}</span>
+      <button aria-label="增加一人" onClick="{{plus}}" style="width: 44px; height: 40px; border: 0; border-radius: 8px; background: #F4F6F9; color: #1E2A44; font: inherit; font-size: 20px">+</button>
+    </div>
+  </div>
+
+  <section aria-labelledby="local-h" style="display: flex; flex-direction: column; gap: 4px; border-top: 1px solid #DCE1E8; padding-top: 16px">
+    <h2 id="local-h" style="margin: 0; font-size: 14px; font-weight: 700">當地設定</h2>
+    <p style="margin: 0 0 6px; font-size: 13px; color: #5B6578">依目的地自動帶入。時間判斷和花費換算都會用這兩項。</p>
+    <label style="display: flex; justify-content: space-between; align-items: center; min-height: 48px; font-size: 15px">時區
+      <select value="{{tz}}" onChange="{{setTz}}" style="height: 40px; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font: inherit; font-size: 14px; color: #1E2A44; background: #FFFFFF">
+        <option value="Asia/Tokyo">日本（UTC+9）</option>
+        <option value="Asia/Seoul">韓國（UTC+9）</option>
+        <option value="Asia/Bangkok">泰國（UTC+7）</option>
+        <option value="Asia/Taipei">台灣（UTC+8）</option>
+        <option value="Europe/Paris">法國（UTC+1）</option>
+      </select>
+    </label>
+    <label style="display: flex; justify-content: space-between; align-items: center; min-height: 48px; font-size: 15px; border-top: 1px solid #DCE1E8">當地貨幣
+      <select value="{{cur}}" onChange="{{setCur}}" style="height: 40px; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font: inherit; font-size: 14px; color: #1E2A44; background: #FFFFFF">
+        <option value="JPY">日圓 JPY</option>
+        <option value="KRW">韓元 KRW</option>
+        <option value="THB">泰銖 THB</option>
+        <option value="TWD">新台幣 TWD</option>
+        <option value="EUR">歐元 EUR</option>
+      </select>
+    </label>
+  </section>
+</main>
+
+<div style="padding: 12px 20px 34px; background: #F4F6F9; display: flex; flex-direction: column; gap: 8px">
+  <sc-if value="{{valid}}" hint-placeholder-val="{{true}}">
+    <a href="EmptyPlan.dc.html" style="height: 54px; border-radius: 14px; background: #1E2A44; color: #FFFFFF; font-size: 16px; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center">建立「{{tripName}}」</a>
+  </sc-if>
+  <sc-if value="{{invalid}}" hint-placeholder-val="{{false}}">
+    <button disabled="" style="height: 54px; border-radius: 14px; border: 0; background: #DCE1E8; color: #5B6578; font: inherit; font-size: 16px; font-weight: 700">填好目的地和日期就能建立</button>
+  </sc-if>
+  <p style="margin: 0; text-align: center; font-size: 13px; color: #5B6578">已經訂好機票飯店？建立後可以用 AI 匯入訂單。</p>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const dest = st.dest ?? '京都';
+const start = st.start ?? '2026-11-20';
+const end = st.end ?? '2026-11-24';
+const ppl = st.ppl ?? 2;
+const AUTO = [[/京都|大阪|東京|北海道|沖繩|日本|福岡|名古屋/, 'Asia/Tokyo', 'JPY'], [/首爾|釜山|濟州|韓國/, 'Asia/Seoul', 'KRW'], [/曼谷|清邁|普吉|泰國/, 'Asia/Bangkok', 'THB'], [/巴黎|法國/, 'Europe/Paris', 'EUR'], [/台北|台中|台南|高雄|花蓮|台灣/, 'Asia/Taipei', 'TWD']];
+const hit = AUTO.find(([re]) => re.test(dest));
+const tz = st.tz ?? (hit ? hit[1] : 'Asia/Tokyo');
+const cur = st.cur ?? (hit ? hit[2] : 'JPY');
+const s = Date.parse(start), e = Date.parse(end);
+const datesOk = !isNaN(s) && !isNaN(e) && e >= s;
+const days = datesOk ? Math.round((e - s) / 86400000) + 1 : 0;
+const valid = !!dest.trim() && datesOk;
+const bad = !isNaN(s) && !isNaN(e) && e < s;
+return {
+dest, start, end, ppl, tz, cur, valid, invalid: !valid,
+atMin: ppl <= 1,
+tripName: dest.trim() + ' ' + days + ' 日',
+daysText: bad ? '回程日比出發日早，請再確認' : (datesOk ? '共 ' + days + ' 天 ' + (days - 1) + ' 晚' : '選好日期後會算出天數'),
+daysStyle: 'margin: -12px 0 0; font-size: 13px; font-weight: 700; color: ' + (bad ? '#B83A32' : '#5B6578'),
+setDest: (ev) => this.setState({ dest: ev.target.value, tz: undefined, cur: undefined }),
+setStart: (ev) => this.setState({ start: ev.target.value }),
+setEnd: (ev) => this.setState({ end: ev.target.value }),
+setTz: (ev) => this.setState({ tz: ev.target.value }),
+setCur: (ev) => this.setState({ cur: ev.target.value }),
+minus: () => this.setState({ ppl: Math.max(1, ppl - 1) }),
+plus: () => this.setState({ ppl: Math.min(20, ppl + 1) })
+};
+}
+}
+</script>
+</body>
+</html>

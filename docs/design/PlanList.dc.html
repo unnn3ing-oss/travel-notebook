@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>規劃旅程</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1E2A44}a:hover{color:#000000}
+.num{font-family:'Space Grotesk',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; display: flex; flex-direction: column; background: #F4F6F9; color: #1E2A44; font-family: 'Noto Sans TC', system-ui, sans-serif; overflow: hidden">
+<main style="flex: 1; overflow-y: auto; padding: 52px 20px 24px; display: flex; flex-direction: column; gap: 14px">
+  <header style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+    <div>
+      <a href="Welcome.dc.html" style="font-size: 13px; color: #5B6578; text-decoration: none">所有旅程</a>
+      <h1 style="margin: 2px 0 0; font-size: 26px; font-weight: 700">京都 5 日</h1>
+      <p class="num" style="margin: 2px 0 0; font-size: 13px; color: #5B6578">11/20 – 11/24，2 人</p>
+    </div>
+    <div role="group" aria-label="檢視方式" style="display: flex; background: #E4E8EE; border-radius: 12px; padding: 3px">
+      <span aria-current="page" style="height: 36px; padding: 0 12px; border-radius: 10px; background: #FFFFFF; font-size: 14px; font-weight: 700; display: flex; align-items: center">清單</span>
+      <a href="Itinerary.dc.html" style="height: 36px; padding: 0 12px; border-radius: 10px; color: #5B6578; font-size: 14px; text-decoration: none; display: flex; align-items: center">時間軸</a>
+    </div>
+  </header>
+
+  <div role="tablist" aria-label="選擇日期" style="display: flex; gap: 6px; overflow-x: auto; margin: 0 -20px; padding: 0 20px">
+    <sc-for list="{{days}}" as="d" hint-placeholder-count="6">
+      <button role="tab" aria-selected="{{d.selected}}" onClick="{{d.pick}}" style="{{d.style}}"><span class="num" style="font-size: 16px; font-weight: 700">{{d.top}}</span><span style="font-size: 11px">{{d.bottom}}</span></button>
+    </sc-for>
+  </div>
+
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+    <p style="margin: 0; display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5B6578">
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="#8A94A6"><circle cx="9" cy="6" r="1.6"></circle><circle cx="15" cy="6" r="1.6"></circle><circle cx="9" cy="12" r="1.6"></circle><circle cx="15" cy="12" r="1.6"></circle><circle cx="9" cy="18" r="1.6"></circle><circle cx="15" cy="18" r="1.6"></circle></svg>
+      長按卡片，上下拖曳排序
+    </p>
+    <button onClick="{{openImport}}" style="height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 13px; font-weight: 500">AI 匯入訂單</button>
+  </div>
+
+  <div style="position: relative">
+  <span aria-hidden="true" style="position: absolute; left: 7px; top: 24px; bottom: 24px; width: 2px; border-radius: 1px; background: #C9D1DE"></span>
+  <ol ref="{{listRef}}" aria-label="{{dayLabel}}" onPointerMove="{{pMove}}" onPointerUp="{{pUp}}" onPointerCancel="{{pCancel}}" style="{{listStyle}}">
+    <sc-for list="{{items}}" as="c" hint-placeholder-count="5">
+      <li data-idx="{{c.idx}}" onPointerDown="{{c.pDown}}" onClick="{{c.open}}" onContextMenu="{{c.noMenu}}" style="{{c.style}}">
+        <span aria-hidden="true" style="{{c.nodeStyle}}"></span>
+        <sc-if value="{{c.isMain}}" hint-placeholder-val="{{true}}">
+          <span class="num" style="{{c.timeStyle}}">{{c.timeText}}</span>
+          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px">
+            <span style="font-size: 16px; font-weight: 700; line-height: 1.35">{{c.title}}</span>
+            <span style="font-size: 12px; color: #5B6578">{{c.sub}}</span>
+            <sc-if value="{{c.warn}}" hint-placeholder-val="{{false}}">
+              <span style="font-size: 12px; font-weight: 700; color: #B83A32">時間比上一張早，改時間或換順序</span>
+            </sc-if>
+          </span>
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="#B8C0CC" style="flex-shrink: 0; margin-top: 2px"><circle cx="9" cy="6" r="1.6"></circle><circle cx="15" cy="6" r="1.6"></circle><circle cx="9" cy="12" r="1.6"></circle><circle cx="15" cy="12" r="1.6"></circle><circle cx="9" cy="18" r="1.6"></circle><circle cx="15" cy="18" r="1.6"></circle></svg>
+        </sc-if>
+        <sc-if value="{{c.isTransit}}" hint-placeholder-val="{{false}}">
+          <span aria-hidden="true" style="position: absolute; left: -38px; top: 50%; width: 34px; border-top: 2px dashed #C9D1DE"></span>
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B6578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><rect x="5" y="3" width="14" height="14" rx="3"></rect><path d="M5 11h14M8 21l2-4M16 21l-2-4"></path></svg>
+          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+            <span style="display: flex; align-items: baseline; gap: 8px"><span class="num" style="font-size: 13px; font-weight: 700; color: #5B6578">{{c.timeText}}</span><span style="font-size: 14px; font-weight: 700">{{c.title}}</span></span>
+            <span class="num" style="font-size: 12px; color: #5B6578">{{c.legsText}}</span>
+            <a href="Transit.dc.html" style="{{c.routeStyle}}">{{c.routeLink}}</a>
+          </span>
+        </sc-if>
+      </li>
+    </sc-for>
+  </ol>
+  </div>
+  <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+    <p style="margin: 0; padding: 24px 12px; border: 1.5px dashed #B8C0CC; border-radius: 12px; text-align: center; font-size: 14px; color: #5B6578">這天還沒有行程</p>
+  </sc-if>
+  <a href="Library.dc.html" style="flex-shrink: 0; height: 48px; box-sizing: border-box; margin-right: 72px; border-radius: 12px; border: 1px solid #DCE1E8; background: #FFFFFF; font-size: 15px; text-decoration: none; display: flex; align-items: center; justify-content: center">從景點庫加入</a>
+</main>
+
+<button onClick="{{openAdd}}" aria-label="新增行程" style="position: absolute; right: 20px; bottom: 100px; z-index: 3; width: 56px; height: 56px; border-radius: 28px; border: 0; background: #1E2A44; color: #FFFFFF; box-shadow: 0 6px 16px rgba(30,42,68,0.28); display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}">
+  <div role="status" style="position: absolute; left: 20px; right: 88px; bottom: 100px; min-height: 52px; box-sizing: border-box; padding: 6px 8px 6px 16px; border-radius: 14px; background: #1E2A44; color: #FFFFFF; display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 14px">
+    <span>{{toast}}</span>
+    <sc-if value="{{canUndo}}" hint-placeholder-val="{{false}}">
+      <button onClick="{{undo}}" style="height: 40px; padding: 0 14px; border: 0; border-radius: 10px; background: transparent; color: #F2C14E; font: inherit; font-size: 14px; font-weight: 700">復原</button>
+    </sc-if>
+  </div>
+</sc-if>
+
+<nav aria-label="主選單" style="height: 84px; flex-shrink: 0; box-sizing: border-box; padding: 6px 8px 24px; background: #FFFFFF; border-top: 1px solid #DCE1E8; display: flex">
+  <a href="Today.dc.html" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #5B6578; font-size: 11px">
+    <span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></span>今日
+  </a>
+  <a href="PlanList.dc.html" aria-current="page" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #1E2A44; font-size: 11px; font-weight: 700">
+    <span style="width: 52px; height: 30px; border-radius: 15px; background: #F2C14E; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span>行程
+  </a>
+  <a href="Bookings.dc.html" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #5B6578; font-size: 11px">
+    <span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"></path><path d="M15 7v10" stroke-dasharray="2 2"></path></svg></span>預訂
+  </a>
+  <a href="Essentials.dc.html" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #5B6578; font-size: 11px">
+    <span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"></path><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"></path></svg></span>必備
+  </a>
+</nav>
+
+<sc-if value="{{sheetEdit}}" hint-placeholder-val="{{false}}">
+  <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(30,42,68,0.55)"></div>
+  <section role="dialog" aria-modal="true" aria-labelledby="edit-h" style="position: absolute; left: 0; right: 0; bottom: 0; background: #FFFFFF; border-radius: 24px 24px 0 0; padding: 10px 20px 34px; display: flex; flex-direction: column; gap: 14px">
+    <span aria-hidden="true" style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: #DCE1E8"></span>
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <h2 id="edit-h" style="margin: 0; font-size: 18px; font-weight: 700">編輯行程</h2>
+      <button onClick="{{closeSheet}}" style="height: 40px; padding: 0 16px; border-radius: 10px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700">完成</button>
+    </div>
+    <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">名稱
+      <input type="text" value="{{ed.title}}" onChange="{{ed.rename}}" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font: inherit; font-size: 17px; font-weight: 700; color: #1E2A44">
+    </label>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">開始時間
+        <input type="time" value="{{ed.time}}" onChange="{{ed.retime}}" class="num" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 10px; font-size: 16px; color: #1E2A44">
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">類型
+        <select value="{{ed.type}}" onChange="{{ed.retype}}" style="height: 48px; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 10px; font: inherit; font-size: 16px; color: #1E2A44; background: #FFFFFF">
+          <option value="place">景點</option><option value="restaurant">餐廳</option><option value="transit">交通</option><option value="hotel">住宿</option><option value="flight">航班</option><option value="ticket">門票</option><option value="other">其他</option>
+        </select>
+      </label>
+    </div>
+    <sc-if value="{{ed.hasDetail}}" hint-placeholder-val="{{false}}">
+      <a href="{{ed.detailHref}}" style="min-height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 12px; background: #EEF1F5; text-decoration: none; display: flex; align-items: center; justify-content: space-between; font-size: 15px; font-weight: 700">{{ed.detailLabel}}<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+    </sc-if>
+    <div style="display: flex; gap: 8px; align-items: center">
+      <button aria-label="上移" onClick="{{ed.up}}" disabled="{{ed.isFirst}}" style="width: 48px; height: 44px; border-radius: 10px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"></path></svg></button>
+      <button aria-label="下移" onClick="{{ed.down}}" disabled="{{ed.isLast}}" style="width: 48px; height: 44px; border-radius: 10px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg></button>
+      <label style="flex: 1; display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5B6578">移到
+        <select value="{{ed.dayKey}}" onChange="{{ed.moveDay}}" style="flex: 1; height: 44px; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font: inherit; font-size: 15px; color: #1E2A44; background: #FFFFFF">
+          <sc-for list="{{dayOptions}}" as="o" hint-placeholder-count="6"><option value="{{o.key}}">{{o.label}}</option></sc-for>
+        </select>
+      </label>
+    </div>
+    <button onClick="{{ed.remove}}" style="height: 44px; border-radius: 12px; border: 0; background: transparent; color: #B83A32; font: inherit; font-size: 15px; font-weight: 700">刪除這張卡片</button>
+  </section>
+</sc-if>
+
+<sc-if value="{{sheetAdd}}" hint-placeholder-val="{{false}}">
+  <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(30,42,68,0.55)"></div>
+  <section role="dialog" aria-modal="true" aria-labelledby="add-h" style="position: absolute; left: 0; right: 0; bottom: 0; background: #FFFFFF; border-radius: 24px 24px 0 0; padding: 10px 20px 34px; display: flex; flex-direction: column; gap: 14px">
+    <span aria-hidden="true" style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: #DCE1E8"></span>
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <h2 id="add-h" style="margin: 0; font-size: 18px; font-weight: 700">新增到 {{dayShort}}</h2>
+      <button onClick="{{closeSheet}}" aria-label="關閉" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: #F4F6F9; color: #1E2A44; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+    </div>
+    <p style="margin: 0; font-size: 13px; color: #5B6578">需要填細節</p>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <sc-for list="{{formTypes}}" as="t" hint-placeholder-count="4">
+        <a href="{{t.href}}" style="min-height: 72px; box-sizing: border-box; padding: 12px; border-radius: 14px; border: 1px solid #DCE1E8; background: #FFFFFF; text-decoration: none; display: flex; flex-direction: column; justify-content: center; gap: 2px"><span style="font-size: 16px; font-weight: 700">{{t.label}}</span><span style="font-size: 12px; color: #5B6578">{{t.hint}}</span></a>
+      </sc-for>
+    </div>
+    <p style="margin: 0; font-size: 13px; color: #5B6578">快速加入</p>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <sc-for list="{{addTypes}}" as="t" hint-placeholder-count="3">
+        <button onClick="{{t.add}}" style="height: 52px; border-radius: 14px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 15px; font-weight: 700">{{t.label}}</button>
+      </sc-for>
+    </div>
+  </section>
+</sc-if>
+
+<sc-if value="{{sheetImport}}" hint-placeholder-val="{{false}}">
+  <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(30,42,68,0.55)"></div>
+  <section role="dialog" aria-modal="true" aria-labelledby="imp-h" style="position: absolute; left: 0; right: 0; bottom: 0; max-height: 92%; overflow-y: auto; box-sizing: border-box; background: #FFFFFF; border-radius: 24px 24px 0 0; padding: 10px 20px 34px; display: flex; flex-direction: column; gap: 16px">
+    <span aria-hidden="true" style="align-self: center; width: 40px; height: 5px; border-radius: 3px; background: #DCE1E8"></span>
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <h2 id="imp-h" style="margin: 0; font-size: 20px; font-weight: 700">用 AI 匯入訂單</h2>
+      <button onClick="{{closeSheet}}" aria-label="關閉" style="width: 44px; height: 44px; border-radius: 22px; border: 0; background: #F4F6F9; color: #1E2A44; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+    </div>
+    <sc-if value="{{noRows}}" hint-placeholder-val="{{true}}">
+      <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #5B6578">App 不會讀你的信箱。複製提示詞給能讀信箱的 AI，再把結果貼回來。</p>
+      <button onClick="{{copyPrompt}}" style="height: 48px; border-radius: 12px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 700">{{copyLabel}}</button>
+      <label for="raw-m" style="font-size: 14px; font-weight: 700">貼回 AI 的結果</label>
+      <textarea id="raw-m" rows="5" value="{{raw}}" onChange="{{setRaw}}" placeholder="長按貼上" class="num" style="font-size: 14px; line-height: 1.5; color: #1E2A44; border: 1px solid #DCE1E8; border-radius: 12px; padding: 10px 12px; resize: none"></textarea>
+      <sc-if value="{{hasError}}" hint-placeholder-val="{{false}}">
+        <p role="alert" style="margin: 0; padding: 10px 12px; border-radius: 10px; background: #F9E1DF; color: #B83A32; font-size: 13px; line-height: 1.6">{{error}}</p>
+      </sc-if>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <button onClick="{{pasteSample}}" style="height: 48px; border-radius: 12px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 14px">貼上示範結果</button>
+        <button onClick="{{check}}" style="height: 48px; border-radius: 12px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 700">檢查內容</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{hasRows}}" hint-placeholder-val="{{false}}">
+      <p style="margin: 0; font-size: 14px; color: #5B6578">勾選要加入的卡片{{skippedNote}}</p>
+      <div style="display: flex; flex-direction: column">
+        <sc-for list="{{rows}}" as="r" hint-placeholder-count="3">
+          <label style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-top: 1px solid #DCE1E8">
+            <input type="checkbox" checked="{{r.checked}}" onChange="{{r.toggle}}" style="width: 22px; height: 22px; margin: 0; accent-color: #1E2A44">
+            <span style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+              <span style="font-size: 15px; font-weight: 700">{{r.title}}</span>
+              <span class="num" style="font-size: 13px; color: #5B6578">{{r.when}}</span>
+              <sc-if value="{{r.hasFlag}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; font-weight: 700; color: #B83A32">{{r.flag}}</span></sc-if>
+            </span>
+          </label>
+        </sc-for>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <button onClick="{{backToPaste}}" style="height: 48px; border-radius: 12px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 14px">重新貼上</button>
+        <button onClick="{{doImport}}" disabled="{{noneChecked}}" style="{{importBtnStyle}}">{{importLabel}}</button>
+      </div>
+    </sc-if>
+  </section>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+init() {
+const c = (id, time, title, type, meta, routes, legs) => ({ id, time, title, type, meta: meta || '', routes: routes || 0, legs: legs || [] });
+return [
+{ key: 'pool', top: '未排', bottom: '景點庫', label: '未排程', items: [c('p1', '', '錦市場', 'restaurant'), c('p2', '', '哲學之道', 'place'), c('p3', '', '金閣寺', 'place')] },
+{ key: '2026-11-20', top: '20', bottom: '週五', label: '11/20 週五', items: [c('a1', '09:10', '抵達關西機場', 'flight', '去程 TPE → KIX'), c('a2', '10:16', '關西機場 → 京都車站', 'transit', '', 1, ['步行 10 分', 'Haruka 75 分']), c('a3', '15:00', '京都車站飯店入住', 'hotel', '訂單 [訂單編號]')] },
+{ key: '2026-11-21', top: '21', bottom: '週六', label: '11/21 週六', items: [c('b1', '07:00', '清水寺', 'place'), c('b2', '09:50', '清水寺 → 二年坂', 'transit', '', 1, ['步行 12 分']), c('b3', '10:30', '二年坂・產寧坂', 'place'), c('b4', '13:00', '午餐　祇園割烹', 'restaurant', '訂單確認'), c('b5', '14:10', '京都車站 → 嵯峨嵐山', 'transit', '', 3, ['步行 5 分', 'JR 嵯峨野線 16 分', '步行 3 分']), c('b6', '15:00', '嵐山小火車', 'ticket')] },
+{ key: '2026-11-22', top: '22', bottom: '週日', label: '11/22 週日', items: [c('c1', '07:00', '伏見稻荷大社', 'place')] },
+{ key: '2026-11-23', top: '23', bottom: '週一', label: '11/23 週一', items: [] },
+{ key: '2026-11-24', top: '24', bottom: '週二', label: '11/24 週二', items: [c('e1', '11:00', '退房', 'hotel'), c('e2', '14:30', '回程 KIX → TPE', 'flight')] }
+];
+}
+parse(raw) {
+const TYPES = ['flight', 'train', 'hotel', 'ticket', 'restaurant', 'other'];
+let text = String(raw || '').trim();
+if (!text) return { error: '還沒有貼上內容。' };
+const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+if (fence) text = fence[1];
+else { const a = text.indexOf('{'), b = text.lastIndexOf('}'); if (a >= 0 && b > a) text = text.slice(a, b + 1); }
+let obj;
+try { obj = JSON.parse(text); } catch (e) { return { error: '看不懂這段內容。請 AI 照提示詞的格式只回傳 JSON，再貼一次。' }; }
+if (!obj || !Array.isArray(obj.items)) return { error: '內容裡找不到 items 清單，請確認是用這份提示詞產生的。' };
+const cols = (this.state && this.state.cols) || this.init();
+const str = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
+const rows = []; let skipped = 0;
+obj.items.slice(0, 100).forEach((it) => {
+const title = str(it && it.title, 60);
+const date = str(it && it.date, 10);
+if (!title || !/^\d{4}-\d{2}-\d{2}$/.test(date)) { skipped++; return; }
+const start = /^\d{2}:\d{2}$/.test(str(it.start, 5)) ? it.start : '';
+let type = TYPES.indexOf(it.type) >= 0 ? it.type : 'other';
+if (type === 'train') type = 'transit';
+const col = cols.find((c) => c.key === date);
+const dup = !!col && col.items.some((x) => x.title.replace(/\s/g, '') === title.replace(/\s/g, ''));
+const meta = [str(it.orderNo, 40) && '訂單 ' + str(it.orderNo, 40), str(it.place, 40)].filter(Boolean).join('，');
+rows.push({ title, date, start, type, meta, target: col ? date : 'pool', checked: !dup,
+flag: dup ? '這天已有同名卡片，預設不加入' : (col ? '' : '日期不在旅程內，會放到未排程') });
+});
+if (!rows.length) return { error: '沒有可以加入的項目：每一筆都要有 date 和 title。' };
+return { rows, skipped };
+}
+renderVals() {
+const st = this.state || {};
+const cols = st.cols || this.init();
+const sel = st.day || '2026-11-21';
+const drag = st.drag || null;
+const TL = { flight: '航班', transit: '交通', hotel: '住宿', ticket: '門票', restaurant: '餐廳', place: '景點', other: '其他' };
+const toMin = (t) => { const m = /^(\d{2}):(\d{2})$/.exec(t || ''); return m ? +m[1] * 60 + +m[2] : null; };
+const clone = () => JSON.parse(JSON.stringify((this.state && this.state.cols) || this.init()));
+const commit = (next, extra) => this.setState({ cols: next, toast: '', canUndo: false, ...(extra || {}) });
+const insertByTime = (arr, card) => { const t = toMin(card.time); const j = t == null ? -1 : arr.findIndex((x) => toMin(x.time) != null && toMin(x.time) > t); if (j < 0) arr.push(card); else arr.splice(j, 0, card); };
+const col = cols.find((c) => c.key === sel);
+const base = col.items;
+// 拖曳中顯示預覽順序：被拖的卡片放在 over 的位置
+const view = drag ? (() => { const a = base.slice(); const [m] = a.splice(drag.from, 1); a.splice(drag.over, 0, m); return a; })() : base;
+const draggedId = drag ? base[drag.from].id : null;
+let prev = null;
+const items = view.map((it, i) => {
+const t = toMin(it.time);
+const warn = !drag && sel !== 'pool' && t != null && prev != null && t < prev;
+if (t != null) prev = t;
+const lifted = it.id === draggedId;
+const realIdx = base.findIndex((x) => x.id === it.id);
+return {
+...it, idx: i, warn,
+timeText: it.time || '未定',
+timeStyle: 'width: 48px; flex-shrink: 0; padding-top: 2px; font-size: 15px; font-weight: 700; ' + (it.time ? '' : 'color: #8A94A6; font-size: 13px'),
+sub: TL[it.type] + (it.meta ? '，' + it.meta : ''),
+isTransit: it.type === 'transit', isMain: it.type !== 'transit',
+legsText: (it.legs || []).join(' → ') || '還沒設定路線',
+routeLink: it.routes > 1 ? '主要路線・另有 ' + (it.routes - 1) + ' 條備用' : (it.routes ? '主要路線・看班次' : '＋ 設定主要路線'),
+routeStyle: 'align-self: flex-start; margin-top: 4px; padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: 700; text-decoration: none; ' + (it.routes ? 'background: #FFFFFF; color: #1E2A44' : 'background: #F9E1DF; color: #B83A32'),
+nodeStyle: it.type === 'transit'
+  ? 'position: absolute; left: -45px; top: calc(50% - 5px); width: 10px; height: 10px; box-sizing: border-box; border-radius: 5px; border: 2px solid #C9D1DE; background: #F4F6F9'
+  : 'position: absolute; left: -22px; top: 19px; width: 12px; height: 12px; box-sizing: border-box; border-radius: 6px; border: 2px solid #F4F6F9; background: ' + (it.time ? '#1E2A44' : '#B8C0CC'),
+style: 'position: relative; display: flex; gap: 12px; cursor: grab; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; transition: box-shadow 120ms, transform 120ms; ' +
+(it.type === 'transit' ? 'margin-left: 48px; align-items: center; padding: 10px 12px; border-radius: 12px; background: #EEF1F5; ' : 'margin-left: 24px; align-items: flex-start; padding: 14px; border-radius: 14px; background: #FFFFFF; ') +
+(lifted ? 'box-shadow: 0 0 0 2px #1E2A44, 0 12px 24px rgba(30,42,68,0.22); transform: scale(1.02); position: relative; z-index: 2' : (warn ? 'box-shadow: inset 0 0 0 1.5px #E8B4AF' : '')),
+noMenu: (e) => e.preventDefault(),
+pDown: (e) => {
+if (e.button) return;
+this._p = { x: e.clientX, y: e.clientY };
+clearTimeout(this._t);
+this._t = setTimeout(() => {
+if (!this._p) return;
+try { if (navigator.vibrate) navigator.vibrate(12); } catch (_) {}
+this.setState({ drag: { from: realIdx, over: realIdx }, toast: '' });
+}, 380);
+},
+open: () => {
+if (this._justDragged) { this._justDragged = false; return; }
+this.setState({ sheet: 'edit', editId: it.id, toast: '' });
+}
+};
+});
+const pMove = (e) => {
+const p = this._p; if (!p) return;
+const d = this.state && this.state.drag;
+if (!d) {
+// 長按前就移動，視為捲動
+if (Math.abs(e.clientX - p.x) + Math.abs(e.clientY - p.y) > 8) { clearTimeout(this._t); this._p = null; }
+return;
+}
+const el = document.elementFromPoint(e.clientX, e.clientY);
+const li = el && el.closest ? el.closest('[data-idx]') : null;
+if (li) { const k = +li.getAttribute('data-idx'); if (k !== d.over) this.setState({ drag: { ...d, over: k } }); }
+};
+const finish = (apply) => {
+clearTimeout(this._t); this._p = null;
+const d = this.state && this.state.drag;
+if (!d) return;
+this._justDragged = true;
+if (!apply || d.from === d.over) { this.setState({ drag: null }); return; }
+const next = clone(); const arr = next.find((c) => c.key === sel).items;
+const [m] = arr.splice(d.from, 1); arr.splice(d.over, 0, m);
+this.setState({ cols: next, drag: null, toast: '已移動「' + m.title + '」', canUndo: true, undoCols: cols });
+};
+
+const DETAIL = { transit: ['Transit.dc.html', '路線、轉乘與班次'], flight: ['AddFlight.dc.html', '航班資訊：航班號碼、航廈、行李'], hotel: ['AddHotel.dc.html', '住宿資訊：入住退房、地址、房型'], ticket: ['AddTicket.dc.html', '票券資訊：場次、票種、取票方式'] };
+const edItem = base.find((x) => x.id === st.editId);
+const edIdx = edItem ? base.indexOf(edItem) : -1;
+const patch = (p) => { const next = clone(); Object.assign(next.find((c) => c.key === sel).items[edIdx], p); commit(next, { sheet: 'edit', editId: st.editId }); };
+const swap = (dir) => { const next = clone(); const arr = next.find((c) => c.key === sel).items; const k = edIdx + dir; if (k < 0 || k >= arr.length) return; [arr[edIdx], arr[k]] = [arr[k], arr[edIdx]]; commit(next, { sheet: 'edit', editId: st.editId }); };
+const ed = edItem ? {
+...edItem, dayKey: sel, isTransit: edItem.type === 'transit',
+hasDetail: !!DETAIL[edItem.type], detailHref: (DETAIL[edItem.type] || [])[0], detailLabel: (DETAIL[edItem.type] || [])[1],
+isFirst: edIdx === 0, isLast: edIdx === base.length - 1,
+rename: (e) => patch({ title: e.target.value }),
+retime: (e) => patch({ time: e.target.value }),
+retype: (e) => patch({ type: e.target.value }),
+up: () => swap(-1), down: () => swap(1),
+moveDay: (e) => {
+const to = e.target.value; if (to === sel) return;
+const next = clone(); const [card] = next.find((c) => c.key === sel).items.splice(edIdx, 1);
+insertByTime(next.find((c) => c.key === to).items, card);
+this.setState({ cols: next, sheet: null, toast: '已移到 ' + cols.find((c) => c.key === to).label, canUndo: true, undoCols: cols });
+},
+remove: () => {
+const next = clone(); const [card] = next.find((c) => c.key === sel).items.splice(edIdx, 1);
+this.setState({ cols: next, sheet: null, toast: '已刪除「' + card.title + '」', canUndo: true, undoCols: cols });
+}
+} : {};
+
+const NEWNAME = { place: '新的景點', restaurant: '新的餐廳', transit: '從哪裡到哪裡', hotel: '住宿', flight: '航班', ticket: '門票', other: '新的行程' };
+const formTypes = [['transit', 'AddTransit.dc.html', '主要路線、轉乘、備用'], ['flight', 'AddFlight.dc.html', '航班號碼、航廈、行李'], ['hotel', 'AddHotel.dc.html', '入住退房、地址、房型'], ['ticket', 'AddTicket.dc.html', '場次、票種、取票方式']].map(([k, href, hint]) => ({ label: TL[k], href, hint }));
+const addTypes = ['place', 'restaurant', 'other'].map((k) => ({ label: TL[k], add: () => {
+const next = clone(); const id = 'n' + Date.now();
+next.find((c) => c.key === sel).items.push({ id, time: '', title: NEWNAME[k], type: k, meta: '' });
+commit(next, { sheet: 'edit', editId: id });
+} }));
+
+const days = cols.map((c) => {
+const on = c.key === sel;
+return { top: c.top, bottom: c.bottom, selected: String(on), pick: () => this.setState({ day: c.key, toast: '', canUndo: false }),
+style: 'flex: 0 0 auto; min-width: 56px; height: 56px; padding: 0 10px; border-radius: 12px; font: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; ' + (on ? 'border: 0; background: #1E2A44; color: #FFFFFF' : (c.key === 'pool' ? 'border: 1px dashed #B8C0CC; background: transparent; color: #1E2A44' : 'border: 0; background: #FFFFFF; color: #1E2A44')) };
+});
+
+const prompt = ['請幫我整理一趟旅行的行程資料。', '', '1. 搜尋我信箱裡和這趟旅行有關的信：機票、訂房、車票、門票、餐廳訂位。旅行日期是 2026-11-20 到 2026-11-24，目的地京都。', '2. 每一筆訂單整理成一個項目。只用信裡寫的內容，查不到的欄位填 null，不要猜。', '3. 同一筆訂單有更改或取消信時，以最新的那封為準；已取消的不要列。', '4. 只回傳一個 JSON 程式碼區塊，不要加其他說明：', '', '```json', '{"version": 1, "items": [{"date": "2026-11-20", "start": "09:10", "end": null, "type": "flight", "title": "去程 TPE → KIX", "place": "關西機場", "orderNo": "訂位代號", "price": "金額與幣別", "notes": null}]}', '```', '', 'type 只能填 flight、train、hotel、ticket、restaurant、other。date 用 YYYY-MM-DD，start 和 end 用 24 小時制 HH:MM。'].join('\n');
+const sample = '```json\n' + JSON.stringify({ version: 1, items: [
+{ date: '2026-11-21', start: '15:00', type: 'ticket', title: '嵐山小火車', place: '嵯峨站', orderNo: '[訂單編號]' },
+{ date: '2026-11-23', start: '10:00', type: 'ticket', title: '金閣寺參觀', place: '金閣寺', orderNo: null },
+{ date: '2026-11-23', start: '18:00', type: 'restaurant', title: '晚餐　先斗町', place: '先斗町', orderNo: '[訂位代號]' }
+] }, null, 2) + '\n```';
+const parsed = st.parsed || null;
+const rows = parsed && parsed.rows ? parsed.rows : [];
+const checkedCount = rows.filter((r) => r.checked).length;
+
+return {
+days, items, empty: !items.length, dayLabel: col.label + ' 的行程', dayShort: col.label,
+dayOptions: cols.map((c) => ({ key: c.key, label: c.label })),
+listRef: (el) => { if (el && !el.__tm) { el.__tm = true; el.addEventListener('touchmove', (ev) => { if (this.state && this.state.drag) ev.preventDefault(); }, { passive: false }); } },
+listStyle: 'position: relative; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; ' + (drag ? 'touch-action: none' : ''),
+pMove, pUp: () => finish(true), pCancel: () => finish(false),
+hasToast: !!st.toast, toast: st.toast || '', canUndo: !!st.canUndo,
+undo: () => this.setState({ cols: st.undoCols, toast: '已復原', canUndo: false }),
+sheetEdit: st.sheet === 'edit' && !!edItem, sheetAdd: st.sheet === 'add', sheetImport: st.sheet === 'import',
+ed,
+closeSheet: () => this.setState({ sheet: null }),
+openAdd: () => this.setState({ sheet: 'add', toast: '' }),
+addTypes, formTypes,
+openImport: () => this.setState({ sheet: 'import', toast: '' }),
+copyLabel: st.copied ? '已複製提示詞' : '複製提示詞',
+copyPrompt: () => { try { navigator.clipboard.writeText(prompt); } catch (e) {} this.setState({ copied: true }); },
+raw: st.raw || '',
+setRaw: (e) => this.setState({ raw: e.target.value, parsed: null }),
+pasteSample: () => this.setState({ raw: sample, parsed: null }),
+check: () => this.setState({ parsed: this.parse(this.state && this.state.raw) }),
+backToPaste: () => this.setState({ parsed: null }),
+noRows: !rows.length,
+hasError: !!(parsed && parsed.error), error: parsed && parsed.error ? parsed.error : '',
+hasRows: rows.length > 0,
+skippedNote: parsed && parsed.skipped ? '（' + parsed.skipped + ' 筆缺日期或名稱，已略過）' : '',
+rows: rows.map((r, i) => ({ ...r, hasFlag: !!r.flag,
+when: r.date.slice(5).replace('-', '/') + (r.start ? ' ' + r.start : '') + '，' + (TL[r.type] || '其他'),
+toggle: () => { const p = JSON.parse(JSON.stringify(this.state.parsed)); p.rows[i].checked = !p.rows[i].checked; this.setState({ parsed: p }); } })),
+noneChecked: checkedCount === 0,
+importLabel: '加入 ' + checkedCount + ' 張',
+importBtnStyle: 'height: 48px; border-radius: 12px; border: 0; font: inherit; font-size: 15px; font-weight: 700; ' + (checkedCount ? 'background: #1E2A44; color: #FFFFFF' : 'background: #DCE1E8; color: #5B6578'),
+doImport: () => {
+const next = clone(); const picked = rows.filter((r) => r.checked);
+picked.forEach((r, k) => insertByTime(next.find((c) => c.key === r.target).items, { id: 'imp' + Date.now() + k, time: r.start, title: r.title, type: r.type, meta: r.meta }));
+this.setState({ cols: next, sheet: null, parsed: null, raw: '', day: picked.length ? picked[0].target : sel, toast: '已加入 ' + picked.length + ' 張卡片', canUndo: true, undoCols: cols });
+}
+};
+}
+}
+</script>
+</body>
+</html>

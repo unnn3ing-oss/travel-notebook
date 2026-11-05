@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>景點卡</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1E2A44}a:hover{color:#000000}
+.num{font-family:'Space Grotesk',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; display: flex; flex-direction: column; background: #F4F6F9; color: #1E2A44; font-family: 'Noto Sans TC', system-ui, sans-serif; overflow: hidden">
+<main style="flex: 1; overflow: hidden; padding: 52px 20px 24px; display: flex; flex-direction: column; gap: 16px">
+  <div style="display: flex; justify-content: space-between; align-items: center">
+    <a href="Itinerary.dc.html" aria-label="返回行程" style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #1E2A44">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    </a>
+    <button style="height: 44px; padding: 0 16px; border-radius: 22px; border: 0; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+      在地圖開啟
+    </button>
+  </div>
+
+  <header>
+    <h1 style="margin: 0; font-size: 28px; font-weight: 700">伏見稻荷大社</h1>
+    <p style="margin: 4px 0 0; font-size: 14px; color: #5B6578">排在 <span class="num">11/22 07:00</span>，建議停留 2 小時</p>
+  </header>
+
+  <div role="group" aria-label="這個景點對我來說是" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+    <sc-for list="{{tags}}" as="t" hint-placeholder-count="4">
+      <button aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}" style="{{t.style}}">{{t.label}}</button>
+    </sc-for>
+  </div>
+
+  <section aria-labelledby="want-h" style="display: flex; flex-direction: column">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <h2 id="want-h" style="margin: 0; font-size: 16px; font-weight: 700">想看清單</h2>
+      <button style="height: 40px; padding: 0 4px; border: 0; background: transparent; color: #1E2A44; font: inherit; font-size: 14px; font-weight: 500">＋ 新增</button>
+    </div>
+    <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; border-top: 1px solid #DCE1E8"><input type="checkbox" style="width: 20px; height: 20px; accent-color: #1F7A5C"> 千本鳥居</label>
+    <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; border-top: 1px solid #DCE1E8"><input type="checkbox" style="width: 20px; height: 20px; accent-color: #1F7A5C"> 稻荷山頂</label>
+    <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px; border-top: 1px solid #DCE1E8"><input type="checkbox" style="width: 20px; height: 20px; accent-color: #1F7A5C"> 狐狸繪馬</label>
+  </section>
+
+  <section aria-labelledby="note-h" style="display: flex; flex-direction: column; gap: 8px">
+    <label id="note-h" for="note" style="font-size: 16px; font-weight: 700">筆記</label>
+    <textarea id="note" rows="3" style="font: inherit; font-size: 15px; line-height: 1.6; color: #1E2A44; border: 1px solid #DCE1E8; border-radius: 10px; padding: 10px 12px; resize: none; background: #FFFFFF">清晨人少比較好拍照，記得帶零錢買繪馬。</textarea>
+  </section>
+
+  <section aria-labelledby="info-h" style="display: flex; flex-direction: column">
+    <h2 id="info-h" style="margin: 0 0 4px; font-size: 16px; font-weight: 700">資訊與連結</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; min-height: 44px; border-top: 1px solid #DCE1E8; font-size: 15px"><span style="color: #5B6578">開放時間</span><span>24 小時</span></div>
+    <a href="#" style="display: flex; justify-content: space-between; align-items: center; min-height: 44px; border-top: 1px solid #DCE1E8; font-size: 15px; text-decoration: none">官方網站<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"></path></svg></a>
+  </section>
+
+  <button style="height: 52px; flex-shrink: 0; border-radius: 14px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 15px; font-weight: 500">移到其他天</button>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+const on = (this.state && this.state.on) || { '喜歡': true, '想去': true };
+const tags = ['喜歡', '想去', '想看', '必去'].map((l) => ({
+label: l,
+pressed: String(!!on[l]),
+style: 'height: 44px; border-radius: 12px; font: inherit; font-size: 14px; ' + (on[l] ? 'border: 0; background: #1E2A44; color: #FFFFFF; font-weight: 700' : 'border: 1px solid #DCE1E8; background: #FFFFFF; color: #5B6578'),
+toggle: () => this.setState({ on: { ...on, [l]: !on[l] } })
+}));
+return { tags };
+}
+}
+</script>
+</body>
+</html>

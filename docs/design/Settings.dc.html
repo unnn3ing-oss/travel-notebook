@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>設定與備份</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1E2A44}a:hover{color:#000000}
+.num{font-family:'Space Grotesk',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 1160px; position: relative; background: #F4F6F9; color: #1E2A44; font-family: 'Noto Sans TC', system-ui, sans-serif; overflow: hidden">
+<main style="padding: 52px 20px 32px; display: flex; flex-direction: column; gap: 24px">
+  <a href="Essentials.dc.html" aria-label="返回" style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #1E2A44">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+  </a>
+  <h1 style="margin: 0; font-size: 28px; font-weight: 700">設定與備份</h1>
+
+  <section aria-labelledby="bk-h" style="display: flex; flex-direction: column; gap: 10px">
+    <h2 id="bk-h" style="margin: 0; font-size: 16px; font-weight: 700">資料備份</h2>
+    <div style="{{backupBoxStyle}}">
+      <p style="margin: 0; font-size: 14px; line-height: 1.6">{{backupNote}}</p>
+      <p class="num" style="margin: 0; font-size: 13px; font-weight: 700">{{lastBackup}}</p>
+    </div>
+    <button onClick="{{backup}}" style="height: 52px; border-radius: 14px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 16px; font-weight: 700">備份成檔案</button>
+    <p style="margin: 0; font-size: 13px; color: #5B6578">會存成一個 .json 檔，可以放到 iCloud 雲碟或傳給自己。檔案裡有訂單編號，不要分享給別人。</p>
+    <button onClick="{{askRestore}}" style="height: 48px; border-radius: 12px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 15px">從備份檔還原</button>
+  </section>
+
+  <section aria-labelledby="ex-h" style="display: flex; flex-direction: column">
+    <h2 id="ex-h" style="margin: 0 0 4px; font-size: 16px; font-weight: 700">匯出</h2>
+    <button style="min-height: 56px; border: 0; border-bottom: 1px solid #DCE1E8; background: transparent; color: #1E2A44; font: inherit; font-size: 15px; text-align: left; display: flex; justify-content: space-between; align-items: center; padding: 0">加到 iPhone 行事曆<span style="font-size: 13px; color: #5B6578">.ics 檔</span></button>
+    <button style="min-height: 56px; border: 0; border-bottom: 1px solid #DCE1E8; background: transparent; color: #1E2A44; font: inherit; font-size: 15px; text-align: left; display: flex; justify-content: space-between; align-items: center; padding: 0">行程表 PDF<span style="font-size: 13px; color: #5B6578">可以印出來或傳給同行的人</span></button>
+  </section>
+
+  <section aria-labelledby="look-h" style="display: flex; flex-direction: column; gap: 10px">
+    <h2 id="look-h" style="margin: 0; font-size: 16px; font-weight: 700">外觀</h2>
+    <div role="radiogroup" aria-labelledby="look-h" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: #E4E8EE; border-radius: 12px; padding: 3px">
+      <sc-for list="{{themes}}" as="t" hint-placeholder-count="3">
+        <button role="radio" aria-checked="{{t.checked}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+      </sc-for>
+    </div>
+    <a href="TodayDark.dc.html" style="font-size: 14px">看深色模式的樣子</a>
+  </section>
+
+  <section aria-labelledby="more-h" style="display: flex; flex-direction: column">
+    <h2 id="more-h" style="margin: 0 0 4px; font-size: 16px; font-weight: 700">其他</h2>
+    <a href="Reminders.dc.html" style="min-height: 56px; border-bottom: 1px solid #DCE1E8; text-decoration: none; display: flex; justify-content: space-between; align-items: center; font-size: 15px">提醒設定<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+    <div style="min-height: 56px; border-bottom: 1px solid #DCE1E8; display: flex; justify-content: space-between; align-items: center; font-size: 15px">這趟旅程的時區<span style="font-size: 14px; color: #5B6578">日本（UTC+9）</span></div>
+    <button onClick="{{askDelete}}" style="min-height: 56px; border: 0; background: transparent; color: #B83A32; font: inherit; font-size: 15px; font-weight: 700; text-align: left; padding: 0">刪除「京都 5 日」</button>
+  </section>
+</main>
+
+<sc-if value="{{confirmOpen}}" hint-placeholder-val="{{false}}">
+  <div aria-hidden="true" style="position: absolute; inset: 0; background: rgba(30,42,68,0.55)"></div>
+  <section role="alertdialog" aria-modal="true" aria-labelledby="cf-h" aria-describedby="cf-d" style="position: absolute; left: 20px; right: 20px; top: 300px; background: #FFFFFF; border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+    <h2 id="cf-h" style="margin: 0; font-size: 18px; font-weight: 700">{{cfTitle}}</h2>
+    <p id="cf-d" style="margin: 0; font-size: 14px; line-height: 1.6; color: #5B6578">{{cfBody}}</p>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <button onClick="{{closeConfirm}}" style="height: 48px; border-radius: 12px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 15px">取消</button>
+      <button onClick="{{doConfirm}}" style="height: 48px; border-radius: 12px; border: 0; background: #B83A32; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 700">{{cfAction}}</button>
+    </div>
+  </section>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1160}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const backed = !!st.backed;
+const theme = st.theme || 'system';
+const CF = {
+restore: ['用備份檔還原？', '目前手機裡的資料會被備份檔的內容取代。建議先按「備份成檔案」存一份現在的資料。', '選擇檔案並還原'],
+del: ['刪除「京都 5 日」？', '行程、預訂、備案、筆記和花費都會一起刪除，而且無法復原。', '刪除旅程']
+};
+const cf = CF[st.confirm] || ['', '', ''];
+return {
+backupNote: backed ? '已存好一份備份。換手機或手機遺失時，可以用這個檔案還原。' : '資料只存在這支手機。換手機、清除 Safari 資料或手機遺失，資料就會不見。出發前至少備份一次。',
+lastBackup: backed ? '上次備份：剛剛' : '還沒備份過',
+backupBoxStyle: 'padding: 14px; border-radius: 14px; display: flex; flex-direction: column; gap: 6px; ' + (backed ? 'background: #DDF1E8; color: #1F7A5C' : 'background: #F9E1DF; color: #B83A32'),
+backup: () => this.setState({ backed: true }),
+askRestore: () => this.setState({ confirm: 'restore' }),
+askDelete: () => this.setState({ confirm: 'del' }),
+confirmOpen: !!st.confirm, cfTitle: cf[0], cfBody: cf[1], cfAction: cf[2],
+closeConfirm: () => this.setState({ confirm: null }),
+doConfirm: () => this.setState({ confirm: null }),
+themes: [['light', '淺色'], ['dark', '深色'], ['system', '跟隨系統']].map(([k, l]) => ({ label: l, checked: String(theme === k), pick: () => this.setState({ theme: k }),
+style: 'height: 40px; border: 0; border-radius: 10px; font: inherit; font-size: 14px; ' + (theme === k ? 'background: #FFFFFF; color: #1E2A44; font-weight: 700' : 'background: transparent; color: #5B6578') }))
+};
+}
+}
+</script>
+</body>
+</html>

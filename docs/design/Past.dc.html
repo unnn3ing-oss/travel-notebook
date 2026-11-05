@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>回顧過去旅行</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1E2A44}a:hover{color:#000000}
+.num{font-family:'Space Grotesk',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; background: #F4F6F9; color: #1E2A44; font-family: 'Noto Sans TC', system-ui, sans-serif; overflow: hidden">
+<main style="padding: 52px 20px 24px; display: flex; flex-direction: column; gap: 18px">
+  <a href="Welcome.dc.html" aria-label="返回" style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #1E2A44">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+  </a>
+  <header>
+    <h1 style="margin: 0; font-size: 28px; font-weight: 700">回顧過去旅行</h1>
+    <p class="num" style="margin: 4px 0 0; font-size: 14px; color: #5B6578">2 趟旅行，共 7 天</p>
+  </header>
+
+  <article style="position: relative; background: #1E2A44; color: #FFFFFF; border-radius: 18px; display: flex; flex-direction: column">
+    <div style="padding: 18px 18px 14px">
+      <p class="num" style="margin: 0; font-size: 13px; color: #C9D1DE">2025/10/02 – 10/05，2 人</p>
+      <h2 style="margin: 4px 0 0; font-size: 24px; font-weight: 700">首爾 4 日</h2>
+    </div>
+    <div aria-hidden="true" style="border-top: 2px dashed rgba(255,255,255,0.3); margin: 0 14px"></div>
+    <span aria-hidden="true" style="position: absolute; left: -10px; top: 78px; width: 20px; height: 20px; border-radius: 10px; background: #F4F6F9"></span>
+    <span aria-hidden="true" style="position: absolute; right: -10px; top: 78px; width: 20px; height: 20px; border-radius: 10px; background: #F4F6F9"></span>
+    <dl style="margin: 0; padding: 14px 18px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <div><dt style="font-size: 12px; color: #C9D1DE">去過的地點</dt><dd class="num" style="margin: 2px 0 0; font-size: 22px; font-weight: 700">14</dd></div>
+      <div><dt style="font-size: 12px; color: #C9D1DE">筆記</dt><dd class="num" style="margin: 2px 0 0; font-size: 22px; font-weight: 700">9</dd></div>
+      <div><dt style="font-size: 12px; color: #C9D1DE">總花費</dt><dd class="num" style="margin: 2px 0 0; font-size: 16px; font-weight: 700; padding-top: 4px">₩[金額]</dd></div>
+    </dl>
+    <p style="margin: 0; padding: 0 18px 16px; font-size: 13px; line-height: 1.6; color: #C9D1DE">標了「喜歡」：益善洞、望遠市場、聖水洞咖啡街</p>
+  </article>
+
+  <article style="background: #FFFFFF; border-radius: 18px; padding: 16px 18px; display: flex; flex-direction: column; gap: 6px">
+    <p class="num" style="margin: 0; font-size: 13px; color: #5B6578">2025/04/18 – 04/20，3 人</p>
+    <h2 style="margin: 0; font-size: 20px; font-weight: 700">沖繩 3 日</h2>
+    <p class="num" style="margin: 0; font-size: 14px; color: #5B6578">去過 9 個地點，寫了 4 則筆記，用過 1 次備案</p>
+  </article>
+
+  <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px">
+    <a href="NewTrip.dc.html" style="height: 52px; border-radius: 14px; background: #1E2A44; color: #FFFFFF; font-size: 15px; font-weight: 700; text-decoration: none; display: flex; align-items: center; justify-content: center">把首爾行程當範本，開新旅程</a>
+    <p style="margin: 0; text-align: center; font-size: 13px; color: #5B6578">會複製景點、筆記和交通路線，日期和訂單不會帶過去。</p>
+  </div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

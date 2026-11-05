@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>景點庫</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1E2A44}a:hover{color:#000000}
+.num{font-family:'Space Grotesk',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 1100px; background: #F4F6F9; color: #1E2A44; font-family: 'Noto Sans TC', system-ui, sans-serif; overflow: hidden">
+<main style="padding: 52px 20px 32px; display: flex; flex-direction: column; gap: 16px">
+  <div style="display: flex; justify-content: space-between; align-items: center">
+    <a href="PlanList.dc.html" aria-label="返回行程" style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #1E2A44">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+    </a>
+    <span class="num" style="font-size: 13px; color: #5B6578">{{countText}}</span>
+  </div>
+  <h1 style="margin: 0; font-size: 28px; font-weight: 700">景點庫</h1>
+
+  <label style="position: relative; display: block">
+    <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">搜尋景點</span>
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B6578" stroke-width="2.2" stroke-linecap="round" style="position: absolute; left: 14px; top: 15px"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+    <input type="search" value="{{q}}" onChange="{{setQ}}" placeholder="搜尋名稱或筆記" style="width: 100%; height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px 0 40px; font: inherit; font-size: 16px; color: #1E2A44; background: #FFFFFF">
+  </label>
+
+  <div role="group" aria-label="依標籤篩選" style="display: flex; gap: 6px; overflow-x: auto; margin: 0 -20px; padding: 0 20px">
+    <sc-for list="{{tags}}" as="t" hint-placeholder-count="5">
+      <button aria-pressed="{{t.pressed}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}">
+    <p role="status" style="margin: 0; padding: 10px 14px; border-radius: 12px; background: #DDF1E8; color: #1F7A5C; font-size: 14px; font-weight: 700">{{toast}}</p>
+  </sc-if>
+
+  <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+    <sc-for list="{{places}}" as="p" hint-placeholder-count="5">
+      <li style="padding: 14px; border-radius: 14px; background: #FFFFFF; display: flex; flex-direction: column; gap: 8px">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px">
+          <a href="Place.dc.html" style="font-size: 16px; font-weight: 700; text-decoration: none">{{p.name}}</a>
+          <span style="font-size: 12px; color: #5B6578; flex-shrink: 0">{{p.kind}}</span>
+        </div>
+        <span style="font-size: 13px; color: #5B6578">{{p.tagText}}</span>
+        <sc-if value="{{p.hasNote}}" hint-placeholder-val="{{false}}"><span style="font-size: 13px; line-height: 1.5">{{p.note}}</span></sc-if>
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #5B6578">{{p.dayLabel}}
+          <select value="{{p.day}}" onChange="{{p.setDay}}" style="flex: 1; height: 40px; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font: inherit; font-size: 14px; color: #1E2A44; background: #FFFFFF">
+            <option value="">還沒排</option><option value="2026-11-20">11/20 週五</option><option value="2026-11-21">11/21 週六</option><option value="2026-11-22">11/22 週日</option><option value="2026-11-23">11/23 週一</option><option value="2026-11-24">11/24 週二</option>
+          </select>
+        </label>
+      </li>
+    </sc-for>
+  </ul>
+  <sc-if value="{{empty}}" hint-placeholder-val="{{false}}">
+    <p style="margin: 0; padding: 24px 12px; border: 1.5px dashed #B8C0CC; border-radius: 12px; text-align: center; font-size: 14px; color: #5B6578">找不到「{{q}}」。可以直接在下面新增。</p>
+  </sc-if>
+
+  <div style="display: flex; gap: 8px; padding: 12px; border-radius: 14px; background: #E4E8EE">
+    <label style="flex: 1"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">新景點名稱</span><input type="text" value="{{newName}}" onChange="{{setNewName}}" placeholder="新增景點，例如：銀閣寺" style="width: 100%; height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 12px; font: inherit; font-size: 15px; color: #1E2A44; background: #FFFFFF"></label>
+    <button onClick="{{addPlace}}" style="height: 44px; padding: 0 16px; border-radius: 10px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700">新增</button>
+  </div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1100}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const DAYS = { '2026-11-20': '11/20 週五', '2026-11-21': '11/21 週六', '2026-11-22': '11/22 週日', '2026-11-23': '11/23 週一', '2026-11-24': '11/24 週二' };
+const list = st.list || [
+{ id: 'p1', name: '金閣寺', kind: '景點', tags: ['必去'], note: '', day: '' },
+{ id: 'p2', name: '錦市場', kind: '餐廳', tags: ['想去'], note: '下午 5 點前去，很多店早收', day: '' },
+{ id: 'p3', name: '哲學之道', kind: '景點', tags: ['想看'], note: '秋天楓葉', day: '' },
+{ id: 'p4', name: '伏見稻荷大社', kind: '景點', tags: ['喜歡', '想去'], note: '清晨人少', day: '2026-11-22' },
+{ id: 'p5', name: '一保堂茶舖', kind: '店家', tags: ['想去'], note: '買抹茶當伴手禮', day: '' }
+];
+const tag = st.tag || '全部';
+const q = st.q || '';
+const ql = q.trim().toLowerCase();
+const shown = list.filter((p) => (tag === '全部' || p.tags.indexOf(tag) >= 0) && (!ql || (p.name + p.note).toLowerCase().indexOf(ql) >= 0));
+const unplanned = list.filter((p) => !p.day).length;
+return {
+q, setQ: (e) => this.setState({ q: e.target.value, toast: '' }),
+countText: list.length + ' 個地點，' + unplanned + ' 個還沒排',
+tags: ['全部', '必去', '想去', '想看', '喜歡'].map((t) => ({ label: t, pressed: String(t === tag), pick: () => this.setState({ tag: t }),
+style: 'flex: 0 0 auto; height: 38px; padding: 0 14px; border-radius: 19px; font: inherit; font-size: 14px; ' + (t === tag ? 'border: 0; background: #1E2A44; color: #FFFFFF; font-weight: 700' : 'border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44') })),
+places: shown.map((p) => ({
+...p, hasNote: !!p.note,
+tagText: p.tags.length ? p.tags.join('、') : '沒有標籤',
+dayLabel: p.day ? '排在' : '加到',
+setDay: (e) => {
+const d = e.target.value;
+this.setState({ list: list.map((x) => (x.id === p.id ? { ...x, day: d } : x)), toast: d ? '已把「' + p.name + '」排到 ' + DAYS[d] + '，時間之後再定' : '已把「' + p.name + '」移回未排程' });
+}
+})),
+empty: !shown.length,
+hasToast: !!st.toast, toast: st.toast || '',
+newName: st.newName || '',
+setNewName: (e) => this.setState({ newName: e.target.value }),
+addPlace: () => {
+const n = (st.newName || '').trim().slice(0, 40);
+if (!n) return;
+if (list.some((p) => p.name === n)) return this.setState({ toast: '景點庫裡已經有「' + n + '」' });
+this.setState({ list: list.concat([{ id: 'n' + Date.now(), name: n, kind: '景點', tags: [], note: '', day: '' }]), newName: '', q: '', tag: '全部', toast: '已新增「' + n + '」' });
+}
+};
+}
+}
+</script>
+</body>
+</html>

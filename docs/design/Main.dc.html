@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>旅程總覽</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1E2A44}a:hover{color:#000000}
+.num{font-family:'Space Grotesk',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; display: flex; flex-direction: column; background: #F4F6F9; color: #1E2A44; font-family: 'Noto Sans TC', system-ui, sans-serif; overflow: hidden">
+<main style="flex: 1; overflow: hidden; padding: 56px 20px 16px; display: flex; flex-direction: column; gap: 16px">
+  <header style="display: flex; justify-content: space-between; align-items: flex-end">
+    <div>
+      <p class="num" style="margin: 0; font-size: 13px; color: #5B6578">11/20 – 11/24，共 5 天</p>
+      <h1 style="margin: 4px 0 0; font-size: 28px; font-weight: 700">京都 5 日</h1>
+    </div>
+    <button aria-label="切換旅程" style="width: 44px; height: 44px; border-radius: 22px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; display: flex; align-items: center; justify-content: center">
+      <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+  </header>
+
+  <section aria-label="出發倒數" style="position: relative; display: flex; background: #1E2A44; color: #FFFFFF; border-radius: 16px">
+    <div style="flex: 1; padding: 20px">
+      <p style="margin: 0; font-size: 13px; color: #C9D1DE">距離出發</p>
+      <p style="margin: 6px 0 0; display: flex; align-items: baseline; gap: 6px">
+        <span class="num" style="font-size: 56px; font-weight: 700; line-height: 1; color: #F2C14E">15</span>
+        <span style="font-size: 16px">天</span>
+      </p>
+    </div>
+    <div style="width: 132px; box-sizing: border-box; padding: 20px 16px; border-left: 2px dashed rgba(255,255,255,0.35); display: flex; flex-direction: column; justify-content: center; gap: 4px">
+      <p style="margin: 0; font-size: 12px; color: #C9D1DE">去程航班</p>
+      <p class="num" style="margin: 0; font-size: 20px; font-weight: 700">TPE → KIX</p>
+      <p class="num" style="margin: 0; font-size: 12px; color: #C9D1DE">11/20 06:00 起飛</p>
+    </div>
+    <span aria-hidden="true" style="position: absolute; top: -10px; right: 122px; width: 20px; height: 20px; border-radius: 10px; background: #F4F6F9"></span>
+    <span aria-hidden="true" style="position: absolute; bottom: -10px; right: 122px; width: 20px; height: 20px; border-radius: 10px; background: #F4F6F9"></span>
+  </section>
+
+  <section aria-labelledby="prep-h" style="padding: 4px 0 0; display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <h2 id="prep-h" style="margin: 0; font-size: 16px; font-weight: 700">出發前準備</h2>
+      <a href="Checklist.dc.html" style="font-size: 14px; font-weight: 500; padding: 10px 0">查看全部 20 項</a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px">
+      <div role="progressbar" aria-label="準備進度" aria-valuenow="12" aria-valuemin="0" aria-valuemax="20" style="flex: 1; height: 8px; border-radius: 4px; background: #DCE1E8; overflow: hidden">
+        <div style="width: 60%; height: 100%; background: #1F7A5C"></div>
+      </div>
+      <span class="num" style="font-size: 14px; font-weight: 700">12 / 20</span>
+    </div>
+    <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+      <li style="display: flex; align-items: center; justify-content: space-between; min-height: 44px; border-top: 1px solid #DCE1E8">
+        <label style="display: flex; align-items: center; gap: 10px; font-size: 15px"><input type="checkbox" style="width: 20px; height: 20px; accent-color: #1F7A5C"> 訂 Haruka 機場快線</label>
+        <span style="font-size: 13px; font-weight: 700; color: #B83A32">要在 11/08 前完成（還剩 3 天）</span>
+      </li>
+      <li style="display: flex; align-items: center; justify-content: space-between; min-height: 44px; border-top: 1px solid #DCE1E8">
+        <label style="display: flex; align-items: center; gap: 10px; font-size: 15px"><input type="checkbox" style="width: 20px; height: 20px; accent-color: #1F7A5C"> 換日圓現金</label>
+        <span style="font-size: 13px; color: #5B6578">要在 11/15 前完成（還剩 10 天）</span>
+      </li>
+      <li style="display: flex; align-items: center; justify-content: space-between; min-height: 44px; border-top: 1px solid #DCE1E8">
+        <label style="display: flex; align-items: center; gap: 10px; font-size: 15px"><input type="checkbox" style="width: 20px; height: 20px; accent-color: #1F7A5C"> 買日本 eSIM</label>
+        <span style="font-size: 13px; color: #5B6578">要在 11/18 前完成（還剩 13 天）</span>
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="bk-h" style="display: flex; flex-direction: column; gap: 4px">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <h2 id="bk-h" style="margin: 0; font-size: 16px; font-weight: 700">預訂狀態</h2>
+      <a href="Bookings.dc.html" style="font-size: 14px; font-weight: 500; padding: 10px 0">看全部預訂</a>
+    </div>
+    <ul style="list-style: none; margin: 0; padding: 0">
+      <li style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid #DCE1E8">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B6578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"></path></svg>
+        <span style="flex: 1; font-size: 15px">去程 CI 156<span style="display: block; font-size: 12px; color: #1F7A5C">訂單確認</span></span>
+      </li>
+      <li style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid #DCE1E8">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B6578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18V6M3 13h18v5M21 13a3 3 0 0 0-3-3h-7v3"></path><circle cx="7" cy="10" r="1.5"></circle></svg>
+        <span style="flex: 1; font-size: 15px">京都車站飯店<span style="display: block; font-size: 12px; color: #5B6578"><span style="color: #1F7A5C">訂單確認</span>，另有 2 個備案</span></span>
+      </li>
+      <li style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid #DCE1E8">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B6578" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="14" rx="3"></rect><path d="M5 11h14M8 21l2-4M16 21l-2-4"></path></svg>
+        <span style="flex: 1; font-size: 15px">嵐山小火車<span style="display: block; font-size: 12px; color: #5B6578">10/21 已開賣，有 1 個備案</span></span>
+        <span style="font-size: 12px; font-weight: 700; color: #B83A32; background: #F9E1DF; padding: 4px 10px; border-radius: 12px">還沒訂</span>
+      </li>
+    </ul>
+  </section>
+</main>
+
+<nav aria-label="主選單" style="height: 84px; box-sizing: border-box; padding: 6px 8px 24px; background: #FFFFFF; border-top: 1px solid #DCE1E8; display: flex">
+  <a href="Main.dc.html" aria-current="page" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #1E2A44; font-size: 11px; font-weight: 700">
+    <span style="width: 52px; height: 30px; border-radius: 15px; background: #F2C14E; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M15.5 8.5l-2 5-5 2 2-5z"></path></svg></span>總覽
+  </a>
+  <a href="PlanList.dc.html" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #5B6578; font-size: 11px">
+    <span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg></span>行程
+  </a>
+  <a href="Bookings.dc.html" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #5B6578; font-size: 11px">
+    <span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"></path><path d="M15 7v10" stroke-dasharray="2 2"></path></svg></span>預訂
+  </a>
+  <a href="Essentials.dc.html" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; color: #5B6578; font-size: 11px">
+    <span style="width: 52px; height: 30px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"></path><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"></path></svg></span>必備
+  </a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

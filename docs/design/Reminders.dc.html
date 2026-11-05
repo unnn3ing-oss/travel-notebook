@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>提醒</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1E2A44}a:hover{color:#000000}
+.num{font-family:'Space Grotesk',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 1180px; background: #F4F6F9; color: #1E2A44; font-family: 'Noto Sans TC', system-ui, sans-serif; overflow: hidden">
+<main style="padding: 52px 20px 32px; display: flex; flex-direction: column; gap: 20px">
+  <a href="Today.dc.html" aria-label="返回今日" style="width: 44px; height: 44px; border-radius: 22px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #1E2A44">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+  </a>
+  <header>
+    <h1 style="margin: 0; font-size: 28px; font-weight: 700">提醒</h1>
+    <p style="margin: 4px 0 0; font-size: 14px; color: #5B6578">依行程、交通和預訂自動排好，不想要的可以關掉。</p>
+  </header>
+
+  <div style="padding: 14px; border-radius: 14px; background: #FCEFC7; display: flex; flex-direction: column; gap: 8px">
+    <p style="margin: 0; font-size: 14px; line-height: 1.6"><strong>iPhone 要先把 App 加到主畫面</strong>，才收得到提醒。在 Safari 按分享，選「加入主畫面」。</p>
+    <button style="align-self: flex-start; height: 40px; padding: 0 14px; border-radius: 10px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700">開啟通知</button>
+  </div>
+
+  <sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+    <section style="display: flex; flex-direction: column">
+      <h2 style="margin: 0 0 4px; font-size: 14px; font-weight: 700; color: #5B6578">{{g.title}}</h2>
+      <ul style="list-style: none; margin: 0; padding: 0">
+        <sc-for list="{{g.items}}" as="r" hint-placeholder-count="3">
+          <li style="display: flex; align-items: center; gap: 12px; min-height: 64px; border-bottom: 1px solid #DCE1E8">
+            <span class="num" style="{{r.timeStyle}}">{{r.time}}</span>
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px">
+              <span style="{{r.textStyle}}">{{r.text}}</span>
+              <span style="font-size: 12px; color: #5B6578">{{r.why}}</span>
+            </span>
+            <input type="checkbox" role="switch" aria-label="{{r.label}}" checked="{{r.on}}" onChange="{{r.toggle}}" style="width: 44px; height: 26px; flex-shrink: 0; accent-color: #1F7A5C">
+          </li>
+        </sc-for>
+      </ul>
+    </section>
+  </sc-for>
+
+  <section aria-labelledby="rule-h" style="display: flex; flex-direction: column">
+    <h2 id="rule-h" style="margin: 0 0 4px; font-size: 14px; font-weight: 700; color: #5B6578">自動提醒規則</h2>
+    <label style="display: flex; justify-content: space-between; align-items: center; min-height: 56px; border-bottom: 1px solid #DCE1E8; font-size: 15px">行程開始前
+      <select value="{{lead}}" onChange="{{setLead}}" style="height: 40px; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font: inherit; font-size: 14px; color: #1E2A44; background: #FFFFFF">
+        <option value="10">10 分鐘</option><option value="30">30 分鐘</option><option value="60">1 小時</option>
+      </select>
+    </label>
+    <label style="display: flex; justify-content: space-between; align-items: center; min-height: 56px; border-bottom: 1px solid #DCE1E8; font-size: 15px">交通：最晚出發去搭車的時間
+      <input type="checkbox" role="switch" checked="{{transitOn}}" onChange="{{toggleTransit}}" style="width: 44px; height: 26px; accent-color: #1F7A5C">
+    </label>
+    <label style="display: flex; justify-content: space-between; align-items: center; min-height: 56px; border-bottom: 1px solid #DCE1E8; font-size: 15px">預訂的免費取消期限前
+      <select value="{{cancelLead}}" onChange="{{setCancelLead}}" style="height: 40px; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font: inherit; font-size: 14px; color: #1E2A44; background: #FFFFFF">
+        <option value="1">1 天</option><option value="2">2 天</option><option value="3">3 天</option>
+      </select>
+    </label>
+    <label style="display: flex; justify-content: space-between; align-items: center; min-height: 56px; border-bottom: 1px solid #DCE1E8; font-size: 15px">安靜時段（不提醒）
+      <span class="num" style="font-size: 14px; color: #5B6578">23:00 – 06:00</span>
+    </label>
+  </section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1180}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const off = st.off || {};
+const lead = st.lead || '30';
+const transitOn = st.transitOn ?? true;
+const sub = (hhmm, m) => { const [h, mm] = hhmm.split(':').map(Number); const t = h * 60 + mm - m; return String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); };
+const L = +lead;
+const raw = [
+{ g: '今天 11/21', id: 'r1', time: '09:50', text: '出發去二年坂', why: '交通：步行 12 分鐘，10:30 要到', kind: 'transit' },
+{ g: '今天 11/21', id: 'r2', time: sub('13:00', L), text: '午餐　祇園割烹 13:00', why: '行程開始前 ' + (L >= 60 ? L / 60 + ' 小時' : L + ' 分鐘'), kind: 'item' },
+{ g: '今天 11/21', id: 'r3', time: '14:05', text: '出發去搭 JR 往嵯峨嵐山', why: '交通：前往 32 號月台需要 5 分鐘，搭 14:07 那班', kind: 'transit' },
+{ g: '今天 11/21', id: 'r4', time: sub('15:00', L), text: '嵐山小火車 15:00 發車', why: '門票：還沒訂，有 1 個備案', kind: 'item', warn: true },
+{ g: '明天 11/22', id: 'r5', time: sub('07:00', L), text: '伏見稻荷大社', why: '行程開始前 ' + (L >= 60 ? L / 60 + ' 小時' : L + ' 分鐘'), kind: 'item' },
+{ g: '之後', id: 'r6', time: '11/24 09:00', text: '退房前整理行李', why: '住宿：11:00 退房', kind: 'item' }
+];
+const groups = [];
+raw.forEach((r) => {
+let g = groups.find((x) => x.title === r.g);
+if (!g) { g = { title: r.g, items: [] }; groups.push(g); }
+const ruleOff = r.kind === 'transit' && !transitOn;
+const on = !off[r.id] && !ruleOff;
+g.items.push({
+time: r.time, text: r.text, why: ruleOff ? '交通提醒已在下方規則關閉' : r.why, on, label: r.text + ' 的提醒',
+timeStyle: 'width: ' + (r.time.length > 5 ? '84px' : '48px') + '; flex-shrink: 0; font-size: 15px; font-weight: 700; ' + (on ? '' : 'color: #8A94A6'),
+textStyle: 'font-size: 15px; font-weight: 700; ' + (on ? (r.warn ? 'color: #B83A32' : '') : 'color: #8A94A6; text-decoration: line-through'),
+toggle: () => this.setState({ off: { ...off, [r.id]: on } })
+});
+});
+return {
+groups, lead, transitOn, cancelLead: st.cancelLead || '2',
+setLead: (e) => this.setState({ lead: e.target.value }),
+toggleTransit: () => this.setState({ transitOn: !transitOn }),
+setCancelLead: (e) => this.setState({ cancelLead: e.target.value })
+};
+}
+}
+</script>
+</body>
+</html>

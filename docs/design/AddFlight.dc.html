@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>新增航班</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1E2A44}a:hover{color:#000000}
+.num{font-family:'Space Grotesk',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 1480px; position: relative; display: flex; flex-direction: column; background: #F4F6F9; color: #1E2A44; font-family: 'Noto Sans TC', system-ui, sans-serif; overflow: hidden">
+<header style="padding: 52px 20px 12px; display: flex; justify-content: space-between; align-items: center">
+  <a href="PlanList.dc.html" style="height: 44px; display: flex; align-items: center; font-size: 15px; text-decoration: none">取消</a>
+  <h1 style="margin: 0; font-size: 17px; font-weight: 700">新增航班</h1>
+  <button onClick="{{save}}" style="height: 40px; padding: 0 16px; border-radius: 10px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 700">儲存</button>
+</header>
+
+<main style="flex: 1; padding: 8px 20px 32px; display: flex; flex-direction: column; gap: 20px">
+  <sc-if value="{{hasMsg}}" hint-placeholder-val="{{false}}">
+    <p role="status" style="{{msgStyle}}">{{msg}}</p>
+  </sc-if>
+
+  <section aria-label="登機證預覽" style="position: relative; border-radius: 16px; background: #1E2A44; color: #FFFFFF; overflow: hidden">
+    <div style="padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <span class="num" style="font-size: 14px; font-weight: 700">{{f.airline}} {{f.flightNo}}</span>
+        <span style="{{statusPill}}">{{statusLabel}}</span>
+      </div>
+      <div style="display: grid; grid-template-columns: minmax(0, 1fr) 40px minmax(0, 1fr); align-items: end; gap: 6px">
+        <div><p class="num" style="margin: 0; font-size: 40px; font-weight: 700; line-height: 1; color: #F2C14E">{{f.from}}</p><p class="num" style="margin: 6px 0 0; font-size: 12px; color: #C9D1DE">{{depLine}}</p></div>
+        <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="#C9D1DE" style="justify-self: center; margin-bottom: 22px"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" transform="rotate(90 12 12)"></path></svg>
+        <div style="text-align: right"><p class="num" style="margin: 0; font-size: 40px; font-weight: 700; line-height: 1; color: #F2C14E">{{f.to}}</p><p class="num" style="margin: 6px 0 0; font-size: 12px; color: #C9D1DE">{{arrLine}}</p></div>
+      </div>
+    </div>
+    <div aria-hidden="true" style="position: relative; height: 0; border-top: 2px dashed rgba(255,255,255,0.25); margin: 0 14px"></div>
+    <span aria-hidden="true" style="position: absolute; left: -9px; top: calc(50% + 6px); width: 18px; height: 18px; border-radius: 9px; background: #F4F6F9"></span>
+    <span aria-hidden="true" style="position: absolute; right: -9px; top: calc(50% + 6px); width: 18px; height: 18px; border-radius: 9px; background: #F4F6F9"></span>
+    <div style="padding: 12px 16px 16px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+      <div><p style="margin: 0; font-size: 11px; color: #C9D1DE">日期</p><p class="num" style="margin: 2px 0 0; font-size: 15px; font-weight: 700">{{dateShort}}</p></div>
+      <div><p style="margin: 0; font-size: 11px; color: #C9D1DE">報到截止</p><p class="num" style="margin: 2px 0 0; font-size: 15px; font-weight: 700">{{checkinBy}}</p></div>
+      <div><p style="margin: 0; font-size: 11px; color: #C9D1DE">座位</p><p class="num" style="margin: 2px 0 0; font-size: 15px; font-weight: 700">{{seatShort}}</p></div>
+      <div><p style="margin: 0; font-size: 11px; color: #C9D1DE">行李</p><p class="num" style="margin: 2px 0 0; font-size: 15px; font-weight: 700">{{bagShort}}</p></div>
+    </div>
+  </section>
+
+  <fieldset style="border: 0; margin: 0; padding: 0">
+    <legend style="font-size: 13px; color: #5B6578; padding: 0; margin-bottom: 8px">訂購狀態</legend>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px">
+      <sc-for list="{{statuses}}" as="s" hint-placeholder-count="3">
+        <button aria-pressed="{{s.pressed}}" onClick="{{s.pick}}" style="{{s.style}}">{{s.label}}</button>
+      </sc-for>
+    </div>
+  </fieldset>
+
+  <section aria-labelledby="fl-h" style="display: flex; flex-direction: column; gap: 12px">
+    <h2 id="fl-h" style="margin: 0; font-size: 17px; font-weight: 700">航班</h2>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">航空公司代碼
+        <input type="text" value="{{f.airline}}" onChange="{{setAirline}}" placeholder="例如 CI" class="num" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF; text-transform: uppercase">
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">航班號碼
+        <input type="text" value="{{f.flightNo}}" onChange="{{setFlightNo}}" placeholder="例如 156" class="num" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF">
+      </label>
+    </div>
+
+    <div style="background: #FFFFFF; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+      <p style="margin: 0; font-size: 14px; font-weight: 700">出發</p>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">機場代碼<input type="text" value="{{f.from}}" onChange="{{setFrom}}" maxlength="3" class="num" style="height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF; text-transform: uppercase"></label>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">航廈<input type="text" value="{{f.fromT}}" onChange="{{setFromT}}" placeholder="例如 T2" class="num" style="height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">起飛日<input type="date" value="{{f.depDate}}" onChange="{{setDepDate}}" class="num" style="height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">起飛時間（當地）<input type="time" value="{{f.depTime}}" onChange="{{setDepTime}}" class="num" style="height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+      </div>
+      <div aria-hidden="true" style="height: 1px; background: #EEF1F5"></div>
+      <p style="margin: 0; font-size: 14px; font-weight: 700">抵達</p>
+      <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">機場代碼<input type="text" value="{{f.to}}" onChange="{{setTo}}" maxlength="3" class="num" style="height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF; text-transform: uppercase"></label>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">航廈<input type="text" value="{{f.toT}}" onChange="{{setToT}}" placeholder="例如 T1" class="num" style="height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">抵達日<input type="date" value="{{f.arrDate}}" onChange="{{setArrDate}}" class="num" style="height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">抵達時間（當地）<input type="time" value="{{f.arrTime}}" onChange="{{setArrTime}}" class="num" style="height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+      </div>
+      <p class="num" style="margin: 0; font-size: 13px; color: #5B6578">{{durationNote}}</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="seat-h" style="display: flex; flex-direction: column; gap: 12px">
+    <h2 id="seat-h" style="margin: 0; font-size: 17px; font-weight: 700">訂位與座位</h2>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">訂位代號<input type="text" value="{{f.pnr}}" onChange="{{setPnr}}" placeholder="6 碼英數" class="num" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF; text-transform: uppercase"></label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">座位<input type="text" value="{{f.seat}}" onChange="{{setSeat}}" placeholder="例如 34A、34B" class="num" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+    </div>
+    <fieldset style="border: 0; margin: 0; padding: 0">
+      <legend style="font-size: 13px; color: #5B6578; padding: 0; margin-bottom: 8px">艙等</legend>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{cabins}}" as="c" hint-placeholder-count="4">
+          <button aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+        </sc-for>
+      </div>
+    </fieldset>
+  </section>
+
+  <section aria-labelledby="bag-h" style="display: flex; flex-direction: column; gap: 10px">
+    <h2 id="bag-h" style="margin: 0; font-size: 17px; font-weight: 700">行李</h2>
+    <div style="background: #FFFFFF; border-radius: 16px; padding: 4px 14px">
+      <div style="display: flex; justify-content: space-between; align-items: center; min-height: 60px; border-bottom: 1px solid #EEF1F5">
+        <span style="display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 700">託運</span><span class="num" style="font-size: 12px; color: #5B6578">每人每件 {{f.bagKg}} kg</span></span>
+        <span style="display: flex; align-items: center; gap: 4px">
+          <button onClick="{{bagMinus}}" aria-label="減少託運件數" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 18px">−</button>
+          <span class="num" style="width: 52px; text-align: center; font-size: 16px; font-weight: 700">{{f.bags}} 件</span>
+          <button onClick="{{bagPlus}}" aria-label="增加託運件數" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 18px">＋</button>
+        </span>
+      </div>
+      <label style="display: flex; justify-content: space-between; align-items: center; min-height: 56px; font-size: 15px; font-weight: 700">手提重量上限
+        <span style="display: flex; align-items: center; gap: 6px"><input type="number" inputmode="numeric" min="0" value="{{f.carryKg}}" onChange="{{setCarry}}" class="num" style="width: 64px; height: 40px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 10px; font-size: 16px; color: #1E2A44; background: #FFFFFF; text-align: right"><span style="font-size: 14px; font-weight: 400; color: #5B6578">kg</span></span>
+      </label>
+    </div>
+  </section>
+
+  <section aria-labelledby="ck-h" style="display: flex; flex-direction: column; gap: 10px">
+    <h2 id="ck-h" style="margin: 0; font-size: 17px; font-weight: 700">報到與提醒</h2>
+    <label style="display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 15px">櫃台在起飛前幾分鐘關閉
+      <select value="{{f.close}}" onChange="{{setClose}}" class="num" style="height: 44px; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 10px; font-size: 16px; color: #1E2A44; background: #FFFFFF"><option value="40">40 分</option><option value="50">50 分</option><option value="60">60 分</option><option value="90">90 分</option></select>
+    </label>
+    <p style="margin: 0; padding: 10px 12px; border-radius: 10px; background: #FBE9C0; color: #8A5A00; font-size: 13px; font-weight: 700">{{checkinNote}}</p>
+    <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px"><input type="checkbox" checked="{{f.remind}}" onChange="{{toggleRemind}}" style="width: 22px; height: 22px; accent-color: #1E2A44">起飛前 3 小時提醒我出發去機場</label>
+  </section>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+    <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">費用<input type="text" value="{{f.price}}" onChange="{{setPrice}}" placeholder="例如 NT$18,400" class="num" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+    <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">改期、退票規定<input type="text" value="{{f.rule}}" onChange="{{setRule}}" placeholder="例如：可改期，酌收手續費" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font: inherit; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+  </div>
+  <button style="height: 48px; border-radius: 12px; border: 1px dashed #B8C0CC; background: transparent; color: #1E2A44; font: inherit; font-size: 15px">＋ 附上電子機票</button>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1480}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const f = st.f || { status: 'confirmed', airline: 'CI', flightNo: '156', from: 'TPE', fromT: 'T2', depDate: '2026-11-20', depTime: '06:00', to: 'KIX', toT: 'T1', arrDate: '2026-11-20', arrTime: '09:30', pnr: '[訂位代號]', seat: '34A、34B', cabin: 'economy', bags: 1, bagKg: 23, carryKg: 7, close: '60', remind: true, price: '', rule: '' };
+const set = (p) => this.setState({ f: { ...f, ...p }, msg: '' });
+const toMin = (t) => { const m = /^(\d{2}):(\d{2})$/.exec(t || ''); return m ? +m[1] * 60 + +m[2] : NaN; };
+const fmt = (n) => { n = ((n % 1440) + 1440) % 1440; return String(Math.floor(n / 60)).padStart(2, '0') + ':' + String(n % 60).padStart(2, '0'); };
+const md = (d) => (d ? d.slice(5).replace('-', '/') : '—');
+const dayDiff = f.depDate && f.arrDate ? Math.round((new Date(f.arrDate) - new Date(f.depDate)) / 86400000) : 0;
+const dep = toMin(f.depTime), arr = toMin(f.arrTime);
+const checkin = isNaN(dep) ? '—' : fmt(dep - (+f.close || 60));
+const leaveHome = isNaN(dep) ? '' : fmt(dep - 180);
+const ST = [['none', '還沒訂'], ['ordered', '已訂購'], ['confirmed', '訂單確認']];
+const PILL = { none: 'background: #F9E1DF; color: #B83A32', ordered: 'background: #FBE9C0; color: #8A5A00', confirmed: 'background: #DDF1E8; color: #1F7A5C' };
+const CAB = [['economy', '經濟艙'], ['premium', '豪華經濟艙'], ['business', '商務艙'], ['first', '頭等艙']];
+const chip = (on) => 'height: 40px; padding: 0 14px; border-radius: 20px; font: inherit; font-size: 14px; ' + (on ? 'border: 0; background: #1E2A44; color: #FFFFFF; font-weight: 700' : 'border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44');
+const up = (v) => String(v || '').toUpperCase();
+return {
+f: { ...f, airline: up(f.airline), from: up(f.from) || '———', to: up(f.to) || '———', pnr: f.pnr },
+statusLabel: ST.find((s) => s[0] === f.status)[1],
+statusPill: 'font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 12px; ' + PILL[f.status],
+statuses: ST.map(([k, l]) => ({ label: l, pressed: String(f.status === k), pick: () => set({ status: k }), style: chip(f.status === k) })),
+cabins: CAB.map(([k, l]) => ({ label: l, pressed: String(f.cabin === k), pick: () => set({ cabin: k }), style: chip(f.cabin === k) })),
+depLine: (f.fromT ? f.fromT + '・' : '') + (f.depTime || '—') + ' 起飛',
+arrLine: (f.arrTime || '—') + ' 抵達' + (dayDiff > 0 ? ' +' + dayDiff : '') + (f.toT ? '・' + f.toT : ''),
+dateShort: md(f.depDate), checkinBy: checkin, seatShort: (f.seat || '—').split('、')[0], bagShort: f.bags ? f.bags + '×' + f.bagKg : '無',
+durationNote: !isNaN(dep) && !isNaN(arr) ? '飛行約 ' + (() => { const m = arr - dep + dayDiff * 1440; return m > 0 ? Math.floor(m / 60) + ' 小時 ' + (m % 60) + ' 分' : '—'; })() + '（兩地有時差時，以當地時間填寫，系統會自動換算）' : '填好起飛和抵達時間後，會算出飛行時間。',
+checkinNote: isNaN(dep) ? '填好起飛時間後，會算出最晚報到時間。' : md(f.depDate) + ' ' + checkin + ' 前要完成報到，建議 ' + leaveHome + ' 出發去機場。',
+setAirline: (e) => set({ airline: e.target.value }), setFlightNo: (e) => set({ flightNo: e.target.value }),
+setFrom: (e) => set({ from: e.target.value }), setFromT: (e) => set({ fromT: e.target.value }),
+setTo: (e) => set({ to: e.target.value }), setToT: (e) => set({ toT: e.target.value }),
+setDepDate: (e) => set({ depDate: e.target.value }), setDepTime: (e) => set({ depTime: e.target.value }),
+setArrDate: (e) => set({ arrDate: e.target.value }), setArrTime: (e) => set({ arrTime: e.target.value }),
+setPnr: (e) => set({ pnr: e.target.value }), setSeat: (e) => set({ seat: e.target.value }),
+bagMinus: () => set({ bags: Math.max(0, f.bags - 1) }), bagPlus: () => set({ bags: Math.min(9, f.bags + 1) }),
+setCarry: (e) => set({ carryKg: e.target.value }), setClose: (e) => set({ close: e.target.value }),
+toggleRemind: () => set({ remind: !f.remind }),
+setPrice: (e) => set({ price: e.target.value }), setRule: (e) => set({ rule: e.target.value }),
+hasMsg: !!st.msg, msg: st.msg || '',
+msgStyle: 'margin: 0; padding: 12px 14px; border-radius: 12px; font-size: 14px; font-weight: 700; ' + (st.msgOk ? 'background: #DDF1E8; color: #1F7A5C' : 'background: #F9E1DF; color: #B83A32'),
+save: () => {
+if (!f.flightNo.trim()) return this.setState({ msg: '請填航班號碼。', msgOk: false });
+if (up(f.from).length !== 3 || up(f.to).length !== 3) return this.setState({ msg: '機場代碼是 3 個英文字母，例如 TPE、KIX。', msgOk: false });
+if (!f.depDate || isNaN(dep)) return this.setState({ msg: '請填起飛日和起飛時間。', msgOk: false });
+if (f.arrDate && f.arrDate < f.depDate) return this.setState({ msg: '抵達日比起飛日早，請再確認。', msgOk: false });
+this.setState({ msg: '已加入 ' + md(f.depDate) + ' 的行程' + (f.remind ? '，' + leaveHome + ' 會提醒你出發去機場' : '') + '。', msgOk: true });
+}
+};
+}
+}
+</script>
+</body>
+</html>

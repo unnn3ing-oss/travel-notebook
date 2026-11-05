@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>新增住宿</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Space+Grotesk:wght@500;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1E2A44}a:hover{color:#000000}
+.num{font-family:'Space Grotesk',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="width: 390px; height: 1520px; position: relative; display: flex; flex-direction: column; background: #F4F6F9; color: #1E2A44; font-family: 'Noto Sans TC', system-ui, sans-serif; overflow: hidden">
+<header style="padding: 52px 20px 12px; display: flex; justify-content: space-between; align-items: center">
+  <a href="PlanList.dc.html" style="height: 44px; display: flex; align-items: center; font-size: 15px; text-decoration: none">取消</a>
+  <h1 style="margin: 0; font-size: 17px; font-weight: 700">新增住宿</h1>
+  <button onClick="{{save}}" style="height: 40px; padding: 0 16px; border-radius: 10px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 700">儲存</button>
+</header>
+
+<main style="flex: 1; padding: 8px 20px 32px; display: flex; flex-direction: column; gap: 20px">
+  <sc-if value="{{hasMsg}}" hint-placeholder-val="{{false}}">
+    <p role="status" style="{{msgStyle}}">{{msg}}</p>
+  </sc-if>
+
+  <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">住宿名稱
+    <input type="text" value="{{h.name}}" onChange="{{setName}}" placeholder="例如 京都車站前飯店" style="height: 52px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 14px; font: inherit; font-size: 17px; font-weight: 700; color: #1E2A44; background: #FFFFFF">
+  </label>
+
+  <fieldset style="border: 0; margin: 0; padding: 0">
+    <legend style="font-size: 13px; color: #5B6578; padding: 0; margin-bottom: 8px">訂購狀態</legend>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px">
+      <sc-for list="{{statuses}}" as="s" hint-placeholder-count="3">
+        <button aria-pressed="{{s.pressed}}" onClick="{{s.pick}}" style="{{s.style}}">{{s.label}}</button>
+      </sc-for>
+    </div>
+  </fieldset>
+
+  <section aria-labelledby="stay-h" style="display: flex; flex-direction: column; gap: 12px">
+    <h2 id="stay-h" style="margin: 0; font-size: 17px; font-weight: 700">入住期間</h2>
+    <div style="background: #FFFFFF; border-radius: 16px; overflow: hidden">
+      <div style="display: grid; grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr); align-items: center; padding: 14px 14px 10px">
+        <div><p style="margin: 0; font-size: 12px; color: #5B6578">入住</p><p class="num" style="margin: 2px 0 0; font-size: 24px; font-weight: 700">{{inShort}}</p><p class="num" style="margin: 0; font-size: 12px; color: #5B6578">{{inWeek}} {{h.inTime}} 起</p></div>
+        <div style="display: flex; flex-direction: column; align-items: center"><span class="num" style="height: 28px; padding: 0 10px; display: flex; align-items: center; border-radius: 14px; background: #F2C14E; color: #1E2A44; font-size: 13px; font-weight: 700">{{nightsLabel}}</span></div>
+        <div style="text-align: right"><p style="margin: 0; font-size: 12px; color: #5B6578">退房</p><p class="num" style="margin: 2px 0 0; font-size: 24px; font-weight: 700">{{outShort}}</p><p class="num" style="margin: 0; font-size: 12px; color: #5B6578">{{outWeek}} {{h.outTime}} 前</p></div>
+      </div>
+      <div style="padding: 0 14px 14px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">入住日<input type="date" value="{{h.inDate}}" onChange="{{setIn}}" class="num" style="height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">退房日<input type="date" value="{{h.outDate}}" onChange="{{setOut}}" class="num" style="height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">最早入住<input type="time" value="{{h.inTime}}" onChange="{{setInTime}}" class="num" style="height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">最晚退房<input type="time" value="{{h.outTime}}" onChange="{{setOutTime}}" class="num" style="height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+      </div>
+      <p style="margin: 0; padding: 10px 14px; background: #EEF1F5; font-size: 13px; color: #5B6578">儲存後會在行程裡放兩張卡片：{{inShort}} 入住、{{outShort}} 退房。</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="addr-h" style="display: flex; flex-direction: column; gap: 12px">
+    <h2 id="addr-h" style="margin: 0; font-size: 17px; font-weight: 700">地址與聯絡</h2>
+    <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">當地語言地址（給司機看）
+      <textarea rows="2" value="{{h.addr}}" onChange="{{setAddr}}" placeholder="例如 京都府京都市下京区…" style="box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 16px; line-height: 1.5; color: #1E2A44; background: #FFFFFF; resize: none"></textarea>
+    </label>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">電話<input type="tel" value="{{h.phone}}" onChange="{{setPhone}}" placeholder="+81 75-…" class="num" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">訂單編號<input type="text" value="{{h.ref}}" onChange="{{setRef}}" placeholder="訂房網站的編號" class="num" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+    </div>
+  </section>
+
+  <section aria-labelledby="room-h" style="display: flex; flex-direction: column; gap: 12px">
+    <h2 id="room-h" style="margin: 0; font-size: 17px; font-weight: 700">房型</h2>
+    <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">房型名稱<input type="text" value="{{h.room}}" onChange="{{setRoom}}" placeholder="例如 雙人房（禁菸）" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font: inherit; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+    <div style="background: #FFFFFF; border-radius: 16px; padding: 4px 14px">
+      <div style="display: flex; justify-content: space-between; align-items: center; min-height: 60px; border-bottom: 1px solid #EEF1F5">
+        <span style="font-size: 15px; font-weight: 700">人數</span>
+        <span style="display: flex; align-items: center; gap: 4px">
+          <button onClick="{{guestMinus}}" aria-label="減少人數" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 18px">−</button>
+          <span class="num" style="width: 52px; text-align: center; font-size: 16px; font-weight: 700">{{h.guests}} 人</span>
+          <button onClick="{{guestPlus}}" aria-label="增加人數" style="width: 40px; height: 40px; border-radius: 10px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 18px">＋</button>
+        </span>
+      </div>
+      <label style="display: flex; justify-content: space-between; align-items: center; min-height: 56px; font-size: 15px; font-weight: 700">含早餐
+        <input type="checkbox" checked="{{h.breakfast}}" onChange="{{toggleBreakfast}}" style="width: 22px; height: 22px; accent-color: #1E2A44">
+      </label>
+    </div>
+  </section>
+
+  <section aria-labelledby="pay-h" style="display: flex; flex-direction: column; gap: 12px">
+    <h2 id="pay-h" style="margin: 0; font-size: 17px; font-weight: 700">費用與取消</h2>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">總金額<input type="text" value="{{h.total}}" onChange="{{setTotal}}" placeholder="例如 ¥54,000" class="num" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+      <div style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">每晚約<p class="num" style="margin: 0; height: 48px; display: flex; align-items: center; padding: 0 12px; border-radius: 12px; background: #EEF1F5; font-size: 16px; font-weight: 700; color: #1E2A44">{{perNight}}</p></div>
+    </div>
+    <fieldset style="border: 0; margin: 0; padding: 0">
+      <legend style="font-size: 13px; color: #5B6578; padding: 0; margin-bottom: 8px">付款方式</legend>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <sc-for list="{{pays}}" as="p" hint-placeholder-count="2">
+          <button aria-pressed="{{p.pressed}}" onClick="{{p.pick}}" style="{{p.style}}">{{p.label}}</button>
+        </sc-for>
+      </div>
+    </fieldset>
+    <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">免費取消期限<input type="date" value="{{h.cancelBy}}" onChange="{{setCancel}}" class="num" style="height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF"></label>
+    <p style="{{cancelStyle}}">{{cancelNote}}</p>
+    <label style="display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px"><input type="checkbox" checked="{{h.remind}}" onChange="{{toggleRemind}}" style="width: 22px; height: 22px; accent-color: #1E2A44">取消期限前 3 天提醒我</label>
+  </section>
+
+  <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578">備註
+    <textarea rows="2" value="{{h.note}}" onChange="{{setNote}}" placeholder="例如：櫃台 23:00 關閉，晚到要先寄信" style="box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 16px; line-height: 1.5; color: #1E2A44; background: #FFFFFF; resize: none"></textarea>
+  </label>
+  <button style="height: 48px; border-radius: 12px; border: 1px dashed #B8C0CC; background: transparent; color: #1E2A44; font: inherit; font-size: 15px">＋ 附上訂房確認信</button>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1520}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const h = st.h || { name: '京都車站前飯店', status: 'ordered', inDate: '2026-11-20', outDate: '2026-11-23', inTime: '15:00', outTime: '11:00', addr: '京都府京都市下京区東塩小路町', phone: '+81 75-000-0000', ref: '', room: '雙人房（禁菸）', guests: 2, breakfast: true, total: '¥54,000', pay: 'later', cancelBy: '2026-11-17', remind: true, note: '' };
+const set = (p) => this.setState({ h: { ...h, ...p }, msg: '' });
+const TODAY = '2026-11-05';
+const md = (d) => (d ? d.slice(5).replace('-', '/') : '—');
+const WK = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+const wk = (d) => (d ? WK[new Date(d + 'T00:00:00').getDay()] : '');
+const days = (a, b) => (a && b ? Math.round((new Date(b) - new Date(a)) / 86400000) : NaN);
+const nights = days(h.inDate, h.outDate);
+const amount = parseFloat(String(h.total).replace(/[^\d.]/g, ''));
+const cur = (String(h.total).match(/^[^\d]*/) || [''])[0];
+const left = days(TODAY, h.cancelBy);
+const ST = [['none', '還沒訂'], ['ordered', '已訂購'], ['confirmed', '訂單確認']];
+const PAY = [['now', '已付清'], ['later', '現場付款']];
+const chip = (on) => 'height: 40px; padding: 0 14px; border-radius: 20px; font: inherit; font-size: 14px; ' + (on ? 'border: 0; background: #1E2A44; color: #FFFFFF; font-weight: 700' : 'border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44');
+const note = 'margin: 0; padding: 10px 12px; border-radius: 10px; font-size: 13px; font-weight: 700; ';
+return {
+h,
+statuses: ST.map(([k, l]) => ({ label: l, pressed: String(h.status === k), pick: () => set({ status: k }), style: chip(h.status === k) })),
+pays: PAY.map(([k, l]) => ({ label: l, pressed: String(h.pay === k), pick: () => set({ pay: k }), style: chip(h.pay === k) })),
+inShort: md(h.inDate), outShort: md(h.outDate), inWeek: wk(h.inDate), outWeek: wk(h.outDate),
+nightsLabel: nights > 0 ? '共 ' + nights + ' 晚' : '— 晚',
+perNight: nights > 0 && amount ? cur + Math.round(amount / nights).toLocaleString('en-US') : '—',
+cancelNote: !h.cancelBy ? '沒有免費取消，或還不確定。' : left < 0 ? '免費取消期限已過。' : '要在 ' + md(h.cancelBy) + ' 前完成（還剩 ' + left + ' 天）',
+cancelStyle: note + (!h.cancelBy ? 'background: #EEF1F5; color: #5B6578' : left < 0 ? 'background: #F9E1DF; color: #B83A32' : 'background: #FBE9C0; color: #8A5A00'),
+setName: (e) => set({ name: e.target.value }),
+setIn: (e) => set({ inDate: e.target.value }), setOut: (e) => set({ outDate: e.target.value }),
+setInTime: (e) => set({ inTime: e.target.value }), setOutTime: (e) => set({ outTime: e.target.value }),
+setAddr: (e) => set({ addr: e.target.value }), setPhone: (e) => set({ phone: e.target.value }), setRef: (e) => set({ ref: e.target.value }),
+setRoom: (e) => set({ room: e.target.value }),
+guestMinus: () => set({ guests: Math.max(1, h.guests - 1) }), guestPlus: () => set({ guests: Math.min(9, h.guests + 1) }),
+toggleBreakfast: () => set({ breakfast: !h.breakfast }),
+setTotal: (e) => set({ total: e.target.value }), setCancel: (e) => set({ cancelBy: e.target.value }),
+toggleRemind: () => set({ remind: !h.remind }), setNote: (e) => set({ note: e.target.value }),
+hasMsg: !!st.msg, msg: st.msg || '',
+msgStyle: 'margin: 0; padding: 12px 14px; border-radius: 12px; font-size: 14px; font-weight: 700; ' + (st.msgOk ? 'background: #DDF1E8; color: #1F7A5C' : 'background: #F9E1DF; color: #B83A32'),
+save: () => {
+if (!h.name.trim()) return this.setState({ msg: '請填住宿名稱。', msgOk: false });
+if (!h.inDate || !h.outDate) return this.setState({ msg: '請填入住日和退房日。', msgOk: false });
+if (!(nights > 0)) return this.setState({ msg: '退房日要比入住日晚。', msgOk: false });
+if (h.cancelBy && h.cancelBy > h.inDate) return this.setState({ msg: '免費取消期限比入住日晚，請再確認。', msgOk: false });
+this.setState({ msg: '已加入行程：' + md(h.inDate) + ' 入住、' + md(h.outDate) + ' 退房，共 ' + nights + ' 晚。', msgOk: true });
+}
+};
+}
+}
+</script>
+</body>
+</html>

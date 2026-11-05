@@ -1,0 +1,298 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "BookingEdit.dc.html": {
+      "h": 1500,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "新增／編輯預訂與備案",
+      "w": 390,
+      "x": 0,
+      "y": 4280
+    },
+    "Bookings.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "預訂與備案",
+      "w": 390,
+      "x": 1410,
+      "y": 0
+    },
+    "Checklist.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "出發前準備清單",
+      "w": 390,
+      "x": 2820,
+      "y": 0
+    },
+    "EmptyPlan.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "空白狀態：新旅程第一天",
+      "w": 390,
+      "x": 2350,
+      "y": 4280
+    },
+    "Essentials.dc.html": {
+      "h": 1400,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "旅途必備",
+      "w": 390,
+      "x": 1410,
+      "y": 2580
+    },
+    "Itinerary.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "行程時間軸",
+      "w": 390,
+      "x": 940,
+      "y": 0
+    },
+    "Library.dc.html": {
+      "h": 1100,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "景點庫",
+      "w": 390,
+      "x": 940,
+      "y": 4280
+    },
+    "Main.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "總覽（出發前）",
+      "w": 390,
+      "x": 0,
+      "y": 0
+    },
+    "NewTrip.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "開始新旅程",
+      "w": 390,
+      "x": 470,
+      "y": 2580
+    },
+    "Past.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "回顧過去旅行",
+      "w": 390,
+      "x": 1880,
+      "y": 2580
+    },
+    "Place.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "景點卡",
+      "w": 390,
+      "x": 2350,
+      "y": 0
+    },
+    "PlanB.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "改用備案",
+      "w": 390,
+      "x": 1880,
+      "y": 0
+    },
+    "PlanList.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "規劃旅程（長按拖曳）",
+      "w": 390,
+      "x": 940,
+      "y": 2580
+    },
+    "Planner.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "title": "行程規劃（桌機、平板）",
+      "w": 1440,
+      "x": 0,
+      "y": 1360
+    },
+    "Reminders.dc.html": {
+      "h": 1180,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "提醒中心",
+      "w": 390,
+      "x": 470,
+      "y": 4280
+    },
+    "Settings.dc.html": {
+      "h": 1160,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "設定與備份",
+      "w": 390,
+      "x": 1410,
+      "y": 4280
+    },
+    "Today.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "今日模式（旅途中）",
+      "w": 390,
+      "x": 470,
+      "y": 0
+    },
+    "TodayDark.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "深色模式：今日",
+      "w": 390,
+      "x": 1880,
+      "y": 4280
+    },
+    "Transit.dc.html": {
+      "h": 1240,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "移動路線與班次",
+      "w": 390,
+      "x": 3290,
+      "y": 0
+    },
+    "Welcome.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "首次開啟",
+      "w": 390,
+      "x": 0,
+      "y": 2580
+    },
+    "AddTransit.dc.html": {
+      "h": 1560,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "新增交通：主要路線與轉乘",
+      "w": 390,
+      "x": 0,
+      "y": 6420
+    },
+    "AddFlight.dc.html": {
+      "h": 1480,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "新增航班",
+      "w": 390,
+      "x": 470,
+      "y": 6420
+    },
+    "AddHotel.dc.html": {
+      "h": 1520,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "新增住宿",
+      "w": 390,
+      "x": 940,
+      "y": 6420
+    },
+    "AddTicket.dc.html": {
+      "h": 1320,
+      "is_interactive": true,
+      "radius": 40,
+      "title": "新增門票",
+      "w": 390,
+      "x": 1410,
+      "y": 6420
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-11-05T10:00:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "noteOrder": [
+    "title",
+    "mobileflow",
+    "fill",
+    "addflow"
+  ],
+  "notes": {
+    "fill": {
+      "kind": "title1",
+      "maxW": 2740,
+      "text": "補齊：預訂、提醒、景點庫、設定、深色與空白狀態",
+      "w": 240,
+      "x": 0,
+      "y": 3980
+    },
+    "mobileflow": {
+      "kind": "title1",
+      "maxW": 2270,
+      "text": "手機版：從首次開啟到旅途中",
+      "w": 240,
+      "x": 0,
+      "y": 2280
+    },
+    "title": {
+      "kind": "title1",
+      "maxW": 3680,
+      "text": "旅行手帳 App：iPhone 介面",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    },
+    "addflow": {
+      "kind": "title1",
+      "maxW": 1800,
+      "text": "新增行程：各類型的專屬內容",
+      "w": 240,
+      "x": 0,
+      "y": 6120
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Today.dc.html",
+    "Itinerary.dc.html",
+    "Bookings.dc.html",
+    "PlanB.dc.html",
+    "Place.dc.html",
+    "Checklist.dc.html",
+    "Transit.dc.html",
+    "Planner.dc.html",
+    "Welcome.dc.html",
+    "NewTrip.dc.html",
+    "PlanList.dc.html",
+    "Essentials.dc.html",
+    "Past.dc.html",
+    "BookingEdit.dc.html",
+    "Reminders.dc.html",
+    "Library.dc.html",
+    "Settings.dc.html",
+    "TodayDark.dc.html",
+    "EmptyPlan.dc.html",
+    "AddTransit.dc.html",
+    "AddFlight.dc.html",
+    "AddHotel.dc.html",
+    "AddTicket.dc.html"
+  ],
+  "pages": [],
+  "title": "旅行手帳 App 介面"
+}
