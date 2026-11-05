@@ -2,6 +2,10 @@
 
 排行程、存備案，旅途中只看現在和下一站。資料只存在這支手機（IndexedDB），不需要帳號，也不需要網路。
 
+## 給接手 AI
+
+先讀 [AGENTS.md](AGENTS.md)、[專案交接](docs/ai-handoff.md) 與 [任務交接索引](docs/handoffs/README.md)。Claude 也可從 [CLAUDE.md](CLAUDE.md) 進入。收到需求並提出方向後，改程式前先保存 GitHub handoff checkpoint；完整命令與授權範圍見 AGENTS.md。
+
 ## 目前有的功能（v0.1）
 
 - **總覽**：出發倒數、出發前準備的期限（例如「要在 11/08 前完成（還剩 3 天）」）、預訂狀態
