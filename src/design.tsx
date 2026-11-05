@@ -64,14 +64,15 @@ const NAV_ICON: Record<string, ReactNode> = {
 export function Nav({ current, during }: { current: string; during: boolean }) {
   const tabs: [string, string][] = [[during ? 'today' : 'overview', during ? '今日' : '總覽'], ['plan', '行程'], ['bookings', '預訂'], ['essentials', '必備']];
   return (
-    <nav aria-label="主選單" className="dnav" style={css('height: 84px; box-sizing: border-box; padding: 6px 8px 24px; background: #FFFFFF; border-top: 1px solid #DCE1E8; display: flex')}>
+    <nav aria-label="主選單" className="dnav" style={css('min-height: 84px; box-sizing: border-box; padding: 6px 8px 24px; background: #FFFFFF; border-top: 1px solid #DCE1E8; display: flex')}>
       {tabs.map(([to, label]) => {
         const on = current === to;
         return (
           <a key={to} href={href(to)} aria-current={on ? 'page' : undefined} style={css('flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; font-size: 11px; ' + (on ? 'color: #1E2A44; font-weight: 700' : 'color: #5B6578'))}>
-            <span style={css('width: 52px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 15px; ' + (on ? 'background: var(--ticket); color: var(--on-ticket)' : ''))}>
+            <span style={css('width: 64px; min-height: 48px; padding: 4px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border-radius: 16px; ' + (on ? 'background: var(--ticket); color: var(--on-ticket)' : ''))}>
               <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" {...SVG} strokeWidth="2">{NAV_ICON[to]}</svg>
-            </span>{label}
+              <span>{label}</span>
+            </span>
           </a>
         );
       })}
