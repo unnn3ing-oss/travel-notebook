@@ -15,12 +15,12 @@ export function seedKyoto(): { trip: Trip; items: Item[]; routes: Route[]; tasks
     it('b4', '2026-11-21', '12:50', '13:40', '午餐　祇園割烹', 'restaurant', { booking: 'confirmed' }),
     it('b5', '2026-11-21', '13:40', '14:50', '京都車站 → 嵯峨嵐山', 'transit', { from: '京都車站', to: '嵯峨嵐山站' }),
     it('b6', '2026-11-21', '15:00', '15:30', '嵐山小火車', 'ticket', { booking: 'none', alts: [{ name: '保津川遊船', status: 'none' }, { name: '嵐山竹林小徑散步', status: 'none', note: '不用預約' }] }),
-    it('c1', '2026-11-22', '07:00', '09:00', '伏見稻荷大社', 'place', { watch: [{ text: '千本鳥居', done: false }, { text: '稻荷山頂', done: false }, { text: '狐狸繪馬', done: false }], note: '清晨人少比較好拍照，記得帶零錢買繪馬。' }),
+    it('c1', '2026-11-22', '07:00', '09:00', '伏見稻荷大社', 'place', { tags: ['喜歡', '想去'], hours: '24 小時', url: 'https://inari.jp/', watch: [{ text: '千本鳥居', done: false }, { text: '稻荷山頂', done: false }, { text: '狐狸繪馬', done: false }], note: '清晨人少比較好拍照，記得帶零錢買繪馬。' }),
     it('e1', '2026-11-24', '11:00', '11:30', '退房', 'hotel'),
     it('e2', '2026-11-24', '16:30', '20:00', '回程 KIX → TPE', 'flight', { booking: 'confirmed' }),
-    it('p1', null, '', '', '錦市場', 'restaurant', { note: '下午 5 點前去，很多店早收' }),
-    it('p2', null, '', '', '哲學之道', 'place'),
-    it('p3', null, '', '', '金閣寺', 'place'),
+    it('p1', null, '', '', '錦市場', 'restaurant', { tags: ['想去'], note: '下午 5 點前去，很多店早收' }),
+    it('p2', null, '', '', '哲學之道', 'place', { tags: ['想看'], note: '秋天楓葉' }),
+    it('p3', null, '', '', '金閣寺', 'place', { tags: ['必去'] }),
   ];
   const routes: Route[] = [
     { id: 'r-walk', itemId: 'b2', name: '步行', mode: 'walk', minutes: 12, walk: 0, place: '', legs: [{ mode: 'walk', label: '步行經松原通', minutes: 12 }], departures: [], fare: 0, primary: true },

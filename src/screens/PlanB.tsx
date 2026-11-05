@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { db } from '../db';
-import type { Item } from '../types';
-import { BOOKING_LABEL, Sheet, Toast } from '../components/ui';
+import type { Alternative, Item } from '../types';
+import { BTN_GHOST, BTN_PRIMARY, css, DSheet, DToast } from '../design';
+import { swapAlt } from './Bookings';
 
-const REASONS = ['停駛', '客滿', '誤點', '不想去了'];
+const REASONS = ['客滿', '誤點', '停駛', '不想去了'];
 
-/** 改用備案：swap the card for one of its alternatives, with undo. */
+/** 設計稿「改用備案」(PlanB) 面板：換成備案，可復原 */
 export function PlanB({ item, onClose, initialPick = 0 }: { item: Item; onClose: () => void; initialPick?: number }) {
   const [reason, setReason] = useState(REASONS[0]);
   const [pick, setPick] = useState(initialPick);
@@ -14,40 +15,43 @@ export function PlanB({ item, onClose, initialPick = 0 }: { item: Item; onClose:
 
   const apply = async () => {
     if (!chosen) return;
-    const rest = alts.filter((_, i) => i !== pick);
-    await db.items.update(item.id, {
-      title: chosen.name,
-      booking: chosen.status,
-      alts: [{ name: item.title, status: item.booking ?? 'none', note: '原本的安排' }, ...rest],
-      replaced: { title: item.title, booking: item.booking, reason },
-    });
+    await db.items.update(item.id, swapAlt(item, pick, reason));
     onClose();
     showUndo(item, chosen.name);
   };
+  const impact = (a: Alternative) => {
+    if (a.note === '不用預約' || a.status === 'confirmed') return { text: (a.status === 'confirmed' ? '訂單確認' : '不用預約') + '，可以直接去', warn: false };
+    if (a.status === 'ordered') return { text: '已訂購，還沒收到確認信', warn: false };
+    return { text: '還沒訂，要先訂到才能用' + (a.note ? '（' + a.note + '）' : ''), warn: true };
+  };
 
   return (
-    <Sheet title={item.title + '不能去了？'} onClose={onClose}>
-      <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
-        <legend className="eyebrow" style={{ padding: 0, marginBottom: 8 }}>原因</legend>
-        <div className="chips">
-          {REASONS.map((r) => <button key={r} className="chip" aria-pressed={reason === r} onClick={() => setReason(r)}>{r}</button>)}
+    <DSheet title={item.title + '不能去了？'} sub={item.start ? item.start + (item.end ? ' – ' + item.end : '') : undefined} onClose={onClose}>
+      <fieldset style={css('border: 0; margin: 0; padding: 0')}>
+        <legend style={css('font-size: 13px; color: #5B6578; padding: 0; margin-bottom: 8px')}>原因</legend>
+        <div style={css('display: flex; flex-wrap: wrap; gap: 8px')}>
+          {REASONS.map((r) => <button key={r} aria-pressed={reason === r} onClick={() => setReason(r)} style={css('height: 40px; padding: 0 16px; border-radius: 20px; font: inherit; font-size: 14px; ' + (r === reason ? 'border: 0; background: #1E2A44; color: #FFFFFF; font-weight: 700' : 'border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44'))}>{r}</button>)}
         </div>
       </fieldset>
-      <fieldset style={{ border: 0, margin: 0, padding: 0 }} className="stack">
-        <legend className="eyebrow" style={{ padding: 0, marginBottom: 8 }}>選一個備案</legend>
-        {alts.map((a, i) => (
-          <label key={i} className={'dep' + (i === pick ? ' on' : '')} style={{ margin: 0 }}>
-            <input type="radio" name="alt" checked={i === pick} onChange={() => setPick(i)} />
-            <span className="stack" style={{ gap: 2 }}>
-              <b>{a.name}</b>
-              <span className="small muted">{BOOKING_LABEL[a.status]}{a.note ? '，' + a.note : ''}</span>
-            </span>
-          </label>
-        ))}
+      <fieldset style={css('border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px')}>
+        <legend style={css('font-size: 13px; color: #5B6578; padding: 0; margin-bottom: 8px')}>選一個備案</legend>
+        {alts.map((a, i) => {
+          const im = impact(a);
+          return (
+            <label key={i} style={css('display: flex; gap: 12px; padding: 14px; border-radius: 14px; cursor: pointer; ' + (i === pick ? 'border: 2px solid #1E2A44; background: #FFFFFF' : 'border: 1px solid #DCE1E8; background: #F4F6F9'))}>
+              <input type="radio" name="alt" checked={i === pick} onChange={() => setPick(i)} style={css('width: 20px; height: 20px; margin: 2px 0 0; accent-color: #1E2A44')} />
+              <span style={css('flex: 1; display: flex; flex-direction: column; gap: 3px')}>
+                <span style={css('font-size: 16px; font-weight: 700')}>{a.name}</span>
+                {item.start && <span className="num" style={css('font-size: 13px; color: #5B6578')}>{item.start}{item.end ? ' – ' + item.end : ''}</span>}
+                <span style={css('font-size: 13px; font-weight: 700; color: ' + (im.warn ? '#B83A32' : '#1F7A5C'))}>{im.text}</span>
+              </span>
+            </label>
+          );
+        })}
       </fieldset>
-      <button className="btn primary" onClick={apply} disabled={!chosen}>改用{chosen?.name ?? '備案'}</button>
-      <button className="btn link" onClick={onClose}>先不換，照原行程</button>
-    </Sheet>
+      <button onClick={apply} disabled={!chosen} style={css(BTN_PRIMARY)}>改用{chosen?.name ?? '備案'}</button>
+      <button onClick={onClose} style={css(BTN_GHOST)}>先不換，照原行程</button>
+    </DSheet>
   );
 }
 
@@ -67,7 +71,7 @@ export function UndoToastHost() {
     listeners.add(on);
     return () => { listeners.delete(on); clearTimeout(timer); };
   }, []);
-  return t ? <Toast text={t.text} action="復原" onAction={() => { t.undo(); setT(null); }} /> : null;
+  return t ? <DToast text={t.text} action="復原" onAction={() => { t.undo(); setT(null); }} /> : null;
 }
 
 function showUndo(before: Item, name: string) {
