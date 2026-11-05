@@ -10,6 +10,7 @@ export interface Trip {
   end: string;
   people: number;
   currency: string;
+  timezone?: string;
 }
 
 export interface Alternative { name: string; status: BookingStatus; note?: string }
@@ -29,6 +30,10 @@ export interface Item {
   replaced?: { title: string; booking?: BookingStatus; reason: string };
   watch?: { text: string; done: boolean }[];
   note?: string;
+  order?: number;
+  orderNumber?: string;
+  cost?: number;
+  cancelBefore?: string;
   // transit cards
   from?: string;
   to?: string;
@@ -59,3 +64,7 @@ export interface Task {
   daysBefore: number;
   done: boolean;
 }
+
+export interface Expense { id: string; tripId: string; date: string; title: string; amount: number }
+export interface Document { id: string; tripId: string; name: string; file: Blob }
+export interface TripDetails { id: string; address: string; rate: number; contacts: string[] }

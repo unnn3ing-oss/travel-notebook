@@ -5,7 +5,7 @@ import type { Clock } from '../lib/clock';
 import { dueInfo } from '../lib/checklist';
 import { daysBetween, md } from '../lib/time';
 import { href } from '../lib/route';
-import { BookingPill } from '../components/ui';
+import { BookingPill, Icon } from '../components/ui';
 
 export function Overview({ trip, clock }: { trip: Trip; clock: Clock }) {
   const tasks = useLiveQuery(() => db.tasks.where({ tripId: trip.id }).toArray(), [trip.id]);
@@ -20,10 +20,10 @@ export function Overview({ trip, clock }: { trip: Trip; clock: Clock }) {
 
   return (
     <main className="screen">
-      <header>
+      <header className="between" style={{alignItems:"flex-end"}}><div>
         <p className="eyebrow num">{md(trip.start)} – {md(trip.end)}，共 {daysBetween(trip.start, trip.end) + 1} 天</p>
         <h1>{trip.name}</h1>
-      </header>
+      </div><a className="round-btn" href={href('')} aria-label="切換旅程"><Icon name="down" /></a></header>
 
       <section className="ticket" aria-label="出發倒數">
         <div style={{ flex: 1, padding: 20 }}>
@@ -33,9 +33,9 @@ export function Overview({ trip, clock }: { trip: Trip; clock: Clock }) {
           </p>
         </div>
         <div className="stub">
-          <p className="small" style={{ margin: 0, color: '#C9D1DE' }}>去程</p>
-          <p className="num" style={{ margin: 0, fontSize: 17, fontWeight: 700 }}>{flight ? flight.title.replace(/^去程\s*/, '') : '還沒加航班'}</p>
-          {flight && <p className="num small" style={{ margin: 0, color: '#C9D1DE' }}>{md(flight.date!)} {flight.start}</p>}
+          <p className="small" style={{ margin: 0, color: '#C9D1DE' }}>去程航班</p>
+          <p className="num" style={{ margin: 0, fontSize: 20, fontWeight: 700 }}>{flight ? flight.title.replace(/^去程\s*/, '') : '還沒加航班'}</p>
+          {flight && <p className="num small" style={{ margin: 0, color: '#C9D1DE' }}>{md(flight.date!)} {flight.start} 起飛</p>}
         </div>
       </section>
 
@@ -65,7 +65,7 @@ export function Overview({ trip, clock }: { trip: Trip; clock: Clock }) {
       <section className="stack" aria-labelledby="bk-h">
         <div className="between">
           <h2 id="bk-h">預訂狀態</h2>
-          <a href={href('plan')} className="small" style={{ fontWeight: 500, padding: '10px 0' }}>看全部行程</a>
+          <a href={href('bookings')} className="small" style={{ fontWeight: 500, padding: '10px 0' }}>看全部預訂</a>
         </div>
         <ul className="list">
           {bookings.map((i) => (

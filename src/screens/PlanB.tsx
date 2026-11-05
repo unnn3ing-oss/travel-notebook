@@ -6,9 +6,9 @@ import { BOOKING_LABEL, Sheet, Toast } from '../components/ui';
 const REASONS = ['停駛', '客滿', '誤點', '不想去了'];
 
 /** 改用備案：swap the card for one of its alternatives, with undo. */
-export function PlanB({ item, onClose }: { item: Item; onClose: () => void }) {
+export function PlanB({ item, onClose, initialPick = 0 }: { item: Item; onClose: () => void; initialPick?: number }) {
   const [reason, setReason] = useState(REASONS[0]);
-  const [pick, setPick] = useState(0);
+  const [pick, setPick] = useState(initialPick);
   const alts = item.alts ?? [];
   const chosen = alts[pick];
 

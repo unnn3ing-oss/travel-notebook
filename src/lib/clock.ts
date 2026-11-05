@@ -14,7 +14,7 @@ export function readOverride(): Date | null {
 
 export interface Clock { date: string; time: string; simulated: boolean }
 
-export function useClock(): Clock {
+export function useClock(timezone?: string): Clock {
   const [, tick] = useState(0);
   useEffect(() => {
     const t = setInterval(() => tick((n) => n + 1), 20_000);
@@ -22,5 +22,10 @@ export function useClock(): Clock {
   }, []);
   const o = readOverride();
   const d = o ?? new Date();
+  if (timezone && !o) {
+    const parts = new Intl.DateTimeFormat('en-CA', {timeZone:timezone,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(d);
+    const part = (type:string) => parts.find(p=>p.type===type)!.value;
+    return {date:`${part('year')}-${part('month')}-${part('day')}`,time:`${part('hour')}:${part('minute')}`,simulated:false};
+  }
   return { date: isoDate(d), time: fmt(d.getHours() * 60 + d.getMinutes()), simulated: !!o };
 }

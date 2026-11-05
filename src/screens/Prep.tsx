@@ -4,6 +4,7 @@ import { db, uid } from '../db';
 import type { Trip } from '../types';
 import type { Clock } from '../lib/clock';
 import { dueInfo } from '../lib/checklist';
+import { Back } from './Trips';
 import { md } from '../lib/time';
 
 export function Prep({ trip, clock }: { trip: Trip; clock: Clock }) {
@@ -23,7 +24,7 @@ export function Prep({ trip, clock }: { trip: Trip; clock: Clock }) {
   };
 
   return (
-    <main className="screen">
+    <main className="screen standalone"><Back to="essentials"/>
       <header className="between" style={{ alignItems: 'flex-end' }}>
         <h1>出發前準備</h1>
         <b className="num">{done} / {tasks.length}</b>

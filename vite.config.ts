@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icon.svg'],
+      includeAssets: ['icon.svg', 'fonts/space-grotesk-latin.woff2'],
       manifest: {
         name: '旅行手帳',
         short_name: '旅行手帳',

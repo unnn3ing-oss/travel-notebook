@@ -31,10 +31,10 @@ export function Today({ trip, clock }: { trip: Trip; clock: Clock }) {
 
   return (
     <main className="screen">
-      <header>
+      <header className="between"><div>
         <p className="eyebrow">第 {dayNo} 天，共 {total} 天</p>
         <h1 className="num">{md(clock.date)} {weekday(clock.date)}</h1>
-      </header>
+      </div><a className="round-btn" aria-label="切換旅程" href={href('')}><Icon name="down" /></a></header>
 
       {nextTransit && tPlan?.leave && leaveIn !== null && leaveIn <= 60 && (
         <a className="banner" href={href('transit', nextTransit.id)}>
