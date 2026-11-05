@@ -267,9 +267,9 @@ function AddRoute({ itemId, sym, hasPrimary, onClose, onSaved }: { itemId: strin
       </fieldset>
       <label style={css(FIELD_LABEL)}>路線名稱<input value={name} onChange={(e) => { setName(e.target.value); setErr(''); }} placeholder="例如：阪急電車 河原町 → 嵐山" style={css(FIELD_INPUT)} /></label>
       <div style={css('display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px')}>
-        <label style={css(FIELD_LABEL)}>出發<input type="time" className="num" value={dep} onChange={(e) => { setDep(e.target.value); setErr(''); }} style={css(FIELD_INPUT + '; padding: 0 6px; font-size: 15px')} /></label>
-        <label style={css(FIELD_LABEL)}>抵達<input type="time" className="num" value={arr} onChange={(e) => { setArr(e.target.value); setErr(''); }} style={css(FIELD_INPUT + '; padding: 0 6px; font-size: 15px')} /></label>
-        <label style={css(FIELD_LABEL)}>單人費用{sym ? '（' + sym + '）' : ''}<input type="number" inputMode="numeric" min="0" className="num" value={fare} onChange={(e) => setFare(e.target.value)} style={css(FIELD_INPUT + '; padding: 0 10px; font-size: 15px')} /></label>
+        <label style={css(FIELD_LABEL)}>出發<input type="time" className="num" value={dep} onChange={(e) => { setDep(e.target.value); setErr(''); }} style={css(FIELD_INPUT + '; padding: 0 6px; font-size: 16px')} /></label>
+        <label style={css(FIELD_LABEL)}>抵達<input type="time" className="num" value={arr} onChange={(e) => { setArr(e.target.value); setErr(''); }} style={css(FIELD_INPUT + '; padding: 0 6px; font-size: 16px')} /></label>
+        <label style={css(FIELD_LABEL)}>單人費用{sym ? '（' + sym + '）' : ''}<input type="number" inputMode="numeric" min="0" className="num" value={fare} onChange={(e) => setFare(e.target.value)} style={css(FIELD_INPUT + '; padding: 0 10px; font-size: 16px')} /></label>
       </div>
       <label style={css('display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 15px')}><input type="checkbox" checked={needBook} onChange={() => setNeedBook((v) => !v)} style={css('width: 22px; height: 22px; accent-color: #1E2A44')} />需要先訂票或預約</label>
       {err && <p role="alert" style={css('margin: 0; padding: 10px 12px; border-radius: 10px; background: #F9E1DF; color: #B83A32; font-size: 13px')}>{err}</p>}

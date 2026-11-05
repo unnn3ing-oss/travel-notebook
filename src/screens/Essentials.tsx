@@ -97,7 +97,7 @@ export function Essentials({ trip, clock }: { trip: Trip; clock: Clock }) {
           {tonight && <p style={css('margin: 0; font-size: 13px; color: #5B6578')}>今晚住宿：{tonight.title.replace(/入住$/, '')}</p>}
           {!value.address || edit === 'addr' ? <>
             <input aria-label="住宿名稱（當地語言）" value={value.hotelName ?? ''} onChange={(e) => save({ hotelName: e.target.value })} placeholder={japan ? '住宿名稱（日文），例如：ホテル京都' : '住宿名稱（當地語言）'} style={css(SMALL_IN + '; height: 44px')} />
-            <textarea aria-label="住宿地址（當地語言）" rows={2} value={value.address} onChange={(e) => save({ address: e.target.value })} placeholder={japan ? '地址（日文），從訂房確認信複製' : '地址（當地語言）'} style={css('font: inherit; font-size: 15px; line-height: 1.5; color: #1E2A44; border: 1px solid #DCE1E8; border-radius: 10px; padding: 10px; resize: none; background: #FFFFFF')} />
+            <textarea aria-label="住宿地址（當地語言）" rows={2} value={value.address} onChange={(e) => save({ address: e.target.value })} placeholder={japan ? '地址（日文），從訂房確認信複製' : '地址（當地語言）'} style={css('font: inherit; font-size: 16px; line-height: 1.5; color: #1E2A44; border: 1px solid #DCE1E8; border-radius: 10px; padding: 10px; resize: none; background: #FFFFFF')} />
             <input aria-label="住宿電話" type="tel" value={value.hotelPhone ?? ''} onChange={(e) => save({ hotelPhone: e.target.value })} placeholder="住宿電話" className="num" style={css(SMALL_IN + '; height: 44px')} />
           </> : (
             <p lang={japan ? 'ja' : undefined} style={css('margin: 0; font-size: 20px; font-weight: 700; line-height: 1.5; white-space: pre-line')}>{value.hotelName ? value.hotelName + '\n' : ''}{value.address}</p>
@@ -144,7 +144,7 @@ export function Essentials({ trip, clock }: { trip: Trip; clock: Clock }) {
         </div>
         {trip.currency !== 'TWD' && (
           <label style={css('display: flex; align-items: center; gap: 8px; font-size: 13px; color: #5B6578; flex-wrap: wrap')}>匯率：1 {CUR[trip.currency] ?? trip.currency} =
-            <input type="number" step="0.001" min="0" value={value.rate || ''} onChange={(e) => save({ rate: Math.max(0, Number(e.target.value) || 0) })} className="num" style={css('width: 80px; height: 36px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 8px; padding: 0 8px; font-size: 14px; color: #1E2A44; background: #FFFFFF')} />新台幣（自己設定，不會連網更新）
+            <input type="number" step="0.001" min="0" value={value.rate || ''} onChange={(e) => save({ rate: Math.max(0, Number(e.target.value) || 0) })} className="num" style={css('width: 80px; height: 36px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 8px; padding: 0 8px; font-size: 16px; color: #1E2A44; background: #FFFFFF')} />新台幣（自己設定，不會連網更新）
           </label>
         )}
         <ul style={css('list-style: none; margin: 0; padding: 0')}>
@@ -156,8 +156,8 @@ export function Essentials({ trip, clock }: { trip: Trip; clock: Clock }) {
           ))}
         </ul>
         <form onSubmit={async (e) => { e.preventDefault(); const amt = Number(amount); if (!(amt > 0)) return; try { await db.expenses.add({ id: uid(), tripId: trip.id, date: clock.date, title: name.trim().slice(0, 30) || '未命名', amount: amt }); setName(''); setAmount(''); } catch { setErr('花費沒存成功。'); } }} style={css('display: flex; gap: 8px')}>
-          <label style={css('flex: 1; min-width: 0')}><span className="visually-hidden">花費項目</span><input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="項目，例如：咖啡" style={css('width: 100%; height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font: inherit; font-size: 15px; color: #1E2A44; background: #FFFFFF')} /></label>
-          <label style={css('width: 104px; flex-shrink: 0')}><span className="visually-hidden">金額</span><input type="number" inputMode="decimal" min="0" step="any" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={sym || trip.currency} className="num" style={css('width: 100%; height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font-size: 15px; color: #1E2A44; background: #FFFFFF')} /></label>
+          <label style={css('flex: 1; min-width: 0')}><span className="visually-hidden">花費項目</span><input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="項目，例如：咖啡" style={css('width: 100%; height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font: inherit; font-size: 16px; color: #1E2A44; background: #FFFFFF')} /></label>
+          <label style={css('width: 104px; flex-shrink: 0')}><span className="visually-hidden">金額</span><input type="number" inputMode="decimal" min="0" step="any" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder={sym || trip.currency} className="num" style={css('width: 100%; height: 48px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 12px; padding: 0 12px; font-size: 16px; color: #1E2A44; background: #FFFFFF')} /></label>
           <button aria-label="記一筆" style={css('width: 48px; height: 48px; flex-shrink: 0; border-radius: 12px; border: 0; background: #1E2A44; color: #FFFFFF; display: flex; align-items: center; justify-content: center')}>{I.plus}</button>
         </form>
       </section>

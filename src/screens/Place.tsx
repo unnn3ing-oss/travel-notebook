@@ -72,15 +72,15 @@ export function Place({ trip, itemId }: { trip: Trip; itemId: string }) {
 
       <section aria-labelledby="info-h" style={css('display: flex; flex-direction: column')}>
         <h2 id="info-h" style={css('margin: 0 0 4px; font-size: 16px; font-weight: 700')}>資訊與連結</h2>
-        <label style={css(ROW)}><span style={css('color: #5B6578')}>開放時間</span><input aria-label="開放時間" defaultValue={item.hours ?? ''} placeholder="未填" onBlur={(e) => save({ hours: e.target.value })} style={css('border: 0; background: transparent; font: inherit; font-size: 15px; color: #1E2A44; text-align: right; width: 50%')} /></label>
+        <label style={css(ROW)}><span style={css('color: #5B6578')}>開放時間</span><input aria-label="開放時間" defaultValue={item.hours ?? ''} placeholder="未填" onBlur={(e) => save({ hours: e.target.value })} style={css('border: 0; background: transparent; font: inherit; font-size: 16px; color: #1E2A44; text-align: right; width: 50%')} /></label>
         {item.url
           ? <a href={item.url} target="_blank" rel="noreferrer" style={css(ROW + '; text-decoration: none')}>官方網站{I.out}</a>
-          : <label style={css(ROW)}><span style={css('color: #5B6578')}>官方網站</span><input aria-label="官方網站網址" type="url" placeholder="貼上網址" onBlur={(e) => /^https?:\/\//.test(e.target.value) && save({ url: e.target.value })} style={css('border: 0; background: transparent; font: inherit; font-size: 15px; color: #1E2A44; text-align: right; width: 60%')} /></label>}
+          : <label style={css(ROW)}><span style={css('color: #5B6578')}>官方網站</span><input aria-label="官方網站網址" type="url" placeholder="貼上網址" onBlur={(e) => /^https?:\/\//.test(e.target.value) && save({ url: e.target.value })} style={css('border: 0; background: transparent; font: inherit; font-size: 16px; color: #1E2A44; text-align: right; width: 60%')} /></label>}
       </section>
 
       {moving ? (
         <label style={css('display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #5B6578')}>移到哪一天
-          <select autoFocus value={item.date ?? ''} onChange={(e) => { save({ date: e.target.value || null }); setMoving(false); }} style={css('height: 52px; border-radius: 14px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 15px; padding: 0 12px')}>
+          <select autoFocus value={item.date ?? ''} onChange={(e) => { save({ date: e.target.value || null }); setMoving(false); }} style={css('height: 52px; border-radius: 14px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 16px; padding: 0 12px')}>
             <option value="">還沒排（放回景點庫）</option>
             {days.map((d) => <option key={d} value={d}>{md(d)} {weekday(d)}</option>)}
           </select>

@@ -247,10 +247,10 @@ function BookingEdit({ trip, id }: { trip: Trip; id?: string }) {
           {!alts.length && <p style={css('margin: 0; padding: 16px; border: 1.5px dashed #B8C0CC; border-radius: 12px; font-size: 14px; color: #5B6578; text-align: center')}>還沒有備案。先存一個，主方案出狀況時可以直接換。</p>}
           <div style={css('display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 12px; background: #E4E8EE')}>
             <label style={css(L)}>新增備案
-              <input type="text" value={newAlt} onChange={(e) => setNewAlt(e.target.value)} placeholder="例如：Hotel C 四條" style={css('height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 12px; font: inherit; font-size: 15px; color: #1E2A44; background: #FFFFFF')} />
+              <input type="text" value={newAlt} onChange={(e) => setNewAlt(e.target.value)} placeholder="例如：Hotel C 四條" style={css('height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 12px; font: inherit; font-size: 16px; color: #1E2A44; background: #FFFFFF')} />
             </label>
             <div style={css('display: flex; align-items: center; justify-content: space-between; gap: 8px')}>
-              <label style={css('display: flex; align-items: center; gap: 8px; font-size: 14px')}>狀態<select value={newStatus} onChange={(e) => setNewStatus(e.target.value as BookingStatus)} style={css('height: 40px; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font: inherit; font-size: 14px; color: #1E2A44; background: #FFFFFF')}><option value="none">還沒訂</option><option value="ordered">已訂購</option><option value="confirmed">訂單確認</option></select></label>
+              <label style={css('display: flex; align-items: center; gap: 8px; font-size: 14px')}>狀態<select value={newStatus} onChange={(e) => setNewStatus(e.target.value as BookingStatus)} style={css('height: 40px; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font: inherit; font-size: 16px; color: #1E2A44; background: #FFFFFF')}><option value="none">還沒訂</option><option value="ordered">已訂購</option><option value="confirmed">訂單確認</option></select></label>
               <button onClick={() => { const n = newAlt.trim().slice(0, 40); if (!n) return; set({ alts: [...alts, { name: n, status: newStatus }] }); setNewAlt(''); setNewStatus('none'); }} style={css('height: 40px; padding: 0 16px; border-radius: 10px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700')}>加入備案</button>
             </div>
           </div>

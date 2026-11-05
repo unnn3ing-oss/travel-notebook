@@ -325,7 +325,7 @@ function EditSheet({ item, list, days, label, routes, close, moveTo, remove, swa
           <button aria-label="上移" disabled={idx <= 0} onClick={() => swap(-1)} style={{ ...css(arrow), opacity: idx <= 0 ? 0.4 : 1 }}><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M6 15l6-6 6 6" /></svg></button>
           <button aria-label="下移" disabled={idx >= list.length - 1} onClick={() => swap(1)} style={{ ...css(arrow), opacity: idx >= list.length - 1 ? 0.4 : 1 }}><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg></button>
           <label style={css('flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5B6578')}>移到
-            <select value={item.date ?? POOL} onChange={(e) => moveTo(e.target.value)} style={css('flex: 1; min-width: 0; height: 44px; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font: inherit; font-size: 15px; color: #1E2A44; background: #FFFFFF')}>
+            <select value={item.date ?? POOL} onChange={(e) => moveTo(e.target.value)} style={css('flex: 1; min-width: 0; height: 44px; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font: inherit; font-size: 16px; color: #1E2A44; background: #FFFFFF')}>
               <option value={POOL}>{label(POOL)}</option>
               {days.map((d) => <option key={d} value={d}>{label(d)}</option>)}
             </select>
@@ -352,7 +352,7 @@ function ImportSheet({ trip, days, items, close, done }: { trip: Trip; days: str
         <p style={css('margin: 0; font-size: 14px; line-height: 1.6; color: #5B6578')}>App 不會讀你的信箱。複製提示詞給能讀信箱的 AI，再把結果貼回來。</p>
         <button onClick={async () => { try { await navigator.clipboard.writeText(importPrompt(trip)); setCopied(true); } catch { setCopied(false); alert(importPrompt(trip)); } }} style={css('height: 48px; border-radius: 12px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 700')}>{copied ? '已複製提示詞' : '複製提示詞'}</button>
         <label htmlFor="raw-m" style={css('font-size: 14px; font-weight: 700')}>貼回 AI 的結果</label>
-        <textarea id="raw-m" rows={5} value={raw} onChange={(e) => { setRaw(e.target.value); setRes(null); }} placeholder="長按貼上" className="num" style={css('font-size: 14px; line-height: 1.5; color: #1E2A44; border: 1px solid #DCE1E8; border-radius: 12px; padding: 10px 12px; resize: none; background: #FFFFFF')} />
+        <textarea id="raw-m" rows={5} value={raw} onChange={(e) => { setRaw(e.target.value); setRes(null); }} placeholder="長按貼上" className="num" style={css('font-size: 16px; line-height: 1.5; color: #1E2A44; border: 1px solid #DCE1E8; border-radius: 12px; padding: 10px 12px; resize: none; background: #FFFFFF')} />
         {res && 'error' in res && <p role="alert" style={css('margin: 0; padding: 10px 12px; border-radius: 10px; background: #F9E1DF; color: #B83A32; font-size: 13px; line-height: 1.6')}>{res.error}</p>}
         <div style={css('display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px')}>
           <button onClick={() => { setRaw(sampleResult(trip)); setRes(null); }} style={css(btn)}>貼上示範結果</button>

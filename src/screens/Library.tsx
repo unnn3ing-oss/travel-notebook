@@ -66,7 +66,7 @@ export function Library({ trip }: { trip: Trip }) {
             <span style={css('font-size: 13px; color: #5B6578')}>{p.tags?.length ? TAGS.filter((t) => p.tags!.includes(t)).join('、') : '沒有標籤'}</span>
             {p.note && <span style={css('font-size: 13px; line-height: 1.5')}>{p.note}</span>}
             <label style={css('display: flex; align-items: center; gap: 8px; font-size: 13px; color: #5B6578')}>{p.date ? '排在' : '加到'}
-              <select value={p.date ?? ''} onChange={(e) => setDay(p, e.target.value)} style={css('flex: 1; height: 40px; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font: inherit; font-size: 14px; color: #1E2A44; background: #FFFFFF')}>
+              <select value={p.date ?? ''} onChange={(e) => setDay(p, e.target.value)} style={css('flex: 1; height: 40px; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 8px; font: inherit; font-size: 16px; color: #1E2A44; background: #FFFFFF')}>
                 <option value="">還沒排</option>
                 {days.map((d) => <option key={d} value={d}>{md(d)} {weekday(d)}</option>)}
               </select>
@@ -77,7 +77,7 @@ export function Library({ trip }: { trip: Trip }) {
       {!shown.length && <p style={css('margin: 0; padding: 24px 12px; border: 1.5px dashed #B8C0CC; border-radius: 12px; text-align: center; font-size: 14px; color: #5B6578')}>{q ? '找不到「' + q + '」。可以直接在下面新增。' : list.length ? '這個標籤還沒有地點。' : '還沒有地點，先存想去的地方。'}</p>}
 
       <form onSubmit={(e) => { e.preventDefault(); add(); }} style={css('display: flex; gap: 8px; padding: 12px; border-radius: 14px; background: #E4E8EE')}>
-        <label style={css('flex: 1; min-width: 0')}><span className="visually-hidden">新景點名稱</span><input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="新增景點，例如：銀閣寺" style={css('width: 100%; height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 12px; font: inherit; font-size: 15px; color: #1E2A44; background: #FFFFFF')} /></label>
+        <label style={css('flex: 1; min-width: 0')}><span className="visually-hidden">新景點名稱</span><input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="新增景點，例如：銀閣寺" style={css('width: 100%; height: 44px; box-sizing: border-box; border: 1px solid #DCE1E8; border-radius: 10px; padding: 0 12px; font: inherit; font-size: 16px; color: #1E2A44; background: #FFFFFF')} /></label>
         <button style={css('height: 44px; flex-shrink: 0; padding: 0 16px; border-radius: 10px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700')}>新增</button>
       </form>
     </main>
