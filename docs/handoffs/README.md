@@ -6,6 +6,7 @@
 
 | 任務 | 文件 | 狀態 |
 | --- | --- | --- |
+| 行程小插圖與六款目的地地標頁首 | [2026-11-06-itinerary-art-destinations.md](2026-11-06-itinerary-art-destinations.md) | 本機完成；待實作截圖確認，未推送程式／部署 |
 | 底部工具列黃底包含文字 | [2026-11-06-bottom-nav-highlight.md](2026-11-06-bottom-nav-highlight.md) | 本機完成；待截圖確認，未推送程式／部署 |
 | 航廈 T 標示與 PDF 訂位資訊提示詞 | [2026-11-06-flight-terminal-pdf.md](2026-11-06-flight-terminal-pdf.md) | 本機完成；待截圖確認，未推送程式／部署 |
 | 建立跨 AI 交接與修改前 checkpoint | [2026-11-06-ai-continuity.md](2026-11-06-ai-continuity.md) | 依文件內最新狀態判斷 |
