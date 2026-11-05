@@ -1,0 +1,61 @@
+export type ItemType = 'place' | 'restaurant' | 'transit' | 'hotel' | 'flight' | 'ticket' | 'other';
+/** 還沒訂 / 已訂購（付款了，還沒收到確認信）/ 訂單確認 */
+export type BookingStatus = 'none' | 'ordered' | 'confirmed';
+export type Mode = 'walk' | 'train' | 'bus' | 'car' | 'ferry' | 'plane';
+
+export interface Trip {
+  id: string;
+  name: string;
+  start: string; // YYYY-MM-DD
+  end: string;
+  people: number;
+  currency: string;
+}
+
+export interface Alternative { name: string; status: BookingStatus; note?: string }
+
+export interface Item {
+  id: string;
+  tripId: string;
+  date: string | null; // null = 還沒排
+  start: string; // HH:MM or ''
+  end: string;
+  title: string;
+  type: ItemType;
+  /** only for things that need booking */
+  booking?: BookingStatus;
+  alts?: Alternative[];
+  /** set after 改用備案, so it can be undone */
+  replaced?: { title: string; booking?: BookingStatus; reason: string };
+  watch?: { text: string; done: boolean }[];
+  note?: string;
+  // transit cards
+  from?: string;
+  to?: string;
+}
+
+export interface Route {
+  id: string;
+  itemId: string;
+  name: string;
+  mode: Mode;
+  minutes: number;
+  /** minutes to reach the boarding place */
+  walk: number;
+  /** where you board; '' when unknown */
+  place: string;
+  legs: { mode: Mode; label: string; minutes: number }[];
+  departures: { dep: string; arr: string; info: string }[];
+  fare: number | null; // per person, local currency
+  booking?: BookingStatus;
+  primary: boolean;
+}
+
+export interface Task {
+  id: string;
+  tripId: string;
+  group: string;
+  title: string;
+  daysBefore: number;
+  done: boolean;
+}
