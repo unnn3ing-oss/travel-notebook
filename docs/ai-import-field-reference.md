@@ -190,36 +190,37 @@ item 使用 `date、start、end、from、to、notes` 與 `routes` 陣列。
 
 ## 10. 完整欄位骨架
 
-以下從目前 importPrompt 的 SCHEMA 直接擷取，是欄位範例，不是訂單。請選用實際類型，替換 YYYY-MM-DD、HH:MM 與示範資料；不要照抄成旅程事實。完整 App 提示詞另見 [範例](handoff-assets/concise-import-notes/prompt-example.txt)。
+八種類型骨架與 App「複製提示詞」共用 `src/lib/importPrompt.ts` 來源；使用方式與限制見[提示詞架構](import-prompt-framework.md)。骨架不是真實資料，日期／名稱需依來源填寫，交通路段缺少必要數字時不能直接匯入。
+
+以下從目前 importPrompt 的 IMPORT_SCHEMA 直接擷取，是欄位範例，不是訂單。請選用實際類型，替換 YYYY-MM-DD、HH:MM 與示範資料；不要照抄成旅程事實。完整 App 提示詞另見 [範例](handoff-assets/concise-import-notes/prompt-example.txt)。
 
 ```json
-
 {
   "version": 2,
   "items": [
     {
       "type": "flight",
-      "title": "去程",
+      "title": "航段名稱",
       "date": "YYYY-MM-DD",
       "start": "HH:MM",
       "end": "HH:MM",
-      "booking": "confirmed",
+      "booking": null,
       "orderNumber": null,
       "price": null,
       "notes": null,
       "flight": {
-        "airline": "CI",
-        "flightNo": "156",
-        "from": "TPE",
+        "airline": null,
+        "flightNo": null,
+        "from": null,
         "fromTerminal": null,
         "departureDate": "YYYY-MM-DD",
         "departureTime": "HH:MM",
-        "departureZone": "Asia/Taipei",
-        "to": "KIX",
+        "departureZone": null,
+        "to": null,
         "toTerminal": null,
         "arrivalDate": "YYYY-MM-DD",
         "arrivalTime": "HH:MM",
-        "arrivalZone": "Asia/Tokyo",
+        "arrivalZone": null,
         "reference": null,
         "seat": null,
         "cabin": null,
@@ -227,6 +228,7 @@ item 使用 `date、start、end、from、to、notes` 與 `routes` 陣列。
         "bagKg": null,
         "carryKg": null,
         "checkinMinutes": null,
+        "remind": null,
         "price": null,
         "rules": null
       }
@@ -234,7 +236,7 @@ item 使用 `date、start、end、from、to、notes` 與 `routes` 陣列。
     {
       "type": "hotel",
       "title": "住宿名稱",
-      "booking": "confirmed",
+      "booking": null,
       "notes": null,
       "hotel": {
         "name": "住宿名稱",
@@ -242,7 +244,7 @@ item 使用 `date、start、end、from、to、notes` 與 `routes` 陣列。
         "checkoutDate": "YYYY-MM-DD",
         "checkinTime": null,
         "checkoutTime": null,
-        "address": "訂單信件內的完整當地語言地址",
+        "address": null,
         "phone": null,
         "reference": null,
         "room": null,
@@ -251,30 +253,8 @@ item 使用 `date、start、end、from、to、notes` 與 `routes` 陣列。
         "total": null,
         "payment": null,
         "cancelBy": null,
+        "remind": null,
         "note": null
-      }
-    },
-    {
-      "type": "ticket",
-      "title": "活動名稱",
-      "booking": null,
-      "notes": null,
-      "ticket": {
-        "name": "活動名稱",
-        "venue": null,
-        "date": "YYYY-MM-DD",
-        "time": null,
-        "early": null,
-        "kinds": [
-          {
-            "label": "成人",
-            "price": null,
-            "quantity": null
-          }
-        ],
-        "pickup": null,
-        "place": null,
-        "reference": null
       }
     },
     {
@@ -285,6 +265,7 @@ item 使用 `date、start、end、from、to、notes` 與 `routes` 陣列。
       "end": null,
       "from": null,
       "to": null,
+      "place": null,
       "booking": null,
       "orderNumber": null,
       "price": null,
@@ -315,6 +296,30 @@ item 使用 `date、start、end、from、to、notes` 與 `routes` 陣列。
       ]
     },
     {
+      "type": "ticket",
+      "title": "活動名稱",
+      "booking": null,
+      "price": null,
+      "notes": null,
+      "ticket": {
+        "name": "活動名稱",
+        "venue": null,
+        "date": "YYYY-MM-DD",
+        "time": null,
+        "early": null,
+        "kinds": [
+          {
+            "label": "票種名稱",
+            "price": null,
+            "quantity": null
+          }
+        ],
+        "pickup": null,
+        "place": null,
+        "reference": null
+      }
+    },
+    {
       "type": "restaurant",
       "title": "餐廳名稱",
       "date": "YYYY-MM-DD",
@@ -323,7 +328,24 @@ item 使用 `date、start、end、from、to、notes` 與 `routes` 陣列。
       "booking": null,
       "orderNumber": null,
       "price": null,
-      "place": "完整地址",
+      "place": null,
+      "cancelBefore": null,
+      "cancelRemind": null,
+      "notes": null
+    },
+    {
+      "type": "place",
+      "title": "景點名稱",
+      "date": "YYYY-MM-DD",
+      "start": null,
+      "end": null,
+      "booking": null,
+      "orderNumber": null,
+      "price": null,
+      "place": null,
+      "hours": null,
+      "url": null,
+      "tags": [],
       "notes": null
     },
     {
@@ -335,13 +357,26 @@ item 使用 `date、start、end、from、to、notes` 與 `routes` 陣列。
       "booking": null,
       "orderNumber": null,
       "price": null,
-      "place": "完整取車地址",
-      "from": "取車門市",
-      "to": "還車門市與地址",
+      "place": null,
+      "from": null,
+      "to": null,
+      "cancelBefore": null,
+      "cancelRemind": null,
+      "notes": null
+    },
+    {
+      "type": "other",
+      "title": "行程名稱",
+      "date": "YYYY-MM-DD",
+      "start": null,
+      "end": null,
+      "booking": null,
+      "orderNumber": null,
+      "price": null,
+      "place": null,
       "notes": null
     }
   ],
   "review": []
 }
-
 ```
