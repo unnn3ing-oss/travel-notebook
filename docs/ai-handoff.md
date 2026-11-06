@@ -6,13 +6,11 @@
 
 - Repo：`unnn3ing-oss/travel-notebook`；正式分支 `main`。
 - 網站：https://travel-notebook-chi.vercel.app/
-- 最近一次應用程式發布基準：[`cfb10e4`](https://github.com/unnn3ing-oss/travel-notebook/commit/cfb10e41ee0b17df5a7dcaf4b12a375c2fb28b5f)。之後若已有新 commit，以實際遠端與使用者需求為準，別退回這個 SHA。
-- 此基準包含新版 AI 匯入、先看資訊再同頁編輯、左右「編輯／刪除」、取消／儲存、刪除確認。發布前有 60 個測試通過，TypeScript／Vite／PWA 建置成功；發布後已實測正式網站。這是歷史基準，不等於下一次修改已驗證。
-- 航廈 T 標示與 PDF 訂位資訊提示詞、底部工具列選取底色包含文字，皆已在本機完成，等待使用者確認截圖，尚未推送程式／部署；見 [航廈任務](handoffs/2026-11-06-flight-terminal-pdf.md) 與 [工具列任務](handoffs/2026-11-06-bottom-nav-highlight.md)。新的需求開始前，先查 [任務索引](handoffs/README.md) 和遠端 `handoff/*`，辨認是否有進行中的交接。
-- 本文件是專案記憶，不是執行紀錄；每個任務的最新狀態在獨立的 `docs/handoffs/*.md`。
-- [訂單狀態右上角](handoffs/2026-11-06-card-booking-corner.md) 已在本機完成，commit `a045182`，待截圖與合併授權。航班／一般／compact 共用卡片狀態統一位於右上角，標題預留空間，把手移到右側中央；沒有 booking 不補值。程式尚未推送／部署。
-- [D 方案檢視切換](handoffs/2026-11-06-compact-view-switch.md) 已在本機完成，commit `89a7ccb`，待實際截圖確認／合併授權。日期下方同列左側文字切換與黃底線、右側 AI 匯入，移除整列大膠囊；前面修改全部保留，程式仍未推送／部署。
-- [行程卡片與六款目的地頁首](handoffs/2026-11-06-itinerary-art-destinations.md) 已依使用者確認的圖片在本機完成，commit `7ad28f1`，待實際截圖審核／合併授權。頁首取最早航班的明確目的地，不隨回程或手動排序改變；無資料／不支援時用中性圖案。六款為日本、韓國、台灣、新加坡、香港、馬來西亞。程式與圖片尚未推送，不代表已部署。
+- 最近一次應用程式發布基準：[`7ab3dcf`](https://github.com/unnn3ing-oss/travel-notebook/commit/7ab3dcf0abdd2bda6f338053696c65541c13e3ea)。後續純文件 commit 不改本次 app bundle；接手仍須以實際遠端 main 為準。
+- 使用者已於 2026-11-06 授權本對話全部累積修改併入與部署：航廈 T／PDF 附件提示詞、底部選取色包含文字、機票與小插圖、六款目的地地標、D 方案文字底線切換、訂單狀態右上角。程式與圖片均已保存 GitHub，不再只有舊工作區。
+- 本次重新驗證 66 個應用測試、6 個交接工具測試與 TypeScript／Vite／PWA 建置通過。Vercel 對應 7ab3dcf 的 status success；正式站載入 index-CciiRILv.js，隔離 Chromium 實測匯入、資料保存與主要操作通過。未測真實 iPhone／Safari。
+- 本次沒有待實作、待審核或未推送的應用變更。發布詳情見 [2026-11-06-release-approved-ui.md](handoffs/2026-11-06-release-approved-ui.md)。先前任務與 checkpoint 的「未合併／尚未授權」是歷史狀態，已被這次明確授權和實際發布取代；不要據此重做或退回舊版。
+- 本文件是專案記憶，不是執行紀錄；新需求開始前，先查 [任務索引](handoffs/README.md) 與遠端 handoff/*。純文件 checkpoint 不能單獨當成程式或部署已更新的證據。
 
 接手時先看工作區差異與 Git 歷史，再看原始需求、最新交接和已確認截圖。不要把舊的「尚未部署」狀態蓋回後來已發布的版本。
 

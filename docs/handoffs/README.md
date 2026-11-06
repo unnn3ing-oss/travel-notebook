@@ -6,11 +6,12 @@
 
 | 任務 | 文件 | 狀態 |
 | --- | --- | --- |
-| 訂單狀態位於卡片右上角 | [2026-11-06-card-booking-corner.md](2026-11-06-card-booking-corner.md) | 本機完成；待截圖確認，未推送程式／部署 |
-| D 方案文字底線檢視切換 | [2026-11-06-compact-view-switch.md](2026-11-06-compact-view-switch.md) | 本機完成；待實作截圖確認，未推送程式／部署 |
-| 行程小插圖與六款目的地地標頁首 | [2026-11-06-itinerary-art-destinations.md](2026-11-06-itinerary-art-destinations.md) | 本機完成；待實作截圖確認，未推送程式／部署 |
-| 底部工具列黃底包含文字 | [2026-11-06-bottom-nav-highlight.md](2026-11-06-bottom-nav-highlight.md) | 本機完成；待截圖確認，未推送程式／部署 |
-| 航廈 T 標示與 PDF 訂位資訊提示詞 | [2026-11-06-flight-terminal-pdf.md](2026-11-06-flight-terminal-pdf.md) | 本機完成；待截圖確認，未推送程式／部署 |
+| 發布全部已確認介面 | [2026-11-06-release-approved-ui.md](2026-11-06-release-approved-ui.md) | completed；Vercel 與正式站已驗證 |
+| 訂單狀態位於卡片右上角 | [2026-11-06-card-booking-corner.md](2026-11-06-card-booking-corner.md) | completed；已併入 main／部署 |
+| D 方案文字底線檢視切換 | [2026-11-06-compact-view-switch.md](2026-11-06-compact-view-switch.md) | completed；已併入 main／部署 |
+| 行程小插圖與六款目的地地標頁首 | [2026-11-06-itinerary-art-destinations.md](2026-11-06-itinerary-art-destinations.md) | completed；已併入 main／部署 |
+| 底部工具列黃底包含文字 | [2026-11-06-bottom-nav-highlight.md](2026-11-06-bottom-nav-highlight.md) | completed；已併入 main／部署 |
+| 航廈 T 標示與 PDF 訂位資訊提示詞 | [2026-11-06-flight-terminal-pdf.md](2026-11-06-flight-terminal-pdf.md) | completed；已併入 main／部署 |
 | 建立跨 AI 交接與修改前 checkpoint | [2026-11-06-ai-continuity.md](2026-11-06-ai-continuity.md) | 依文件內最新狀態判斷 |
 | 匯出 Claude Design 畫布原始檔到 docs/design | [2026-11-06-design-source-export.md](2026-11-06-design-source-export.md) | completed |
 

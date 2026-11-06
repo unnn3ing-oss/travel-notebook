@@ -1,6 +1,6 @@
-# 航廈與 PDF 匯入：待確認畫面
+# 航廈與 PDF 匯入：已發布畫面
 
-本次任務：[2026-11-06-flight-terminal-pdf](../../handoffs/2026-11-06-flight-terminal-pdf.md)。這組是本機實作的審核截圖，**尚未獲使用者確認、尚未部署**，不要當成已發布規格。
+本次任務：[2026-11-06-flight-terminal-pdf](../../handoffs/2026-11-06-flight-terminal-pdf.md)。這組是本機實作的審核截圖，**使用者已確認並隨 7ab3dcf 發布**，作為已發布版本的視覺參考。
 
 - [flight-view.png](flight-view.png)：舊資料 `1`／`t2` 顯示為 `T1`／`T2`，摘要與出發／抵達列一致。
 - [pdf-import.png](pdf-import.png)：匯入說明要求已授權的 AI 讀取 PDF 附件。

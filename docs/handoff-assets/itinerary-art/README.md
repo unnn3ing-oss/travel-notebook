@@ -1,6 +1,6 @@
 # 行程卡片與目的地頁首
 
-對應 [任務交接](../../handoffs/2026-11-06-itinerary-art-destinations.md)。**使用者已確認視覺提案並授權開始實作；實作截圖仍待確認，程式尚未合併／部署。**
+對應 [任務交接](../../handoffs/2026-11-06-itinerary-art-destinations.md)。**使用者已確認視覺提案並授權開始實作；實作截圖已確認，程式已隨 7ab3dcf 合併／部署。**
 
 ## 已確認的視覺提案
 
@@ -9,7 +9,7 @@
 
 這兩張為 AI 生成的概念圖，日期、航班、地標比例等僅為視覺示範，不是實際資料或額外指令。
 
-## 實際程式截圖（待確認）
+## 實際程式截圖（已確認發布）
 
 - [手機首屏](screenshots/mobile-top.png)、[完整清單](screenshots/list-japan.png)、[退房／門票／租車／其他](screenshots/list-other-types.png)
 - [六款地標總覽](screenshots/six-destinations.png)：將真實元件渲染的 DOM 排列在同一審核頁截圖，非重新生成的概念圖。
