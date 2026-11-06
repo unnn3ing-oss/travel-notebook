@@ -1,9 +1,9 @@
 # 任務交接：依核對報告精簡 AI 匯入筆記
 
 - 日期：2026-11-06（Asia/Taipei）
-- 狀態：awaiting_review（本機完成並驗證；提示詞範例與虛構資料截圖已提供，未合併／部署）
+- 狀態：completed（已併入 main、Vercel 成功，正式站複製提示詞與匯入流程已實測）
 - 正式版／本機基準：35f964f0425df4eabcedc9c8ba83983ffd55d561，work 分支
-- 授權：使用者要求依旅行資料優化提示詞，現已提供另一對話的核對報告；實作與驗證，不包含本次 main 合併／部署。
+- 授權：使用者已確認新版接入「複製提示詞」，並明確要求「部署合併」，授權本次 main 合併及 Vercel 正式部署。
 - 私人來源：使用者提供的核對報告只在此對話附件，不上傳 GitHub、不寫入 fixtures 或截圖。沒有直接讀取真實 Gmail／Notion／PDF，不把報告的核驗聲稱當成本 AI 親自驗證。
 
 ## 使用者需求
@@ -27,6 +27,14 @@
 - 保留最新 UI、原始手動筆記與舊格式 JSON 相容性；不增加硬截斷。沒有直接驗證原始私信或附件。
 
 ## 接手狀態
+
+最新發布結果優先於下方審核階段紀錄：使用者已要求「部署合併」，本任務已正常 fast-forward 併入 main：35f964f → `0afb5fbad861654911730db779eb5c0f77247634`，沒有 force-push。
+
+發布前重新執行 69 個測試與 TypeScript／Vite／PWA 建置皆成功；Vercel 對應 0afb5fb 的 status success，部署紀錄：https://vercel.com/itsjeann/travel-notebook/BadqJx7SW3reURp3L3vYpYysQ8Ka 。正式站 HTTP 200，載入 `index-W1Os5r1g.js`，與本次建置一致。
+
+已在正式站的隔離 Chromium 新建虛構旅程，點「複製提示詞」確認實際剪貼簿包含當前旅程日期、三項短筆記、review 分區、PDF 先補件再 JSON 等新版內容；從 UI 貼入虛構 JSON，加入航班與住宿雙卡。驗證 review 不混入筆記、付款仍未知、隔日抵達與指定座位保留；詳細頁三個短項在重載、編輯／取消後都正確，沒有 browser pageerror 或水平溢出。沒有執行外部 AI 或讀取真實 PDF，不宣稱測過 Gmail 附件權限。
+
+本次所有程式、提示詞範例及示範圖片均已保存 GitHub main，不再僅限本機。下方未推送／待核准敘述是實作審核階段的歷史，已由本次發布取代。沒有待實作、待審核或未推送的應用變更，下一個 AI 請依新需求工作，不要重做此任務。後續只有這份完成紀錄等純文件提交；app bundle 不變，發布時仍核對其最終 Vercel status。
 
 修改前計畫已 pushed 才開始實作；使用者選擇 PDF 入口後再保存一次方向 checkpoint。實作已完成於本機 work commit `d4607ebd43b97d8972e3833598bf93bf90bab2d9`，尚未推送程式分支、合併 main 或部署。
 
@@ -52,5 +60,6 @@
 - 修改前計畫已 pushed：handoff/2026-11-06-concise-import-notes-20261106-140603-764575，commit `bb7a0c474e22761905a4b882d6c38598766a7213`。
 - PDF 入口方向更新已 pushed：handoff/2026-11-06-concise-import-notes-20261106-141018-611189，commit `12e173c1bae5156b2643acd582d05eff040cc628`。
 - 完成後另保存純文件待審核 checkpoint，實際分支／SHA 以發布工具輸出與讀回為準。未推送應用程式或私人資料。
+- 發布前授權與驗證 checkpoint：handoff/2026-11-06-concise-import-notes-20261106-142112-417616，commit `a6d61b4d0e53c1914238485837903adefdb44cab`；確認 pushed 後才執行 main 推送。
 
 純文件 checkpoint 不是程式備份；不要將附件的私人訂單編號、姓名、地址、信箱、Notion 私人頁面連結或完整報告放進 repo。

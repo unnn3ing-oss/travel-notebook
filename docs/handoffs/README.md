@@ -6,7 +6,7 @@
 
 | 任務 | 文件 | 狀態 |
 | --- | --- | --- |
-| 精簡匯入筆記與外部 AI PDF 補件 | [2026-11-06-concise-import-notes.md](2026-11-06-concise-import-notes.md) | 本機完成；待確認／合併部署授權 |
+| 精簡匯入筆記與外部 AI PDF 補件 | [2026-11-06-concise-import-notes.md](2026-11-06-concise-import-notes.md) | completed；已部署並驗證正式站複製按鈕 |
 | 發布全部已確認介面 | [2026-11-06-release-approved-ui.md](2026-11-06-release-approved-ui.md) | completed；Vercel 與正式站已驗證 |
 | 訂單狀態位於卡片右上角 | [2026-11-06-card-booking-corner.md](2026-11-06-card-booking-corner.md) | completed；已併入 main／部署 |
 | D 方案文字底線檢視切換 | [2026-11-06-compact-view-switch.md](2026-11-06-compact-view-switch.md) | completed；已併入 main／部署 |
