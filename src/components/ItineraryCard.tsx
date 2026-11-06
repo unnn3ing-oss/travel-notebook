@@ -1,6 +1,6 @@
 import type { Item, Route } from '../types';
 import { formatTerminal } from '../lib/terminal';
-import { BOOKING_LABEL, BookingPill } from './ui';
+import { BookingPill } from './ui';
 import { EntryArt, FlightArt } from './TravelArt';
 
 const LABELS = { flight:'航班',transit:'交通',hotel:'住宿',ticket:'門票',restaurant:'餐廳',place:'景點',car:'租車',other:'其他' };
@@ -21,24 +21,25 @@ export function ItineraryCard({ item, routes = [], compact = false, showTime = f
  const flight = item.flight;
  const from = flight?.from || item.from;
  const to = flight?.to || item.to;
- if (item.type === 'flight') return <span className={'itinerary-ticket' + (compact ? ' is-compact' : '')}>
+ const bookingClass = item.booking ? ' has-booking' : '';
+ const booking = item.booking && <span className="itinerary-status"><BookingPill status={item.booking}/></span>;
+ if (item.type === 'flight') return <span className={'itinerary-ticket' + (compact ? ' is-compact' : '') + bookingClass}>
+  {booking}
   <span className="itinerary-ticket-stub"><FlightArt/></span>
   <span className="itinerary-ticket-body">
-   <span className="itinerary-card-heading"><strong className="itinerary-title">{item.title}</strong>{!compact && <BookingPill status={item.booking}/>}</span>
+   <span className="itinerary-card-heading"><strong className="itinerary-title">{item.title}</strong></span>
    {(from || to) && <strong className="itinerary-flight-route num">{from || '—'} <span>→</span> {to || '—'}</strong>}
    <span className="itinerary-subtitle num">{[flight && [flight.airline,flight.flightNo].filter(Boolean).join(' '), flight && [formatTerminal(flight.fromTerminal), formatTerminal(flight.toTerminal)].filter(Boolean).join(' → ')].filter(Boolean).join(' · ') || '航班資訊待補'}</span>
    {showTime && <span className="itinerary-subtitle num">{[flight?.departureTime || item.start, flight?.arrivalTime || item.end].filter(Boolean).join(' – ') || '時間未定'}</span>}
-   {compact && item.booking && <span className="itinerary-subtitle">{BOOKING_LABEL[item.booking]}</span>}
   </span>
  </span>;
- return <span className={'itinerary-small-card' + (compact ? ' is-compact' : '') + ' type-' + item.type}>
+ return <span className={'itinerary-small-card' + (compact ? ' is-compact' : '') + ' type-' + item.type + bookingClass}>
+  {booking}
   <span className="itinerary-small-art"><EntryArt type={item.type} checkout={!!item.linkedStayId}/></span>
   <span className="itinerary-small-body">
    <span className="itinerary-card-heading"><strong className="itinerary-title">{item.title}</strong></span>
    <span className="itinerary-subtitle">{summary(item,routes)}</span>
    {showTime && <span className="itinerary-subtitle num">{item.start || '時間未定'}{item.end && item.end!==item.start && ' – ' + item.end}</span>}
-   {!compact && item.booking && <BookingPill status={item.booking}/>}
-   {compact && item.booking && <span className="itinerary-subtitle">{BOOKING_LABEL[item.booking]}</span>}
   </span>
  </span>;
 }

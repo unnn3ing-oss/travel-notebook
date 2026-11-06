@@ -465,7 +465,7 @@ input::-webkit-datetime-edit { padding: 0; }
 .itinerary-list-card { display:block; position:relative; border-radius:15px; background:var(--card); border:1px solid var(--line); transition:box-shadow 120ms; }
 .itinerary-list-card.is-lifted { box-shadow:0 0 0 2px var(--ink),0 12px 24px #1e2a4438; }
 .itinerary-list-card.has-time-warning { border-color:var(--warn); }
-.itinerary-card-grip { position:absolute; right:8px; top:9px; color:var(--ink-3); display:flex; }
+.itinerary-card-grip { position:absolute; right:8px; top:50%; transform:translateY(-50%); color:var(--ink-3); display:flex; }
 .itinerary-card-grip>svg { width:14px; height:14px; }
 .itinerary-card-chevron { position:absolute; right:7px; bottom:12px; display:flex; color:var(--ink-2); }
 .itinerary-card-chevron>svg { width:16px; height:16px; }
@@ -478,7 +478,12 @@ input::-webkit-datetime-edit { padding: 0; }
 .itinerary-card-heading { display:flex; align-items:flex-start; flex-wrap:wrap; gap:6px; min-width:0; }
 .itinerary-title { display:block; min-width:0; overflow-wrap:anywhere; font-size:15px; line-height:1.4; }
 .itinerary-subtitle { display:block; font-size:11px; line-height:1.5; color:var(--ink-2); overflow-wrap:anywhere; }
-.itinerary-small-body>.pill,.itinerary-card-heading>.pill { align-self:flex-start; width:fit-content; padding:2px 6px; font-size:10px; }
+.itinerary-ticket,.itinerary-small-card { position:relative; }
+.itinerary-status { position:absolute; top:9px; right:9px; z-index:1; line-height:1; }
+.itinerary-status>.pill { display:block; width:fit-content; padding:2px 6px; font-size:10px; white-space:nowrap; }
+.has-booking .itinerary-card-heading { padding-right:56px; }
+.is-compact.has-booking .itinerary-card-heading { padding-right:54px; }
+.timeline-card-content.is-short .has-booking .itinerary-title { -webkit-line-clamp:1; }
 .itinerary-ticket { display:flex; align-items:stretch; min-width:0; border-radius:14px; background:var(--ticket-soft); overflow:hidden; }
 .itinerary-ticket-stub { flex:0 0 64px; display:flex; justify-content:center; align-items:center; position:relative; background:#1E2A44; border-right:2px dashed #C9D1DE; }
 .itinerary-ticket-stub:before,.itinerary-ticket-stub:after { content:''; position:absolute; right:-7px; width:12px; height:12px; background:var(--bg); border-radius:50%; z-index:1; }
