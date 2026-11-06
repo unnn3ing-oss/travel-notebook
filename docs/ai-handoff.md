@@ -2,6 +2,10 @@
 
 更新日期：2026-11-06（Asia/Taipei）。先讀根目錄 [AGENTS.md](../AGENTS.md)；Claude 另有 [CLAUDE.md](../CLAUDE.md) 入口。
 
+## 本次尚未發布的工作
+
+[2026-11-07 匯入提示詞架構](handoffs/2026-11-07-import-prompt-framework.md) 已於本機完成，commit `d2a3a71c599b09277d4de5a75b47963996ec4600`，81 tests／建置及瀏覽器八類匯入與重載通過。新版八段提示詞、文件與示範截圖尚未推程式／合併／部署；修改前計畫與完成交接保存獨立 handoff 分支，不能當成程式已備份到遠端。使用者本次僅要求設計可供複製的架構；待審核與本次合併／部署指示。下方「沒有待實作」描述的是前次已發布基準。
+
 ## 目前狀態與接手順序
 
 - Repo：`unnn3ing-oss/travel-notebook`；正式分支 `main`。
