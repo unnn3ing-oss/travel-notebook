@@ -9,7 +9,8 @@
 - 最近一次應用程式發布基準：[`7ab3dcf`](https://github.com/unnn3ing-oss/travel-notebook/commit/7ab3dcf0abdd2bda6f338053696c65541c13e3ea)。後續純文件 commit 不改本次 app bundle；接手仍須以實際遠端 main 為準。
 - 使用者已於 2026-11-06 授權本對話全部累積修改併入與部署：航廈 T／PDF 附件提示詞、底部選取色包含文字、機票與小插圖、六款目的地地標、D 方案文字底線切換、訂單狀態右上角。程式與圖片均已保存 GitHub，不再只有舊工作區。
 - 本次重新驗證 66 個應用測試、6 個交接工具測試與 TypeScript／Vite／PWA 建置通過。Vercel 對應 7ab3dcf 的 status success；正式站載入 index-CciiRILv.js，隔離 Chromium 實測匯入、資料保存與主要操作通過。未測真實 iPhone／Safari。
-- 本次沒有待實作、待審核或未推送的應用變更。發布詳情見 [2026-11-06-release-approved-ui.md](handoffs/2026-11-06-release-approved-ui.md)。先前任務與 checkpoint 的「未合併／尚未授權」是歷史狀態，已被這次明確授權和實際發布取代；不要據此重做或退回舊版。
+- 上次介面發布已完成，詳情見 [2026-11-06-release-approved-ui.md](handoffs/2026-11-06-release-approved-ui.md)。該批先前 checkpoint 的「未合併／尚未授權」是歷史狀態，已被實際發布取代；不要據此重做或退回舊版。
+- 新需求 [精簡匯入筆記與 PDF 補件](handoffs/2026-11-06-concise-import-notes.md) 已在本機 commit `d4607eb` 完成，69 tests 與建置通過，尚未推送程式／部署，等待使用者確認。提示詞以三個短項為原則，來源／查核留根層 review（App 不匯入）；Gmail 拒絕機票附件且座位缺漏時，先請使用者將 PDF 上傳同一外部 AI 對話再產生 JSON。沒有新增 App PDF 解析器或回溯截斷舊筆記。
 - 本文件是專案記憶，不是執行紀錄；新需求開始前，先查 [任務索引](handoffs/README.md) 與遠端 handoff/*。純文件 checkpoint 不能單獨當成程式或部署已更新的證據。
 
 接手時先看工作區差異與 Git 歷史，再看原始需求、最新交接和已確認截圖。不要把舊的「尚未部署」狀態蓋回後來已發布的版本。
