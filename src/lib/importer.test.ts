@@ -67,6 +67,31 @@ describe('current form fields and legacy compatibility',()=>{
  it('asks the AI for the exact current field names rather than the old title-only schema',()=>{
   const prompt=importPrompt(trip);for(const field of ['flightNo','airline','address','checkoutDate','room','kinds','routes','notes','不要猜'])expect(prompt).toContain(field);
   for(const instruction of ['已獲授權','PDF 附件','不要只讀信件本文','起飛日期及旅客逐一核對','flight.seat','無法讀取 PDF 附件','缺少的欄位填 null','附件檔名','fromTerminal／toTerminal','大寫 T'])expect(prompt).toContain(instruction);
+  for(const instruction of ['最多 3 個短項','hotel.note','review','不顯示 review','已取消訂單不輸出 items','實際付款收據取代舊待扣款計畫','訂單確認不等於已付款','跨日航班保留真實 arrivalDate','無資料不等於 0／false'])expect(prompt).toContain(instruction);
+  expect(prompt).toContain('先停止產生最終 JSON');expect(prompt).toContain('直接上傳原始 PDF 到同一個 AI 對話');expect(prompt).toContain('已讀附件未載明座位');
+ });
+});
+describe('concise notes with independent review records',()=>{
+ it('keeps review out of imported notes while preserving an uncollected scheduled payment as unknown',()=>{
+  const note='• 預定出發前一天自動扣款，完成狀態待確認。\n• 晚到請先聯絡櫃台。';
+  const result=parseImport(JSON.stringify({version:2,items:[{type:'hotel',title:'示範旅宿',booking:'confirmed',notes:null,hotel:{name:'示範旅宿',checkinDate:trip.start,checkoutDate:'2026-11-21',total:'JPY 8,000',payment:null,note}}],review:[{itemTitle:'示範旅宿',kind:'source',detail:'核對程序不應變成旅途筆記',source:'demo-confirmation.pdf'}]}),[trip.start,'2026-11-21'],{});
+  if('error'in result)throw Error(result.error);
+  expect(result.rows[0].fields.hotel).toMatchObject({payment:'',total:'JPY 8,000',note});
+  let n=0;const bundle=materializeImport(result.rows,trip,()=>String(++n));
+  expect(bundle.items).toHaveLength(2);expect(bundle.items[0].note).toBe(note);expect(bundle.items[0].booking).toBe('confirmed');
+  expect(JSON.stringify(bundle)).not.toContain('核對程序');expect(JSON.stringify(bundle)).not.toContain('demo-confirmation.pdf');
+ });
+ it('preserves a next-day arrival beyond the itinerary end and distinguishes missing baggage from known carry weight',()=>{
+  const row=parsed([{type:'flight',title:'示範回程',flight:{airline:'CI',flightNo:'0199',from:'NRT',to:'TPE',departureDate:trip.end,departureTime:'23:10',departureZone:'Asia/Tokyo',arrivalDate:'2026-11-25',arrivalTime:'01:30',arrivalZone:'Asia/Taipei',seat:null,bags:null,carryKg:8},notes:null}]).rows[0];
+  const item=materializeImport([row],trip,()=> 'overnight').items[0];
+  expect(item.date).toBe(trip.end);expect(item.flight).toMatchObject({flightNo:'0199',arrivalDate:'2026-11-25',seat:'',carryKg:8});
+  expect(item.missingFields).toContain('託運件數');expect(item.missingFields).not.toContain('手提重量');expect(item.note).toBeUndefined();
+ });
+ it('keeps a rental and its accessory instructions in one reservation without duplicating the total',()=>{
+  const note='• 取車時攜帶預約要求的文件。\n• 隔日 16:00 在 B 門市還車，取出 ETC 卡另寄回。';
+  const row=parsed([{type:'car',title:'示範租車',date:trip.start,start:'14:00',end:null,from:'A 門市',to:'B 門市（示範地址）',place:'A 門市（示範地址）',price:'JPY 12,500',orderNumber:'DEMO-CAR',notes:note}]).rows[0];
+  const bundle=materializeImport([row],trip,()=> 'rental');
+  expect(bundle.items).toHaveLength(1);expect(bundle.items[0]).toMatchObject({type:'car',from:'A 門市',to:'B 門市（示範地址）',address:'A 門市（示範地址）',price:'JPY 12,500',end:'',note});
  });
 });
 it('accepts currency-formatted ticket prices without silently turning them into free tickets',()=>{
