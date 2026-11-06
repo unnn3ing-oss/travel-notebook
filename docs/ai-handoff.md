@@ -6,14 +6,14 @@
 
 - Repo：`unnn3ing-oss/travel-notebook`；正式分支 `main`。
 - 網站：https://travel-notebook-chi.vercel.app/
-- 最近一次應用程式發布基準：[`0afb5fb`](https://github.com/unnn3ing-oss/travel-notebook/commit/0afb5fbad861654911730db779eb5c0f77247634)。後續純文件 commit 不改本次 app bundle；接手仍須以實際遠端 main 為準。
+- 最近一次應用程式發布基準：[`8aa76d7`](https://github.com/unnn3ing-oss/travel-notebook/commit/8aa76d7f66a1dca1ee708f0d7812957848a4a1a9)。後續純文件 commit 不改本次 app bundle；接手仍須以實際遠端 main 為準。
 - 使用者已於 2026-11-06 授權本對話全部累積修改併入與部署：航廈 T／PDF 附件提示詞、底部選取色包含文字、機票與小插圖、六款目的地地標、D 方案文字底線切換、訂單狀態右上角。程式與圖片均已保存 GitHub，不再只有舊工作區。
 - 最新提示詞發布已重新驗證 69 個應用測試與 TypeScript／Vite／PWA 建置。Vercel 對應 0afb5fb 的 status success，正式站載入 index-W1Os5r1g.js；實測複製按鈕帶入旅程與新版 PDF 補件／短筆記規則，匯入、住宿雙卡、重載保存通過。未執行外部 AI 或讀取真實 PDF，未測真實 iPhone／Safari。
 - 上次介面發布已完成，詳情見 [2026-11-06-release-approved-ui.md](handoffs/2026-11-06-release-approved-ui.md)。該批先前 checkpoint 的「未合併／尚未授權」是歷史狀態，已被實際發布取代；不要據此重做或退回舊版。
 - [精簡匯入筆記與 PDF 補件](handoffs/2026-11-06-concise-import-notes.md) 已獲使用者「部署合併」授權並完成發布。提示詞以三個短項為原則，來源／查核留根層 review（App 不匯入）；Gmail 拒絕機票附件且座位缺漏時，先請使用者將 PDF 上傳同一外部 AI 對話再產生 JSON。程式、範例與截圖已在 GitHub；目前沒有待實作或待核准項目。沒有新增 App PDF 解析器或回溯截斷舊筆記。
 - 本文件是專案記憶，不是執行紀錄；新需求開始前，先查 [任務索引](handoffs/README.md) 與遠端 handoff/*。純文件 checkpoint 不能單獨當成程式或部署已更新的證據。
-- 新需求 [設備時間地標背景](handoffs/2026-11-06-destination-day-period.md) 已於本機 a6d0280 完成、79 tests／建置及瀏覽器驗證通過，未推送程式／部署。06–11 早上、11–14 中午、14–18 下午、其餘晚上，依設備本地時鐘，30 秒檢查與回前景即時更新；不改旅程提醒時區。等待本次畫面確認／合併授權。
-- 優化匯入提示詞可用 [完整欄位參考](ai-import-field-reference.md)，含八種類型、UI／匯入能力差異、選項與現行 JSON 骨架；此文件已提供使用者，目前隨 a6d0280 存在本機，尚未推送。
+- [設備時間地標背景](handoffs/2026-11-06-destination-day-period.md) 已獲使用者「推」授權並隨 8aa76d7 併入／部署，79 tests 與建置通過，Vercel success、正式站載入 index-Bub3IUyT.js。正式站實測四時段、跨界 timer、回前景更新、設備／目的地時區區分及資料未改寫。06–11 早上、11–14 中午、14–18 下午、其餘晚上；30 秒檢查，不改旅程提醒時區。未測真實 iPhone／Safari。
+- 優化匯入提示詞可用 [完整欄位參考](ai-import-field-reference.md)，含八種類型、UI／匯入能力差異、選項與現行 JSON 骨架；文件、程式及圖片均已在 GitHub main，不再只在本機。目前沒有待實作、待審核或未推送的應用變更。
 
 接手時先看工作區差異與 Git 歷史，再看原始需求、最新交接和已確認截圖。不要把舊的「尚未部署」狀態蓋回後來已發布的版本。
 

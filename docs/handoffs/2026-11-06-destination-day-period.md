@@ -1,9 +1,9 @@
 # 任務交接：設備時間與城市地標四時段背景
 
 - 日期：2026-11-06（Asia/Taipei）
-- 狀態：awaiting_review（實作、欄位參考文件與驗證完成；尚未推送程式／合併部署）
+- 狀態：completed（已併入 main／Vercel，正式站四時段與設備時間已實測）
 - 正式版／本機基準：f5ccc64319b470341467a6cf7fb2780dc43f6e14，work 分支
-- 授權：實作並提供實際截圖；尚未授權本次程式合併 main／部署。純交接 checkpoint 已授權。
+- 授權：使用者在實作截圖後要求「推」，授權推送到 main 與既有 Vercel 自動部署。純交接 checkpoint 已授權。
 - 同時收到的要求：提供目前類型／選項／格式以優化提示詞；已只讀檢查實際表單與 parser，新增 docs/ai-import-field-reference.md（尚未提交），並在對話提供連結。這是文件工作，不改匯入規則。
 
 ## 使用者需求
@@ -28,6 +28,14 @@
 
 ## 接手狀態
 
+最新發布結果優先於下方審核歷史：使用者已要求「推」，環境恢復後確認原 commits 完整，已正常 fast-forward 推送 main：f5ccc64 → `8aa76d7f66a1dca1ee708f0d7812957848a4a1a9`，沒有 force-push。本次重新跑 79 個測試與正式建置全數成功。
+
+該 SHA 的 Vercel context success，紀錄：https://vercel.com/itsjeann/travel-notebook/HGYbrfT6Crkqcnmx9BYUTR9b8dp2 。正式站 HTTP 200，載入 index-Bub3IUyT.js／index-B0dBqr0b.css，與本次建置一致。
+
+正式站隔離 Chromium 以虛構資料建立旅程、使用現有複製提示詞並從 UI 匯入；驗證日本地標四時段、設備時鐘跨 06:00 無重載更新、回到前景更新、台北設備 13:30 仍為中午（不採東京旅程時區）、清單／時間軸正常，items 前後相同、沒有 browser pageerror 或水平溢出。沒有讀取使用者真實資料，沒有測真實 iPhone／Safari。
+
+程式、圖片與 docs/ai-import-field-reference.md 已保存 GitHub main，不再僅在舊工作區；README／索引／長期交接同步完成狀態。沒有待實作、待核准或未推送的應用修改，下一個 AI 不要依舊 planned checkpoint 重做。下面的「未推送／等待授權」均是被本次發布取代的審核歷史；本次後續純文件 commit 不改 app bundle，仍核對最終 Vercel 狀態。
+
 已確認修改前計畫 pushed 才開始修改程式。完成於本機 work commit `a6d028087f8781db71cf05a55aa207c19f692ae0`，尚未推送任何程式分支、合併 main 或部署。
 
 完成內容：dayPeriod.ts 提供設備本地時段與 hook；Plan 只訂閱一次並共用至手機／桌機頁首；DestinationHeader／TravelArt／CSS 實作四種天空、日月／雲／星與城市窗光，地標配色及文字隨背景調整。App 的 useClock、旅程提醒及資料模型都未改。
@@ -50,5 +58,6 @@
 
 - 修改前計畫已 pushed：handoff/2026-11-06-destination-day-period-20261106-143940-217808，commit `37baf1d6f1b69baa48cde149327381108f419034`。
 - 完成後保存純文件待審核 checkpoint，實際分支／SHA 以發布工具輸出及讀回為準；沒有推送應用程式與圖片。
+- 發布前授權與驗收計畫已 pushed：handoff/2026-11-06-destination-day-period-20261106-155718-054563，commit `1795437bc3b9209e54aa459c655092ea3e20522b`；確認後才推 main。
 
 純文件 checkpoint 不包含尚未推送的原始碼／圖片；若本次尚未合併，程式只在 /workspace/travel-notebook。

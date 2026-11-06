@@ -1,6 +1,6 @@
-# 地標四時段背景：實作截圖（待確認）
+# 地標四時段背景：已確認發布的實作截圖
 
-對應 [任務交接](../../handoffs/2026-11-06-destination-day-period.md)。本機實作完成，尚未合併／部署。
+對應 [任務交接](../../handoffs/2026-11-06-destination-day-period.md)。已隨 8aa76d7 併入 main／部署，正式站四時段與設備時鐘更新已實測。
 
 - [four-periods.png](four-periods.png)：日本地標的早上、中午、下午與晚上實際元件總覽。
 - [six-destinations.png](six-destinations.png)：六個目的地 × 四時段完整比較。
