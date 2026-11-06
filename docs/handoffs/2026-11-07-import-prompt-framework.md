@@ -1,9 +1,9 @@
 # 任務交接：重新設計複製提示詞的匯入架構
 
 - 日期：2026-11-07（Asia/Taipei）
-- 狀態：implemented；已完成本機驗證，待使用者審核／本次合併部署指示
+- 狀態：releasing；使用者已授權「推上併入」，準備 fast-forward main 並驗證 Vercel
 - 正式版／本機基準：d42a29189ee19030571cdfd8249b95b0613ed223，work 分支
-- 授權：重設可直接作為「複製提示詞」使用的範本、實作與驗證；尚未授權本次 main 合併／部署。
+- 授權：使用者已審閱實作摘要／文字檔與截圖連結，明確要求「推上併入」；本次 GitHub main 合併與其自動 Vercel 發布已授權。
 
 ## 使用者需求
 
@@ -49,8 +49,10 @@
 - 320／390 寬度無水平溢出，無 pageerror；截圖 copy-prompt.png、import-preview.png、short-hotel-note.png 已在本機 commit。
 - 沒有外部 AI／真實信箱／Notion／PDF 端到端測試，不能宣稱已實測附件權限或辨識率。未測真實 iPhone／Safari。
 
-### 下一步
+### 本次發布授權與下一步
 
-供使用者查看文字檔與截圖。若使用者調整就先更新這份交接；若這次明確要求「推／合併／部署」，先核對遠端 main 與工作區，再完成合併推送、驗證 Vercel 與正式站複製內容，更新交接／索引狀態。不要套用過去已完成任務的部署授權。
+使用者已於本次回覆「推上併入」。已 fetch main 與最新 handoff，main 仍為 d42a291，工作區乾淨，本機 HEAD 82ef949 包含實作與完整交接；確認 main 是 HEAD 祖先，可正常 fast-forward，不需要 force push。程式自前次 81 tests／建置／瀏覽器驗證後未修改，沿用該次結果。
+
+先保存此發布交接，再正常 push HEAD:main，等待 Vercel success 並核對正式站 bundle index-D75fNmoZ.js。使用隔離瀏覽器透過實際 UI 建立示範旅程，檢查複製內容及匯入／重載；完成後更新交接、索引與長期記憶，不再把待審核狀態當現況。
 
 程式與範例若未推送只在 /workspace/travel-notebook，純文件 checkpoint 不是原始碼備份。使用者過去的部署指示不自動套用新需求。
