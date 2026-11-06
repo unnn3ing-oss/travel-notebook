@@ -6,7 +6,7 @@
 
 | 任務 | 文件 | 狀態 |
 | --- | --- | --- |
-| 重新設計八類型複製提示詞架構 | [2026-11-07-import-prompt-framework.md](2026-11-07-import-prompt-framework.md) | implemented；本機已驗證，待審核與本次部署指示 |
+| 重新設計八類型複製提示詞架構 | [2026-11-07-import-prompt-framework.md](2026-11-07-import-prompt-framework.md) | completed；已部署並實測正式站複製與八類匯入 |
 | 設備時間地標四時段背景＋欄位參考 | [2026-11-06-destination-day-period.md](2026-11-06-destination-day-period.md) | completed；已部署並實測設備時間更新 |
 | 精簡匯入筆記與外部 AI PDF 補件 | [2026-11-06-concise-import-notes.md](2026-11-06-concise-import-notes.md) | completed；已部署並驗證正式站複製按鈕 |
 | 發布全部已確認介面 | [2026-11-06-release-approved-ui.md](2026-11-06-release-approved-ui.md) | completed；Vercel 與正式站已驗證 |

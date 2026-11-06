@@ -1,7 +1,7 @@
 # 任務交接：重新設計複製提示詞的匯入架構
 
 - 日期：2026-11-07（Asia/Taipei）
-- 狀態：releasing；使用者已授權「推上併入」，準備 fast-forward main 並驗證 Vercel
+- 狀態：completed；已併入 GitHub main、Vercel success、正式站實測通過
 - 正式版／本機基準：d42a29189ee19030571cdfd8249b95b0613ed223，work 分支
 - 授權：使用者已審閱實作摘要／文字檔與截圖連結，明確要求「推上併入」；本次 GitHub main 合併與其自動 Vercel 發布已授權。
 
@@ -34,11 +34,11 @@
 
 ### 已完成
 
-- 本機程式與範例 commit：`d2a3a71c599b09277d4de5a75b47963996ec4600`（work）。**尚未推程式到 GitHub，未合併 main／未部署**。
+- 程式與範例 commit：`d2a3a71c599b09277d4de5a75b47963996ec4600`，已隨 `55a8d21dd2159facfd07f1bd94958059414eb7f5` 正常 fast-forward 併入 GitHub main／部署；程式、文件與示範截圖皆已保存遠端。
 - `src/lib/importPrompt.ts`：八段架構、六個動態旅程參考欄位、八種類型骨架與完整選項；`importer.ts` re-export 保留複製按鈕入口。parser、資料庫與舊卡資料未改。
 - 保留 PDF 補件／座位逐人逐航段核對、T 航廈、短筆記、獨立 review；補齊交通缺數字／mode、跨午夜班次、外幣、提醒偏好與重複匯入限制。
 - `Plan.tsx` 說明更新為可搭配信件／Notion／PDF／圖片；版面維持現有樣式。
-- `docs/import-prompt-framework.md`、欄位參考與兩份 prompt-example.txt 同步。新候選截圖與文字在 `docs/handoff-assets/import-prompt-framework/`，全部為虛構示範資料，尚非使用者確認的正式視覺基準。
+- `docs/import-prompt-framework.md`、欄位參考與兩份 prompt-example.txt 同步。新候選截圖與文字在 `docs/handoff-assets/import-prompt-framework/`，全部為虛構示範資料，使用者已要求本次「推上併入」，這批更新已發布。
 
 ### 實際驗證
 
@@ -49,10 +49,16 @@
 - 320／390 寬度無水平溢出，無 pageerror；截圖 copy-prompt.png、import-preview.png、short-hotel-note.png 已在本機 commit。
 - 沒有外部 AI／真實信箱／Notion／PDF 端到端測試，不能宣稱已實測附件權限或辨識率。未測真實 iPhone／Safari。
 
-### 本次發布授權與下一步
+### 發布與正式站驗證
 
-使用者已於本次回覆「推上併入」。已 fetch main 與最新 handoff，main 仍為 d42a291，工作區乾淨，本機 HEAD 82ef949 包含實作與完整交接；確認 main 是 HEAD 祖先，可正常 fast-forward，不需要 force push。程式自前次 81 tests／建置／瀏覽器驗證後未修改，沿用該次結果。
+- 使用者本次明確指示「推上併入」，此前的待審核／未授權描述已被這次授權與發布取代。
+- 發布前 checkpoint：`handoff/2026-11-07-import-prompt-framework-20261106-174852-754501`，commit `e3a49f396a419c0a59a526e08a6c99a70fcdefad`。
+- 已 push `55a8d21dd2159facfd07f1bd94958059414eb7f5` 至 main，GitHub Vercel status `success` / Deployment has completed；部署結果 https://vercel.com/itsjeann/travel-notebook/CKaeXeFDYBhXB4Ea1aH2BdMkVv5h 。
+- 正式站 https://travel-notebook-chi.vercel.app/ 已載入 `index-D75fNmoZ.js`，與已驗證建置一致。
+- 隔離 Chromium 透過正式 UI 建立虛構旅程，再按「複製提示詞」；剪貼簿與相同旅程參數的本機函式輸出完全一致（含當前旅程名稱、人數、幣別、時區、八段與八類型）。未使用開發來源路徑進入正式站。
+- 正式 UI 貼回虛構八類型 JSON → 預覽八筆 → 九張卡 → 重載保存通過；航班前導零／座位、住宿雙卡／一行短筆記、交通路段保存；review 沒進資料庫。320／390 無水平溢出，無 pageerror。
+- 程式自前次 81 tests／建置後未改，沿用通過結果；本次正式站檢查提供發布後驗證。
 
-先保存此發布交接，再正常 push HEAD:main，等待 Vercel success 並核對正式站 bundle index-D75fNmoZ.js。使用隔離瀏覽器透過實際 UI 建立示範旅程，檢查複製內容及匯入／重載；完成後更新交接、索引與長期記憶，不再把待審核狀態當現況。
+### 接手下一步
 
-程式與範例若未推送只在 /workspace/travel-notebook，純文件 checkpoint 不是原始碼備份。使用者過去的部署指示不自動套用新需求。
+本次已完成，沒有待審核、待推送的應用變更。不需重新套用舊計畫；收到新需求時先檢查 main／工作區與相關最新 handoff，再保存新計畫。最後的發布紀錄／索引 commit 為純文件，不改此 app bundle。
