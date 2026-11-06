@@ -95,24 +95,20 @@ export function Plan({ trip, day }: { trip: Trip; day?: string }) {
 
   const tripEmpty = items.length === 0;
 
-  const header = <><DestinationHeader trip={trip} items={items}/>{!tripEmpty && <div className="plan-view-bar"><Segment view={view} setView={setV}/></div>}</>;
-
   return (
     <TabPage pad="52px 20px 16px" gap={14}>
       <div className="desktop-board"><DestinationHeader trip={trip} items={items}/><PlanBoard trip={trip} days={days} items={items} routes={routes} edit={(i) => (i === 'new' ? setSheet('add') : location.hash=href('item',i.id))} /></div>
       <div className="mobile-plan">
-        {header}
+        <DestinationHeader trip={trip} items={items}/>
+        {view==='timeline' && !tripEmpty ? <TimelineDays days={days} sel={sel===POOL?days[0]:sel} items={items} pick={pick}/> : <DayTabs days={days} sel={sel} pick={pick}/>}
+        {!tripEmpty && <div className="plan-tools">
+          <ViewSwitch view={view} setView={setV}/>
+          <button type="button" className="plan-import" onClick={()=>setSheet('import')}>AI 匯入訂單</button>
+        </div>}
         {view === 'timeline' && !tripEmpty
-          ? <Timeline days={days} sel={sel === POOL ? days[0] : sel} items={items} routes={routes} pick={pick} poolCount={poolCount} onAdd={() => setSheet('add')} />
+          ? <Timeline sel={sel === POOL ? days[0] : sel} items={items} routes={routes} poolCount={poolCount} onAdd={() => setSheet('add')} />
           : <>
-            <DayTabs days={days} sel={sel} pick={pick} />
             {tripEmpty ? <EmptyTrip first={sel === days[0]} onImport={() => setSheet('import')} onAdd={() => setSheet('add')} /> : <>
-              <div style={css('display: flex; align-items: center; justify-content: space-between; gap: 8px')}>
-                <p style={css('margin: 0; display: flex; align-items: center; gap: 6px; font-size: 13px; color: #5B6578')}>
-                  <span style={css('color: #8A94A6; display: flex')}>{I.grip}</span>長按卡片，上下拖曳排序
-                </p>
-                <button onClick={() => setSheet('import')} style={css('height: 40px; flex-shrink: 0; padding: 0 14px; border-radius: 10px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 13px; font-weight: 500')}>AI 匯入訂單</button>
-              </div>
               <CardList key={sel} list={list} routes={routes} pool={sel === POOL} label={label(sel)} open={(i) => location.hash=href('item',i.id)} reorder={reorder} />
               {!list.length && <p style={css('margin: 0; padding: 24px 12px; border: 1.5px dashed #B8C0CC; border-radius: 12px; text-align: center; font-size: 14px; color: #5B6578')}>{sel === POOL ? '景點庫是空的，想去的地方可以先放這裡' : '這天還沒有行程'}</p>}
               <div style={css('display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; flex-shrink: 0')}>
@@ -140,16 +136,11 @@ export function Plan({ trip, day }: { trip: Trip; day?: string }) {
   );
 }
 
-function Segment({ view, setView, tall }: { view: string; setView: (v: 'list' | 'timeline') => void; tall?: boolean }) {
-  const h = tall ? '38px; padding: 0 14px' : '36px; padding: 0 12px';
-  const on = 'height: ' + h + '; border: 0; border-radius: 10px; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 14px; font-weight: 700';
-  const off = 'height: ' + h + '; border: 0; border-radius: 10px; background: transparent; color: #5B6578; font: inherit; font-size: 14px';
-  return (
-    <div role="group" aria-label="檢視方式" style={css('display: flex; flex-shrink: 0; background: #E4E8EE; border-radius: 12px; padding: 3px')}>
-      <button aria-pressed={view === 'list'} onClick={() => setView('list')} style={css(view === 'list' ? on : off)}>清單</button>
-      <button aria-pressed={view === 'timeline'} onClick={() => setView('timeline')} style={css(view === 'timeline' ? on : off)}>時間軸</button>
-    </div>
-  );
+function ViewSwitch({ view, setView }: { view: string; setView: (v: 'list' | 'timeline') => void }) {
+  return <div className="plan-view-switch" role="group" aria-label="檢視方式">
+    <button type="button" aria-pressed={view==='list'} onClick={()=>setView('list')}>清單</button>
+    <button type="button" aria-pressed={view==='timeline'} onClick={()=>setView('timeline')}>時間軸</button>
+  </div>;
 }
 
 function DayTabs({ days, sel, pick }: { days: string[]; sel: string; pick: (k: string) => void }) {
@@ -198,7 +189,7 @@ function CardList({ list, routes, pool, label, open, reorder }: { list: Item[]; 
   };
   let prev: number | null = null;
   return (
-    <ol className="connected-plan" ref={ol} aria-label={label + ' 的行程'} style={css('list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; ' + (drag ? 'touch-action: none' : ''))}
+    <ol className="connected-plan" ref={ol} aria-label={label + ' 的行程'} aria-description="長按卡片，上下拖曳排序" style={css('list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; ' + (drag ? 'touch-action: none' : ''))}
       onPointerMove={(e) => {
         if (!p.current) return;
         if (!dragRef.current) { if (Math.abs(e.clientX - p.current.x) + Math.abs(e.clientY - p.current.y) > 8) { clearTimeout(t.current); p.current = null; } return; }
@@ -311,24 +302,9 @@ function EmptyTrip({ first, onImport, onAdd }: { first: boolean; onImport: () =>
   </>;
 }
 
-/** 時間軸 (Itinerary)：每小時 50px */
-function Timeline({ days, sel, items, routes, pick, poolCount, onAdd }: { days: string[]; sel: string; items: Item[]; routes: Route[]; pick: (k: string) => void; poolCount: number; onAdd: () => void }) {
-  const list = items.filter((i) => i.date === sel && !isNaN(toMin(i.start))).sort(byTime);
-  const untimed = items.filter((i) => i.date === sel && isNaN(toMin(i.start)));
-  const PX = 50 / 60;
-  const startH = list.length ? Math.floor(Math.min(...list.map((i) => toMin(i.start))) / 60) : 8;
-  const endH = list.length ? Math.ceil(Math.max(...list.map((i) => toMin(i.end || i.start) || toMin(i.start) + 30)) / 60) : 18;
-  const hours = Array.from({ length: Math.max(endH - startH, 4) + 1 }, (_, k) => startH + k);
-  const y = (m: number) => (m - startH * 60) * PX;
-  const many = days.length > 5;
-
-  const shift = async (fromId: string, mins: number) => {
-    const later = list.slice(list.findIndex((i) => i.id === fromId));
-    const f = (t: string) => (isNaN(toMin(t)) ? t : fmt(Math.min(toMin(t) + mins, 1439)));
-    await db.transaction('rw', db.items, async () => { for (const i of later) await db.items.update(i.id, { start: f(i.start), end: f(i.end) }); });
-  };
-
-  return <>
+function TimelineDays({days,sel,items,pick}: {days:string[];sel:string;items:Item[];pick:(day:string)=>void}) {
+  const many=days.length>5;
+  return (
     <div role="tablist" aria-label="選擇日期" className="noscrollbar" style={css(many ? 'display: flex; gap: 6px; overflow-x: auto; margin: 0 -20px; padding: 0 20px' : 'display: grid; grid-template-columns: repeat(' + days.length + ', minmax(0, 1fr)); gap: 6px')}>
       {days.map((d) => {
         const on = d === sel;
@@ -341,7 +317,26 @@ function Timeline({ days, sel, items, routes, pick, poolCount, onAdd }: { days: 
         );
       })}
     </div>
+  );
+}
 
+/** 時間軸 (Itinerary)：每小時 50px */
+function Timeline({ sel, items, routes, poolCount, onAdd }: { sel: string; items: Item[]; routes: Route[]; poolCount: number; onAdd: () => void }) {
+  const list = items.filter((i) => i.date === sel && !isNaN(toMin(i.start))).sort(byTime);
+  const untimed = items.filter((i) => i.date === sel && isNaN(toMin(i.start)));
+  const PX = 50 / 60;
+  const startH = list.length ? Math.floor(Math.min(...list.map((i) => toMin(i.start))) / 60) : 8;
+  const endH = list.length ? Math.ceil(Math.max(...list.map((i) => toMin(i.end || i.start) || toMin(i.start) + 30)) / 60) : 18;
+  const hours = Array.from({ length: Math.max(endH - startH, 4) + 1 }, (_, k) => startH + k);
+  const y = (m: number) => (m - startH * 60) * PX;
+
+  const shift = async (fromId: string, mins: number) => {
+    const later = list.slice(list.findIndex((i) => i.id === fromId));
+    const f = (t: string) => (isNaN(toMin(t)) ? t : fmt(Math.min(toMin(t) + mins, 1439)));
+    await db.transaction('rw', db.items, async () => { for (const i of later) await db.items.update(i.id, { start: f(i.start), end: f(i.end) }); });
+  };
+
+  return <>
     {!list.length && <p style={css('margin: 0; padding: 24px 12px; border: 1.5px dashed #B8C0CC; border-radius: 12px; text-align: center; font-size: 14px; color: #5B6578')}>這天還沒有排時間的行程</p>}
     {!!list.length && (
       <section aria-label={md(sel) + ' 時間軸'} style={{ position: 'relative', height: (hours.length - 1) * 50 + 10, marginBottom: 76 }}>
