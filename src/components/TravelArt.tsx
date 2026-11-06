@@ -1,5 +1,6 @@
 import type { ItemType } from '../types';
 import type { Destination } from '../lib/destinations';
+import type { DayPeriod } from '../lib/dayPeriod';
 
 const GOLD = '#F2C14E', BLUE = '#8DB5D7', PALE = '#DCEAF5';
 const line = { stroke: 'var(--ink)', strokeWidth: 2.2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
@@ -29,16 +30,28 @@ export function FlightArt() {
 }
 
 /** Destination vignettes share a fixed canvas so every header has the same layout. */
-export function DestinationArt({ destination }: { destination?: Destination }) {
+export function DestinationArt({ destination, period = 'night' }: { destination?: Destination; period?: DayPeriod }) {
+ const blue = 'var(--landmark-blue, #8DB5D7)', pale = 'var(--landmark-pale, #DCEAF5)';
+ const sun = period === 'morning' ? {x:173,y:54} : period === 'afternoon' ? {x:191,y:60} : {x:183,y:24};
  return <svg className="destination-art" aria-hidden="true" viewBox="0 0 240 120" fill="none">
-  <circle cx="183" cy="27" r="17" fill={GOLD}/>
-  <path d="M0 120c20-34 39-40 62-20 21-35 53-40 77-10 31-15 50-12 69 5 12-15 24-14 32-2v27z" fill={BLUE} opacity=".45"/>
-  {destination === 'japan' && <><path d="M12 120 112 30l108 90z" fill={BLUE}/><path d="m112 30-37 34 23-4 14 9 13-10 26 4z" fill="white"/><path d="m169 78 24-16 34-6" stroke="#9B7667" strokeWidth="4" strokeLinecap="round"/>{[[178,65],[198,53],[215,61],[229,45]].map(([x,y])=><g key={x} transform={`translate(${x} ${y})`} fill="#F5D6E0"><circle cx="-4" cy="-3" r="4"/><circle cx="4" cy="-3" r="4"/><circle cy="4" r="4"/><circle r="2" fill={GOLD}/></g>)}</>}
-  {destination === 'korea' && <><path d="M63 111 69 45h6l5 66z" fill={PALE}/><path d="M72 45V9m-7 26h14v10H65z" stroke={PALE} strokeWidth="3"/><path d="M62 30h20v6H62z" fill={BLUE}/><path d="M122 84h86v32h-86z" fill={PALE}/><path d="M141 89h12v27h-12m35-27h12v27h-12" fill="#B67468"/><path d="M111 84c21-6 35-9 54-22 19 13 33 16 54 22z" fill={BLUE} stroke={PALE} strokeWidth="2"/><path d="M129 61c12-4 23-9 36-19 13 10 24 15 36 19z" fill={PALE}/><path d="M134 61h63v12h-63z" fill={BLUE}/></>}
-  {destination === 'taiwan' && <><path d="M143 118V99h-6V82h-3V65h-3V49h4V34h5V21h13v13h5v15h4v16h-3v17h-3v17h-6v19z" fill={BLUE} stroke={PALE} strokeWidth="2"/><path d="M146 21V7m-9 44h22m-20 16h18m-15 16h13m-10 17h8" stroke={PALE} strokeWidth="2"/><path d="M184 111V94h34v17" fill={PALE}/><path d="M176 95c11-3 18-8 25-17 7 9 14 14 25 17z" fill="#BD776F"/><path d="M196 98v16m12-16v16" stroke="#BD776F" strokeWidth="3"/></>}
-  {destination === 'singapore' && <><path d="m59 112 5-63h16l4 63m17 0 4-63h16l4 63m17 0 4-63h16l4 63" fill={BLUE} stroke={PALE} strokeWidth="2"/><path d="M54 47c19 5 85 5 116-3l4-8c-38 9-90 9-119 2z" fill={PALE}/>{[70,111,152].map(x=><path key={x} d={`M${x} 61v40`} stroke={GOLD} strokeWidth="3" strokeDasharray="3 4"/>)}<path d="M199 111c14-5 15-13 5-23 4-2 5-6 3-10l5-7-5-5c-11-2-16 5-15 15l-8 4 7 5-2 6c-5 4-6 10-5 15z" fill={PALE}/><path d="M190 82c-14-8-17-4-17 10" stroke={PALE} strokeWidth="2"/><path d="M23 116q14-6 28 0t28 0t28 0t28 0t28 0t28 0t28 0" stroke={BLUE} strokeWidth="3"/></>}
-  {destination === 'hongkong' && <><path d="M45 109V66h18v43m9 0V43h20v66m13 0V25l21 19v65m10 0V57h16v52m12 0V70h21v39m13 0V49h15v60" fill={BLUE} stroke={PALE} strokeWidth="1.5"/><path d="m105 25 21 38-21 46m0-54 21-11m-11-10V10" stroke={PALE} strokeWidth="2"/><path d="M151 91h60l-9 12h-42z" fill={GOLD}/><path d="M181 91V57l-24 28zm4 0V65l21 23z" fill="#D99A87"/><path d="M16 115q17-5 34 0t34 0t34 0t34 0t34 0t34 0" stroke={PALE} strokeWidth="2"/></>}
-  {destination === 'malaysia' && <><g fill={BLUE} stroke={PALE} strokeWidth="2">{[88,139].map(x=><path key={x} d={`M${x} 119V63h-4V48h4V34h5V22h6v12h5v14h4v15h-4v56z`}/>)}</g><path d="M96 22V8m51 14V8m-47 70h44v7h-44M89 48h15m36 0h15M89 63h15m36 0h15m-51 34h36" stroke={PALE} strokeWidth="3"/><path d="m202 117-3-35m0 0c-17-18-28-7-26-2 10-5 18-4 26 2zm0 0c7-24 23-20 26-10-12-3-19 1-26 10zm0 0c14-3 23 4 23 12-11-11-17-12-23-12z" stroke="#B9D3BD" strokeWidth="3" strokeLinecap="round"/></>}
-  {!destination && <><path d="M23 95c26-38 51 7 84-25s58-8 102-24" stroke={PALE} strokeWidth="2" strokeDasharray="5 6"/><path d="m134 65 26-9 12-24 7-2-5 25 27-4 5 6-33 8-12 23-6 2 4-24-21 5z" fill="white"/><circle cx="50" cy="85" r="4" fill={GOLD}/></>}
+  {period==='night' ? <g className="destination-night-sky">
+   <path d="M193 9a18 18 0 1 0 13 29A18 18 0 0 1 193 9Z" fill="#F3E3AC"/>
+   {[[24,32],[58,12],[111,19],[155,11],[225,29],[204,62]].map(([x,y],index)=><circle key={x} cx={x} cy={y} r={index%2?1.3:1.8} fill="#E6EDF6"/>)}
+  </g> : <g className="destination-day-sky">
+   <circle cx={sun.x} cy={sun.y} r="17" fill={period==='afternoon'?'#E59D5D':GOLD}/>
+   <path d="M12 42c-1-8 11-12 16-4 6-14 26-11 26 2 10-4 20 2 19 10H8c-1-4 0-6 4-8z" fill="white" opacity=".6"/>
+   {period==='morning'&&<path d="M112 19c3-8 15-9 18 0 8-4 15 2 15 8h-39c0-5 2-8 6-8z" fill="white" opacity=".5"/>}
+  </g>}
+  <path d="M0 120c20-34 39-40 62-20 21-35 53-40 77-10 31-15 50-12 69 5 12-15 24-14 32-2v27z" fill={blue} opacity=".45"/>
+  {destination === 'japan' && <><path d="M12 120 112 30l108 90z" fill={blue}/><path d="m112 30-37 34 23-4 14 9 13-10 26 4z" fill="white"/><path d="m169 78 24-16 34-6" stroke="#9B7667" strokeWidth="4" strokeLinecap="round"/>{[[178,65],[198,53],[215,61],[229,45]].map(([x,y])=><g key={x} transform={`translate(${x} ${y})`} fill="#F5D6E0"><circle cx="-4" cy="-3" r="4"/><circle cx="4" cy="-3" r="4"/><circle cy="4" r="4"/><circle r="2" fill={GOLD}/></g>)}</>}
+  {destination === 'korea' && <><path d="M63 111 69 45h6l5 66z" fill={pale}/><path d="M72 45V9m-7 26h14v10H65z" stroke={pale} strokeWidth="3"/><path d="M62 30h20v6H62z" fill={blue}/><path d="M122 84h86v32h-86z" fill={pale}/><path d="M141 89h12v27h-12m35-27h12v27h-12" fill="#B67468"/><path d="M111 84c21-6 35-9 54-22 19 13 33 16 54 22z" fill={blue} stroke={pale} strokeWidth="2"/><path d="M129 61c12-4 23-9 36-19 13 10 24 15 36 19z" fill={pale}/><path d="M134 61h63v12h-63z" fill={blue}/></>}
+  {destination === 'taiwan' && <><path d="M143 118V99h-6V82h-3V65h-3V49h4V34h5V21h13v13h5v15h4v16h-3v17h-3v17h-6v19z" fill={blue} stroke={pale} strokeWidth="2"/><path d="M146 21V7m-9 44h22m-20 16h18m-15 16h13m-10 17h8" stroke={pale} strokeWidth="2"/><path d="M184 111V94h34v17" fill={pale}/><path d="M176 95c11-3 18-8 25-17 7 9 14 14 25 17z" fill="#BD776F"/><path d="M196 98v16m12-16v16" stroke="#BD776F" strokeWidth="3"/></>}
+  {destination === 'singapore' && <><path d="m59 112 5-63h16l4 63m17 0 4-63h16l4 63m17 0 4-63h16l4 63" fill={blue} stroke={pale} strokeWidth="2"/><path d="M54 47c19 5 85 5 116-3l4-8c-38 9-90 9-119 2z" fill={pale}/>{[70,111,152].map(x=><path key={x} d={`M${x} 61v40`} stroke={GOLD} strokeWidth="3" strokeDasharray="3 4"/>)}<path d="M199 111c14-5 15-13 5-23 4-2 5-6 3-10l5-7-5-5c-11-2-16 5-15 15l-8 4 7 5-2 6c-5 4-6 10-5 15z" fill={pale}/><path d="M190 82c-14-8-17-4-17 10" stroke={pale} strokeWidth="2"/><path d="M23 116q14-6 28 0t28 0t28 0t28 0t28 0t28 0t28 0" stroke={blue} strokeWidth="3"/></>}
+  {destination === 'hongkong' && <><path d="M45 109V66h18v43m9 0V43h20v66m13 0V25l21 19v65m10 0V57h16v52m12 0V70h21v39m13 0V49h15v60" fill={blue} stroke={pale} strokeWidth="1.5"/><path d="m105 25 21 38-21 46m0-54 21-11m-11-10V10" stroke={pale} strokeWidth="2"/><path d="M151 91h60l-9 12h-42z" fill={GOLD}/><path d="M181 91V57l-24 28zm4 0V65l21 23z" fill="#D99A87"/><path d="M16 115q17-5 34 0t34 0t34 0t34 0t34 0t34 0" stroke={pale} strokeWidth="2"/></>}
+  {destination === 'malaysia' && <><g fill={blue} stroke={pale} strokeWidth="2">{[88,139].map(x=><path key={x} d={`M${x} 119V63h-4V48h4V34h5V22h6v12h5v14h4v15h-4v56z`}/>)}</g><path d="M96 22V8m51 14V8m-47 70h44v7h-44M89 48h15m36 0h15M89 63h15m36 0h15m-51 34h36" stroke={pale} strokeWidth="3"/><path d="m202 117-3-35m0 0c-17-18-28-7-26-2 10-5 18-4 26 2zm0 0c7-24 23-20 26-10-12-3-19 1-26 10zm0 0c14-3 23 4 23 12-11-11-17-12-23-12z" stroke="#B9D3BD" strokeWidth="3" strokeLinecap="round"/></>}
+  {period==='night' && destination && destination!=='japan' && <g className="destination-night-windows" fill="#F2C14E">
+   {(destination==='taiwan'?[[143,44],[150,58],[143,72],[149,88]]:destination==='korea'?[[131,93],[159,93],[195,93]]:destination==='hongkong'?[[50,76],[55,88],[78,57],[84,76],[111,64],[118,88],[169,83],[204,60]]:destination==='malaysia'?[[92,42],[98,58],[92,89],[143,42],[149,58],[143,89]]:[[70,63],[111,75],[152,89]]).map(([x,y])=><rect key={x+'-'+y} x={x} y={y} width="3" height="4" rx=".5"/>)}
+  </g>}
+  {!destination && <><path d="M23 95c26-38 51 7 84-25s58-8 102-24" stroke={pale} strokeWidth="2" strokeDasharray="5 6"/><path d="m134 65 26-9 12-24 7-2-5 25 27-4 5 6-33 8-12 23-6 2 4-24-21 5z" fill="white"/><circle cx="50" cy="85" r="4" fill={GOLD}/></>}
  </svg>;
 }

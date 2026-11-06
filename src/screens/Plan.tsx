@@ -13,6 +13,7 @@ import { PlanBoard } from './Planner';
 import { DestinationHeader } from '../components/DestinationHeader';
 import { ItineraryCard } from '../components/ItineraryCard';
 import { EntryArt } from '../components/TravelArt';
+import { useDeviceDayPeriod } from '../lib/dayPeriod';
 
 export const TYPE_LABEL: Record<ItemType, string> = { flight: '航班', transit: '交通', hotel: '住宿', ticket: '門票', restaurant: '餐廳', place: '景點', car: '租車', other: '其他' };
 const NEWNAME: Record<ItemType, string> = { place: '新的景點', restaurant: '新的餐廳', transit: '從哪裡到哪裡', hotel: '住宿', flight: '航班', ticket: '門票', car: '租車', other: '新的行程' };
@@ -45,6 +46,7 @@ export function Plan({ trip, day }: { trip: Trip; day?: string }) {
   const sel = day && (day === POOL || days.includes(day)) ? day : days[0];
   const items = useLiveQuery(() => db.items.where({ tripId: trip.id }).toArray(), [trip.id]);
   const routes = useLiveQuery(() => db.routes.toArray(), []);
+  const dayPeriod = useDeviceDayPeriod();
   const [view, setView] = useState<'list' | 'timeline'>(() => (sessionStorage.getItem('plan-view') === 'timeline' ? 'timeline' : 'list'));
   const [sheet, setSheet] = useState<null | 'add' | 'import'>(null);
   const [toast, setToast] = useState<{ text: string; undo?: Snap } | null>(null);
@@ -97,9 +99,9 @@ export function Plan({ trip, day }: { trip: Trip; day?: string }) {
 
   return (
     <TabPage pad="52px 20px 16px" gap={14}>
-      <div className="desktop-board"><DestinationHeader trip={trip} items={items}/><PlanBoard trip={trip} days={days} items={items} routes={routes} edit={(i) => (i === 'new' ? setSheet('add') : location.hash=href('item',i.id))} /></div>
+      <div className="desktop-board"><DestinationHeader trip={trip} items={items} period={dayPeriod}/><PlanBoard trip={trip} days={days} items={items} routes={routes} edit={(i) => (i === 'new' ? setSheet('add') : location.hash=href('item',i.id))} /></div>
       <div className="mobile-plan">
-        <DestinationHeader trip={trip} items={items}/>
+        <DestinationHeader trip={trip} items={items} period={dayPeriod}/>
         {view==='timeline' && !tripEmpty ? <TimelineDays days={days} sel={sel===POOL?days[0]:sel} items={items} pick={pick}/> : <DayTabs days={days} sel={sel} pick={pick}/>}
         {!tripEmpty && <div className="plan-tools">
           <ViewSwitch view={view} setView={setV}/>

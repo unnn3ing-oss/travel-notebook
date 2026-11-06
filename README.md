@@ -6,6 +6,8 @@
 
 先讀 [AGENTS.md](AGENTS.md)、[專案交接](docs/ai-handoff.md) 與 [任務交接索引](docs/handoffs/README.md)。Claude 也可從 [CLAUDE.md](CLAUDE.md) 進入。收到需求並提出方向後，改程式前先保存 GitHub handoff checkpoint；完整命令與授權範圍見 AGENTS.md。
 
+優化 AI 匯入提示詞前，另讀 [可填欄位、選項與 JSON 格式清單](docs/ai-import-field-reference.md)，區分專屬表單、通用欄位與尚未接入 importer 的手動功能。
+
 ## 目前有的功能（v0.1）
 
 - **總覽**：出發倒數、出發前準備的期限（例如「要在 11/08 前完成（還剩 3 天）」）、預訂狀態
