@@ -2,6 +2,10 @@
 
 更新日期：2026-11-07（Asia/Taipei）。先讀根目錄 [AGENTS.md](../AGENTS.md)；Claude 另有 [CLAUDE.md](../CLAUDE.md) 入口。
 
+## 本次待審核工作
+
+[聯網旅途資訊](handoffs/2026-11-07-online-travel-info.md) 已在本機完成，commit `da67b9b8953d34198b578dcd1ea09825da5b7262`。總覽／今日提供 Open-Meteo 天氣、Wikipedia 周邊車站／景點、手動選城、自動／手動更新與離線快取。89 tests／建置、真實 API 瀏覽器、失敗／離線／退避／切城、PWA 正式建置離線重載通過。交通不是即時班次／延誤，UI 已明示。候選截圖已在本機 commit，應用程式尚未推 GitHub／併入 main／部署，只有 handoff 文件遠端 checkpoint；待使用者本次發布指示，不能套用上次提示詞的授權。下方沒有待推項目是上次發布基準，不代表本次工作已發布。
+
 ## 最新已發布工作
 
 [2026-11-07 匯入提示詞架構](handoffs/2026-11-07-import-prompt-framework.md) 已獲使用者「推上併入」授權，程式、文件與示範截圖隨 `55a8d21dd2159facfd07f1bd94958059414eb7f5` 併入 main／發布。81 tests、TypeScript／Vite／PWA 建置通過；Vercel success，正式站載入 `index-D75fNmoZ.js`。正式 UI 複製內容與當前旅程參數函式一致，八類匯入、九張卡含住宿雙卡、短筆記與重載保存通過，review 未進 App 資料庫。沒有待審核或未推送的應用變更；舊 checkpoint「未合併／未部署」已被完成狀態取代。外部 AI／真實信箱／Notion／PDF 未端到端測試。
