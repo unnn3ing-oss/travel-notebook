@@ -542,3 +542,20 @@ input::-webkit-datetime-edit { padding: 0; }
   .is-editing .stay-dates>div:last-child { grid-column:2; grid-row:1; }
   .is-editing .stay-dates>.pill { grid-column:1/-1; grid-row:2; justify-self:center; }
 }
+
+/* City context fetched from public sources; keeps itinerary cards untouched. */
+.travel-info{background:#fff;border:1px solid #dce1e8;border-radius:18px;padding:16px;min-width:0;color:#1e2a44;display:flex;flex-direction:column;gap:12px}
+.ti-heading,.ti-status{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ti-heading h2{margin:0;font-size:18px}.ti-heading p{margin:4px 0 0;font-size:13px;color:#5b6578}
+.ti-text-button{padding:6px 0;min-height:36px;background:none;border:0;color:#1e2a44;font:inherit;font-size:13px;font-weight:700;flex-shrink:0}.ti-text-button:disabled{opacity:.45}
+.ti-auto{display:flex;align-items:center;gap:8px;font-size:13px}.ti-auto input{width:18px;height:18px;margin:0;accent-color:#1e2a44}
+.ti-status{font-size:12px;color:#5b6578;min-width:0}.ti-status span{overflow-wrap:anywhere}
+.ti-tabs{display:flex;border-bottom:1px solid #dce1e8;gap:24px}.ti-tabs button{font:inherit;font-size:14px;padding:8px 0;background:none;border:0;border-bottom:3px solid transparent;color:#5b6578;min-width:40px}.ti-tabs button[aria-selected=true]{border-color:#f2c14e;color:#1e2a44;font-weight:700}
+.ti-meta{font-size:11px;color:#5b6578;margin:0 0 10px}.ti-caption,.ti-message{font-size:12px;line-height:1.7;color:#5b6578;margin:0 0 8px;overflow-wrap:anywhere}
+.ti-weather{list-style:none;padding:0;margin:0}.ti-weather li{display:grid;grid-template-columns:44px 1fr auto 62px;gap:6px;align-items:center;min-height:42px;border-bottom:1px solid #eef1f5;font-size:13px}.ti-weather li:last-child{border:0}.ti-weather li>span:last-child{text-align:right;font-size:11px;color:#5b6578}.ti-weather b{font-size:14px}
+.ti-source{font-size:10px;line-height:1.6;color:#5b6578;margin:12px 0 0}.ti-source a{color:inherit}.ti-privacy{font-size:10px;color:#5b6578;line-height:1.6;margin:0;padding-top:10px;border-top:1px solid #eef1f5}
+.ti-places{list-style:none;padding:0;margin:0}.ti-places li{padding:12px 0;border-bottom:1px solid #eef1f5}.ti-places li:last-child{border:0}.ti-place-title{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.ti-place-title b{font-size:14px;overflow-wrap:anywhere}.ti-place-title span{font-size:11px;color:#5b6578;white-space:nowrap}.ti-places li p{font-size:12px;color:#5b6578;line-height:1.7;margin:6px 0;overflow-wrap:anywhere}.ti-place-links{display:flex;gap:20px}.ti-place-links a{font-size:12px;min-height:32px;display:inline-flex;align-items:center;text-decoration:none}
+.ti-official{padding:12px;background:#f4f6f9;border-radius:12px;display:block;font-size:13px;font-weight:700;text-decoration:none;margin-top:8px;line-height:1.6}.ti-official small{display:block;font-size:11px;font-weight:400;color:#5b6578}
+.ti-city-search label{font-size:12px;display:block;margin-bottom:8px}.ti-city-search>div{display:flex;gap:8px}.ti-city-search input{min-width:0;flex:1;height:42px;border:1px solid #dce1e8;border-radius:10px;padding:0 10px;font:inherit;font-size:16px;box-sizing:border-box}.ti-city-search button{font:inherit;border:1px solid #dce1e8;border-radius:10px;background:#fff;color:#1e2a44;padding:8px 12px;font-size:13px}.ti-city-search button:disabled{opacity:.45}.ti-city-search ul{list-style:none;padding:0;margin:8px 0}.ti-city-search li button{width:100%;text-align:left;border:0;border-bottom:1px solid #eef1f5;border-radius:0;line-height:1.7}.ti-city-search small{display:block;font-size:10px;color:#5b6578}.ti-city-search>p{font-size:12px;color:#b83a32}
+
+.ti-places li p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}

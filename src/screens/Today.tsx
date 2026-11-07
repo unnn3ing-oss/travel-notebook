@@ -1,3 +1,4 @@
+import { TravelInfo } from '../components/TravelInfo';
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
@@ -137,6 +138,7 @@ export function Today({ trip, clock }: { trip: Trip; clock: Clock }) {
       )}
 
       {planB && <PlanB item={planB} onClose={() => setPlanB(null)} />}
+      <TravelInfo key={trip.id} trip={trip} />
     </TabPage>
   );
 }

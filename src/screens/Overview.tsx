@@ -1,3 +1,4 @@
+import { TravelInfo } from '../components/TravelInfo';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import type { Item, Trip } from '../types';
@@ -105,6 +106,7 @@ export function Overview({ trip, clock }: { trip: Trip; clock: Clock }) {
           {!bookings.length && <li style={css('display: flex; align-items: center; min-height: 52px; border-top: 1px solid #DCE1E8; font-size: 14px; color: #5B6578')}>還沒有預訂，機票、住宿都可以在「預訂」加入。</li>}
         </ul>
       </section>
+      <TravelInfo key={trip.id} trip={trip} />
     </TabPage>
   );
 }
