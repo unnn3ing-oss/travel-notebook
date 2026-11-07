@@ -1,7 +1,7 @@
 # 任務交接：聯網自動收集旅途資訊
 
 - 日期：2026-11-07（Asia/Taipei）
-- 狀態：releasing；使用者已明確回覆「推」，準備合併 main 並驗證 Vercel／正式站
+- 狀態：completed；使用者本次「推」已完成 main 合併、Vercel success 與正式站驗證
 - 正式版基準：b29e8a7517c3cd2caacd54c769472bd417ab8bdd
 - 工作分支：work，工作區乾淨
 - 本次授權：使用者要求「聯網時可以自動更新、搜集相關資料」，確認選擇「App 自動更新天氣、交通與景點資訊」。使用者審閱變更與截圖後已回覆「推」，授權本次 main 合併與自動 Vercel 發布。
@@ -34,7 +34,7 @@
 
 - 修改前計畫：`handoff/2026-11-07-online-travel-info-20261107-111556-567211`，commit `e58e168bd11ceb2621e562a4c75b95171f0c84f1`，觀察 pushed 後才開始程式。
 - 主要階段 checkpoint：`handoff/2026-11-07-online-travel-info-20261107-112531-195095`，commit `18df64674b4639e7115cfde948121d171bc4b8e6`。
-- 本機完整實作／文件／截圖 commit：`da67b9b8953d34198b578dcd1ea09825da5b7262`，work 分支。**應用程式仍未推 GitHub、未合併 main、未部署**。公開 handoff 文件不包含這份程式 diff；另一台機器不能憑此遠端 checkpoint 恢復本機程式。
+- 本機完整實作／文件／截圖 commit：`da67b9b8953d34198b578dcd1ea09825da5b7262`，work 分支。已隨發布 commit `1147d5ef71e66ead48aab272ebc5186387a76280` 正常 fast-forward 併入 GitHub main／部署；程式、文件、截圖已全部保存遠端，先前只有本機的限制已解除。
 - 本次使用者明確回覆「推」，已取得這批新功能 main 推送／自動部署授權。
 
 ### 完成內容
@@ -53,11 +53,20 @@
 - 網路模擬：離線不發請求、回線更新；API 503 保留原資料／成功時間；五分鐘退避；關閉自動更新無自動請求且手動可查；地名候選不自動選第一筆；切城取消／隔離；城市與開關重載保存。曾找到重複 online 事件清掉退避問題，已改只接受真正離線→上線轉換，重跑全流程通過。
 - 320／390 無水平溢出，無 pageerror；既有 IndexedDB 示範行程與筆記／訂位欄位完整不變，所有公開請求未包含私密示範資料。
 - 本機正式建置 preview：Service Worker ready 後關網重載，天氣／車站／景點快取可讀，偏好保留；「今日」旅途中頁亦顯示資訊卡。這是本機建置驗證，不是正式網站發布。
-- 6 張候選截圖在 docs/handoff-assets/online-travel-info，包含三個真實公開來源分頁、模擬離線／部分失敗、正式建置離線重載；已進本機 commit，尚未進 GitHub。
+- 6 張候選截圖在 docs/handoff-assets/online-travel-info，包含三個真實公開來源分頁、模擬離線／部分失敗、正式建置離線重載；已隨本次發布進 GitHub main。
 - 未測真實 iPhone／Safari、實際背景／關 App 執行；沒有即時交通或景點開放資料源，因此未宣稱驗證。
 
-### 本次發布計畫
+### 發布與正式站驗證（2026-11-08 Asia/Taipei）
 
-已 fetch 遠端 main 與最新 handoff，main 仍為 b29e8a7 且為本機 HEAD 05c941e 的祖先，工作區乾淨；可正常 fast-forward，不需要 force push。程式自前次 89 tests／建置／瀏覽器驗證後未改，沿用其結果。
+- 使用者本次明確回覆「推」。發布前已 fetch，main b29e8a7 是本機 HEAD 05c941e 的祖先，工作區乾淨；正常 fast-forward，沒有 force push。
+- 發布前交接：`handoff/2026-11-07-online-travel-info-20261107-162945-849699`，commit `db1f02f47420485ecdd8494106f5ad3b75a43cd8`。
+- 已 push `1147d5ef71e66ead48aab272ebc5186387a76280` 至 main；GitHub Vercel status success / Deployment has completed，部署 https://vercel.com/itsjeann/travel-notebook/AoN3EvNmZmpX12Xv2y5UpGGEk88a 。
+- 正式站 https://travel-notebook-chi.vercel.app/ 載入 `index-B4inossp.js`，與本次已驗證建置一致。程式自前次 89 tests／建置後未改，沿用通過結果；本次另跑正式站檢查。
+- 隔離 Chromium 透過正式 UI 建立虛構東京旅程：Open-Meteo 天氣、Wikipedia、Open-Meteo 城市搜尋皆 HTTP200，無 pageerror。東京取得 16 天預報、5 車站、2 景點，旅行日呈現正確；交通限制文字與來源可見。
+- Service Worker ready 後真正離線重新載入，東京天氣、車站、景點可讀；沒有模擬 API 資料。恢復連線後搜尋京都並人工選定，手動更新取得預報／3 景點，城市與停用自動更新的偏好重載保存，城市快取分開。
+- 京都該次百科範圍回傳 0 車站，驗證 UI 誠實顯示「此範圍暫無符合條件的資料」，不是快取遺失，也沒有補假車站。不可把有限中文條目覆蓋當成完整交通目錄；這個限制已在 UI／說明文件。
+- 京都偏好保存後再次離線重載，可讀天氣／景點與正確車站空結果；320／390 無水平溢出，無 pageerror。沒有使用開發版來源路徑或清除使用者資料。
 
-使用者已明確回覆「推」。先保存這份發布計畫，再正常 push HEAD:main；確認 Vercel success 與正式站 bundle `index-B4inossp.js`，透過隔離瀏覽器在正式 UI 建立虛構旅程，驗證真實來源天氣／車站／景點與 PWA 離線重載、城市／偏好保存。完成後把本文件、索引與長期交接改為 completed，避免下個 AI 把舊待審核狀態當現況。
+### 下一步
+
+本次已完成，沒有待審核、待推送或待部署的應用變更。收到新需求先檢查 main、工作區與相關最新 handoff，另存新計畫；不要重做或套用已被發布取代的 awaiting_review／releasing 歷史狀態。最後發布紀錄／索引 commit 為純文件，不改此 app bundle。

@@ -1,12 +1,10 @@
 # 旅行手帳：給接手 AI 的長期交接
 
-更新日期：2026-11-07（Asia/Taipei）。先讀根目錄 [AGENTS.md](../AGENTS.md)；Claude 另有 [CLAUDE.md](../CLAUDE.md) 入口。
-
-## 本次待審核工作
-
-[聯網旅途資訊](handoffs/2026-11-07-online-travel-info.md) 已在本機完成，commit `da67b9b8953d34198b578dcd1ea09825da5b7262`。總覽／今日提供 Open-Meteo 天氣、Wikipedia 周邊車站／景點、手動選城、自動／手動更新與離線快取。89 tests／建置、真實 API 瀏覽器、失敗／離線／退避／切城、PWA 正式建置離線重載通過。交通不是即時班次／延誤，UI 已明示。候選截圖已在本機 commit，應用程式尚未推 GitHub／併入 main／部署，只有 handoff 文件遠端 checkpoint；待使用者本次發布指示，不能套用上次提示詞的授權。下方沒有待推項目是上次發布基準，不代表本次工作已發布。
+更新日期：2026-11-08（Asia/Taipei）。先讀根目錄 [AGENTS.md](../AGENTS.md)；Claude 另有 [CLAUDE.md](../CLAUDE.md) 入口。
 
 ## 最新已發布工作
+
+[聯網旅途資訊](handoffs/2026-11-07-online-travel-info.md) 已獲本次「推」授權，隨 `1147d5ef71e66ead48aab272ebc5186387a76280` 併入 GitHub main／部署。89 tests／建置與本機失敗／離線／退避／切城驗證通過，Vercel success，正式站 bundle `index-B4inossp.js`。正式 UI 真實天氣／Wikipedia／地名服務 HTTP200，東京三類資料與 PWA 離線重載、京都人工選城／偏好保存、320／390 無溢出與無 pageerror 均通過。京都該次 0 車站，UI 誠實顯示空結果；不是完整目錄，也沒有即時班次／延誤。程式、說明及截圖全在 main，沒有待審核或未推送應用變更；舊 handoff 草稿狀態不能覆蓋此完成結果。
 
 [2026-11-07 匯入提示詞架構](handoffs/2026-11-07-import-prompt-framework.md) 已獲使用者「推上併入」授權，程式、文件與示範截圖隨 `55a8d21dd2159facfd07f1bd94958059414eb7f5` 併入 main／發布。81 tests、TypeScript／Vite／PWA 建置通過；Vercel success，正式站載入 `index-D75fNmoZ.js`。正式 UI 複製內容與當前旅程參數函式一致，八類匯入、九張卡含住宿雙卡、短筆記與重載保存通過，review 未進 App 資料庫。沒有待審核或未推送的應用變更；舊 checkpoint「未合併／未部署」已被完成狀態取代。外部 AI／真實信箱／Notion／PDF 未端到端測試。
 
@@ -14,7 +12,7 @@
 
 - Repo：`unnn3ing-oss/travel-notebook`；正式分支 `main`。
 - 網站：https://travel-notebook-chi.vercel.app/
-- 最近一次應用程式發布基準：[`55a8d21`](https://github.com/unnn3ing-oss/travel-notebook/commit/55a8d21dd2159facfd07f1bd94958059414eb7f5)。後續純文件 commit 不改本次 app bundle；接手仍須以實際遠端 main 為準。
+- 最近一次應用程式發布基準：[`1147d5e`](https://github.com/unnn3ing-oss/travel-notebook/commit/1147d5ef71e66ead48aab272ebc5186387a76280)。後續純文件 commit 不改本次 app bundle；接手仍須以實際遠端 main 為準。
 - 使用者已於 2026-11-06 授權本對話全部累積修改併入與部署：航廈 T／PDF 附件提示詞、底部選取色包含文字、機票與小插圖、六款目的地地標、D 方案文字底線切換、訂單狀態右上角。程式與圖片均已保存 GitHub，不再只有舊工作區。
 - 前次精簡筆記提示詞發布曾驗證 69 個應用測試與 TypeScript／Vite／PWA 建置。Vercel 對應 0afb5fb 的 status success，正式站載入 index-W1Os5r1g.js；實測複製按鈕帶入旅程與新版 PDF 補件／短筆記規則，匯入、住宿雙卡、重載保存通過。未執行外部 AI 或讀取真實 PDF，未測真實 iPhone／Safari。
 - 上次介面發布已完成，詳情見 [2026-11-06-release-approved-ui.md](handoffs/2026-11-06-release-approved-ui.md)。該批先前 checkpoint 的「未合併／尚未授權」是歷史狀態，已被實際發布取代；不要據此重做或退回舊版。
