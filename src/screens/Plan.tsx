@@ -7,7 +7,8 @@ import { orderedDay, saveEntries } from '../lib/entryStore';
 import { isEntryKind } from '../lib/entries';
 import { byTime } from '../lib/day';
 import { href } from '../lib/route';
-import { importPrompt, parseImport, sampleResult, materializeImport, type ImportRow } from '../lib/importer';
+import { importPrompt, parseImport, sampleResult, type ImportRow } from '../lib/importer';
+import { saveImport, ImportConflict } from '../lib/importStore';
 import { css, DSheet, DToast, I, TabPage, Skeleton, SK } from '../design';
 import { PlanBoard } from './Planner';
 import { DestinationHeader } from '../components/DestinationHeader';
@@ -19,7 +20,7 @@ export const TYPE_LABEL: Record<ItemType, string> = { flight: '航班', transit:
 const NEWNAME: Record<ItemType, string> = { place: '新的景點', restaurant: '新的餐廳', transit: '從哪裡到哪裡', hotel: '住宿', flight: '航班', ticket: '門票', car: '租車', other: '新的行程' };
 const MODE: Record<string, string> = { walk: '步行', train: '電車', bus: '巴士', car: '計程車', ferry: '渡輪', plane: '飛機' };
 const POOL = 'pool';
-type Snap = { put: Item[]; del: string[]; routes?: Route[]; documents?: Document[] };
+type Snap = { put: Item[]; del: string[]; routes?: Route[]; documents?: Document[]; routeOwners?: string[] };
 
 /** 一天的卡片：手動排過（order）就照手動順序，否則照時間 */
 export function dayCards(items: Item[], key: string) {
@@ -59,6 +60,7 @@ export function Plan({ trip, day }: { trip: Trip; day?: string }) {
   const undo = async (s: Snap) => {
     await db.transaction('rw', db.items, db.routes, db.documents, async () => {
       if (s.del.length) { await db.routes.where('itemId').anyOf(s.del).delete(); await db.documents.where({tripId:trip.id}).filter(d=>!!d.itemId&&s.del.includes(d.itemId)).delete(); await db.items.bulkDelete(s.del); }
+      if (s.routeOwners?.length) await db.routes.where('itemId').anyOf(s.routeOwners).delete();
       await db.items.bulkPut(s.put);
       if (s.routes?.length) await db.routes.bulkPut(s.routes);
       if (s.documents?.length) await db.documents.bulkPut(s.documents);
@@ -87,12 +89,11 @@ export function Plan({ trip, day }: { trip: Trip; day?: string }) {
     location.hash=href('item',it.id);
   };
   const doImport = async (rows: ImportRow[]) => {
-    const bundle = materializeImport(rows,trip,uid);
-    const made=bundle.items;
-    await saveEntries(made,bundle.routes);
+    const result = await saveImport(rows,trip);
     setSheet(null);
-    if (made[0]) pick(made[0].date ?? POOL);
-    say('已加入 ' + made.length + ' 張卡片', { put: [], del: made.map((m) => m.id) });
+    if (result.items[0]) pick(result.items[0].date ?? POOL);
+    const text = result.overwritten ? `已新增 ${result.added} 張卡片、覆蓋 ${result.overwritten} 筆行程` : result.added ? `已加入 ${result.added} 張卡片` : '已忽略，原行程未變更';
+    say(text, result.items.length ? result.undo : undefined);
   };
 
   const tripEmpty = items.length === 0;
@@ -243,8 +244,10 @@ function ImportSheet({ trip, days, items, close, done }: { trip: Trip; days: str
   const [res, setRes] = useState<ReturnType<typeof parseImport> | null>(null);
   const rows = res && 'rows' in res ? res.rows : [];
   const checked = rows.filter((r) => r.checked);
-  const existing: Record<string, string[]> = {};
-  for (const i of items) if (i.date) (existing[i.date] ??= []).push(i.title);
+  const existing = items;
+  const overwrites = checked.filter(r=>!!r.duplicates?.length);
+  const unresolved = overwrites.some(r=>!r.overwriteId);
+  const changeRow = (index:number, patch:Partial<ImportRow>) => setRes({ rows:rows.map((r,k)=>k===index?{...r,...patch}:r), skipped:res&&'skipped'in res?res.skipped:0 });
   const btn = 'height: 48px; border-radius: 12px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 14px';
   return (
     <DSheet title="用 AI 匯入訂單" onClose={close}>
@@ -260,25 +263,36 @@ function ImportSheet({ trip, days, items, close, done }: { trip: Trip; days: str
           <button onClick={() => setRes(parseImport(raw, days, existing))} style={css('height: 48px; border-radius: 12px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 15px; font-weight: 700')}>檢查內容</button>
         </div>
       </> : <>
-        <p style={css('margin: 0; font-size: 14px; color: #5B6578')}>勾選要加入的卡片{res && 'skipped' in res && res.skipped ? '（' + res.skipped + ' 筆缺日期或名稱，已略過）' : ''}</p>
+        <p style={css('margin: 0; font-size: 14px; color: #5B6578')}>選擇要加入的卡片；重複行程預設忽略{res && 'skipped' in res && res.skipped ? '（' + res.skipped + ' 筆缺日期或名稱，已略過）' : ''}</p>
         <div style={css('display: flex; flex-direction: column')}>
           {rows.map((r, i) => (
-            <label key={i} style={css('display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-top: 1px solid #DCE1E8')}>
-              <input type="checkbox" checked={r.checked} onChange={() => setRes({ rows: rows.map((x, k) => (k === i ? { ...x, checked: !x.checked } : x)), skipped: 'skipped' in res! ? res.skipped : 0 })} style={css('width: 22px; height: 22px; margin: 0; flex-shrink: 0; accent-color: #1E2A44')} />
-              <span style={css('flex: 1; display: flex; flex-direction: column; gap: 2px')}>
+            <div key={i} role="group" aria-label={r.title} style={css('display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-top: 1px solid #DCE1E8')}>
+              {r.duplicates?.length ? <span aria-hidden="true" style={css('width: 24px; height: 24px; border-radius: 12px; background: #FCEFC7; color: #1E2A44; text-align: center; flex-shrink: 0')}>↻</span> : <input aria-label={'加入 '+r.title} type="checkbox" checked={r.checked} onChange={() => changeRow(i,{checked:!r.checked})} style={css('width: 22px; height: 22px; margin: 0; flex-shrink: 0; accent-color: #1E2A44')} />}
+              <span style={css('flex: 1; min-width: 0; overflow-wrap: anywhere; display: flex; flex-direction: column; gap: 2px')}>
                 <span style={css('font-size: 15px; font-weight: 700')}>{r.title}</span>
                 <span className="num" style={css('font-size: 13px; color: #5B6578')}>{r.date.slice(5).replace('-', '/')}{r.start && ' ' + r.start}，{TYPE_LABEL[r.type]}</span>
                 {r.fields.flight && <span className="small muted num">航班：{[r.fields.flight.airline,r.fields.flight.flightNo].filter(Boolean).join(' ')||'未提供'} · 訂位：{r.fields.flight.reference||'未提供'}</span>}
                 {r.fields.hotel && <span className="small muted">地址：{r.fields.hotel.address||'未提供'}<br/>入住 {r.fields.hotel.checkinDate} ／ 退房 {r.fields.hotel.checkoutDate||'未提供'}</span>}
-                {!!r.fields.missingFields?.length && <span className="small muted">未提供：{r.fields.missingFields.join('、')}</span>}
-                {r.flag && <span style={css('font-size: 12px; font-weight: 700; color: #B83A32')}>{r.flag}</span>}
+                {!!r.fields.missingFields?.length && (r.duplicates?.length ? <details className="small muted"><summary>新資料缺少 {r.fields.missingFields.length} 項，覆蓋時保留原值</summary><span>{r.fields.missingFields.join('、')}</span></details> : <span className="small muted">未提供：{r.fields.missingFields.join('、')}</span>)}
+                {r.flag && <span style={css('font-size: 12px; font-weight: 700; color: #8A5A00')}>{r.duplicates?.length?(r.checked?'將覆蓋選定行程':'已選忽略，保留原行程'):r.flag}</span>}
+                {!!r.duplicates?.length&&r.target===null&&<span className="small" style={css('color: #B83A32')}>新日期不在旅程內，覆蓋後會移到未排程。</span>}
+                {!!r.duplicates?.length && <>
+                  <span className="small muted">{r.duplicates.length===1?`${r.duplicates[0].reason}：${r.duplicates[0].date} ${r.duplicates[0].title}`:`找到 ${r.duplicates.length} 筆候選，覆蓋前請選定原行程`}</span>
+                  <select aria-label={'重複行程處理：'+r.title} value={r.checked?'overwrite':'ignore'} onChange={e=>changeRow(i,{checked:e.target.value==='overwrite'})} style={css('width: 100%; min-width: 0; height: 42px; padding: 0 10px; margin-top: 6px; border: 1px solid #DCE1E8; border-radius: 10px; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 14px')}>
+                    <option value="ignore">忽略，保留原行程</option><option value="overwrite">覆蓋，更新原行程</option>
+                  </select>
+                  {r.checked&&r.duplicates.length>1&&<select aria-label={'覆蓋目標：'+r.title} value={r.overwriteId||''} onChange={e=>changeRow(i,{overwriteId:e.target.value||undefined})} style={css('width: 100%; min-width: 0; height: 42px; margin-top: 6px; border: 1px solid #DCE1E8; border-radius: 10px; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 14px')}>
+                    <option value="">請選擇要覆蓋的原行程</option>{r.duplicates.map(m=><option key={m.id} value={m.id}>{m.date} {m.title}</option>)}
+                  </select>}
+                </>}
               </span>
-            </label>
+            </div>
           ))}
         </div>
+        {!!rows.some(r=>r.duplicates?.length)&&<p className="small muted" style={css('margin: 0; line-height: 1.7')}>覆蓋只更新有提供的資料，未提供的原資訊與附件會保留。新筆記會取代原筆記，完成後可按「復原」。<br/>將新增 {checked.length-overwrites.length} 筆、覆蓋 {overwrites.length} 筆，其餘忽略。</p>}
         <div style={css('display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px')}>
           <button onClick={() => setRes(null)} style={css(btn)}>重新貼上</button>
-          <button disabled={!checked.length||busy} onClick={async()=>{if(busy)return;setBusy(true);setFailure('');try{await done(checked);}catch{setFailure('匯入未成功，資料尚未寫入，請再試一次。');setBusy(false);}}} style={css('height: 48px; border-radius: 12px; border: 0; font: inherit; font-size: 15px; font-weight: 700; ' + (checked.length ? 'background: #1E2A44; color: #FFFFFF' : 'background: #DCE1E8; color: #5B6578'))}>{busy?'加入中…':`加入 ${checked.length} 筆訂單`}</button>
+          <button disabled={busy||unresolved} onClick={async()=>{if(busy||unresolved)return;setBusy(true);setFailure('');try{await done(checked);}catch(error){setFailure(error instanceof ImportConflict?error.message:'匯入未成功，資料尚未寫入，請再試一次。');setBusy(false);}}} style={css('height: 48px; border-radius: 12px; border: 0; font: inherit; font-size: 15px; font-weight: 700; ' + (!unresolved ? 'background: #1E2A44; color: #FFFFFF' : 'background: #DCE1E8; color: #5B6578'))}>{busy?'儲存中…':unresolved?'請選覆蓋目標':!checked.length?'完成（全部忽略）':overwrites.length?`確認匯入 ${checked.length} 筆`:`加入 ${checked.length} 筆訂單`}</button>
         </div>
       </>}
     </DSheet>

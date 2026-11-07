@@ -1,9 +1,11 @@
+import { importMatches, sameImportedEntry, type ImportMatch } from './importDuplicates';
 import type { BookingStatus, FlightDetails, HotelDetails, Item, ItemType, Mode, Route, TicketDetails, Trip } from '../types';
 
 export interface ImportRow {
   title: string; date: string; start: string; end: string; type: ItemType; orderNumber: string;
   place: string; target: string | null; checked: boolean; flag: string;
   fields: Partial<Item>; routes: Omit<Route,'id'|'itemId'>[];
+  duplicates?: ImportMatch[]; overwriteId?: string; batchDuplicate?: boolean; source?: unknown;
 }
 export type ImportResult = { error: string } | { rows: ImportRow[]; skipped: number };
 type Obj = Record<string,unknown>;
@@ -99,7 +101,7 @@ export function recoverEntry(item:Item):Item {
  if(item.ticket)return {...item,ticket:{...item.ticket,reference:item.ticket.reference||item.orderNumber||''}};
  return {...item,...(normalized.fields.flight?{flight:normalized.fields.flight}:{}),...(normalized.fields.hotel?{hotel:normalized.fields.hotel}:{}),...(normalized.fields.ticket?{ticket:normalized.fields.ticket}:{}),missingFields:normalized.fields.missingFields};
 }
-export function parseImport(raw:string,days:string[],existing:Record<string,string[]>):ImportResult {
+export function parseImport(raw:string,days:string[],existing:Record<string,string[]>|Item[]):ImportResult {
  let source=String(raw||'').trim();if(!source)return {error:'還沒有貼上內容。'};
  const fence=source.match(/```(?:json)?\s*([\s\S]*?)```/i);if(fence)source=fence[1];else{const a=source.indexOf('{'),b=source.lastIndexOf('}');if(a>=0&&b>a)source=source.slice(a,b+1);}
  let data:Obj;try{data=object(JSON.parse(source));}catch{return {error:'看不懂這段內容。請 AI 照提示詞的格式只回傳 JSON，再貼一次。'};}
@@ -108,10 +110,12 @@ export function parseImport(raw:string,days:string[],existing:Record<string,stri
  for(const rawItem of data.items.slice(0,100)) {
   const result=normalizeImportItem(rawItem);if(!result){skipped++;continue;}
   const {fields,date:day,routes,place}=result;const title=fields.title!;const inTrip=days.includes(day);
-  const duplicate=inTrip&&[...(existing[day]??[]),...(seen[day]??[])].some(t=>norm(t)===norm(title));
+  const candidates=Array.isArray(existing)?importMatches(fields,existing):[];
+  const batchDuplicate=Array.isArray(existing)&&rows.some(row=>sameImportedEntry(fields,row.fields));
+  const duplicate=Array.isArray(existing)?candidates.length>0||batchDuplicate:inTrip&&[...(existing[day]??[]),...(seen[day]??[])].some(t=>norm(t)===norm(title));
   (seen[day]??=[]).push(title);
-  const flag=duplicate?'這天已有同名卡片，預設不加入':inTrip?'':'日期不在旅程內，會放到未排程';
-  rows.push({title,date:day,start:fields.start||'',end:fields.end||'',type:fields.type!,orderNumber:fields.orderNumber||'',place,target:inTrip?day:null,checked:!duplicate,flag,fields,routes});
+  const flag=candidates.length?'找到已存在行程，預設忽略':batchDuplicate?'這份內容有重複項目，請只選一筆':duplicate?'這天已有同名卡片，預設不加入':inTrip?'':'日期不在旅程內，會放到未排程';
+  rows.push({title,date:day,start:fields.start||'',end:fields.end||'',type:fields.type!,orderNumber:fields.orderNumber||'',place,target:inTrip?day:null,checked:!duplicate,flag,fields,routes,...(Array.isArray(existing)?{duplicates:candidates,overwriteId:candidates.length===1?candidates[0].id:undefined,batchDuplicate,source:rawItem}:{})});
  }
  return rows.length?{rows,skipped}:{error:'沒有可以加入的項目：每一筆都要有 date 和 title。'};
 }
