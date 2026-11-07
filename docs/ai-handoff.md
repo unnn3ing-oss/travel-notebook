@@ -2,6 +2,10 @@
 
 更新日期：2026-11-08（Asia/Taipei）。先讀根目錄 [AGENTS.md](../AGENTS.md)；Claude 另有 [CLAUDE.md](../CLAUDE.md) 入口。
 
+## 本次待審核工作
+
+[AI 匯入忽略／覆蓋](handoffs/2026-11-08-import-ignore-overwrite.md) 已在本機完成，commit `ade8a016d541bb505504e4b3221c84a13747b941`。重複項預設忽略，可選覆蓋；多候選必選目標。原 ID／附件／未知原值／手動偏好保留，住宿雙卡連動、交通指定卡路線更新、同批交易回滾及 UI 復原均驗證。106 tests／建置、隔離 Chromium 真實預覽與混合新增覆蓋／重載／復原、320／390 無溢出通過。程式與五張候選圖尚未推 GitHub／main／部署，只有 handoff 文件 checkpoint；等待本次發布指示，不能沿用前次聯網資訊的「推」。下方無待發布項目是前次已完成基準。
+
 ## 最新已發布工作
 
 [聯網旅途資訊](handoffs/2026-11-07-online-travel-info.md) 已獲本次「推」授權，隨 `1147d5ef71e66ead48aab272ebc5186387a76280` 併入 GitHub main／部署。89 tests／建置與本機失敗／離線／退避／切城驗證通過，Vercel success，正式站 bundle `index-B4inossp.js`。正式 UI 真實天氣／Wikipedia／地名服務 HTTP200，東京三類資料與 PWA 離線重載、京都人工選城／偏好保存、320／390 無溢出與無 pageerror 均通過。京都該次 0 車站，UI 誠實顯示空結果；不是完整目錄，也沒有即時班次／延誤。程式、說明及截圖全在 main，沒有待審核或未推送應用變更；舊 handoff 草稿狀態不能覆蓋此完成結果。

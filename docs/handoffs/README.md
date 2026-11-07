@@ -6,6 +6,7 @@
 
 | 任務 | 文件 | 狀態 |
 | --- | --- | --- |
+| AI 匯入重複行程忽略／覆蓋 | [2026-11-08-import-ignore-overwrite.md](2026-11-08-import-ignore-overwrite.md) | awaiting_review；本機驗證通過，未推程式／未部署 |
 | 聯網自動收集天氣／車站／景點 | [2026-11-07-online-travel-info.md](2026-11-07-online-travel-info.md) | completed；已部署並驗證正式站真實 API／離線重載 |
 | 重新設計八類型複製提示詞架構 | [2026-11-07-import-prompt-framework.md](2026-11-07-import-prompt-framework.md) | completed；已部署並實測正式站複製與八類匯入 |
 | 設備時間地標四時段背景＋欄位參考 | [2026-11-06-destination-day-period.md](2026-11-06-destination-day-period.md) | completed；已部署並實測設備時間更新 |
