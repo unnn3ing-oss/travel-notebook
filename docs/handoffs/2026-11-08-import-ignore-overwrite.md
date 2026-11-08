@@ -1,10 +1,10 @@
 # 任務交接：AI 匯入重複行程選擇忽略／覆蓋
 
 - 日期：2026-11-08（Asia/Taipei）
-- 狀態：awaiting_review；本機已完成，106 tests／建置與實際 UI 匯入覆蓋復原通過，待本次合併部署指示
+- 狀態：releasing；使用者本次回覆「推」，準備合併 main 並驗證 Vercel／正式站
 - 正式版基準：1f3c04863f6317cabbef27fc8704c449f7b94276
 - 工作分支：work，原工作區乾淨
-- 本次授權：使用者要求 AI 匯入相同已存在行程時，可選忽略或覆蓋。授權實作與驗證；新需求尚未授權 main 合併／部署。
+- 本次授權：使用者要求 AI 匯入相同已存在行程時，可選忽略或覆蓋。使用者審閱功能摘要與截圖後已回覆「推」，授權本次 main 合併及自動 Vercel 發布。
 
 ## 使用者需求
 
@@ -35,13 +35,13 @@
 - 修改前 checkpoint：`handoff/2026-11-08-import-ignore-overwrite-20261107-193524-196925`，commit `91209cd2148957e9bad8b233fd69f0ed7e0bcb3a`；確認 pushed 後才改程式。
 - 主要階段 checkpoint：`handoff/2026-11-08-import-ignore-overwrite-20261107-194454-141655`，commit `e714ed3ee50ce84101af13b06a0bbe69d435563f`。
 - 本機完整程式／文件／候選圖：commit `ade8a016d541bb505504e4b3221c84a13747b941`，work 分支。**尚未推應用程式進 GitHub、未合併 main、未部署**；只有 handoff 文件遠端 checkpoint，其他工作區不能靠這份文件還原本機程式 diff。
-- 本次使用者僅要求功能，尚未授權發布；前次聯網資訊「推」已完成，不能套用到這份新需求。
+- 使用者本次已明確回覆「推」，這批新功能已取得 main 推送／自動部署授權。
 
 ### 已完成
 
 - `importDuplicates.ts`：同類型／訂單編號或同日同名候選、航班方向隔離、排除不同編號與退房子卡、多候選保留讓人選。
 - `importer.ts`：保留舊 titles-map 呼叫相容；App 傳實際 Item[] 得到 ID／原卡 revision、批次重複與來源 metadata，僅用於預覽，不接受 JSON 指定覆蓋 ID／操作，也不把 raw JSON 留資料庫。
-- `importStore.ts`：原 ID 更新、有效已提供資料合併；未知／空字串／空清單保留原值；明確 0／false 可更新，負數／非數值／無效列舉不沖掉原已知值；新筆記取代原筆記。
+- `importStore.ts`：原 ID 更新、有效已提供資料合併；未知／空字串／空清單保留原值；明確 0／false 可更新，負數／非數值／無效取票方式不沖掉原已知值；新筆記取代原筆記。
 - 住宿雙卡 ID／附件／子卡筆記保留，改日期同步；原手動單卡有完整退房日可補子卡並正確計新增。新舊日期矛盾的住宿與可計算出負飛行時間的航班會中止，要求補齊。
 - 交通只替換指定卡完整路線，空路線保留。同名唯一路線保留 ID、手動訂票資訊與說明，未提供的付款／預訂保留；其他卡路線不動。票種依唯一 label 保留未知單價／張數再計價。
 - 單一 transaction 寫入新增／覆蓋／排序／路線；預覽後原卡變更、刪除或出現新重複則要求重檢。跨旅程／批次重複／同 ID 兩次防護。未改 date／start 的卡保持原位置，新增／改期才插入；完成可復原卡片、路線與排序。
@@ -58,6 +58,8 @@
 - 5 張候選截圖在 docs/handoff-assets/import-ignore-overwrite：default-ignore、choose-overwrite、confirmation-summary、select-target、hotel-updated；已在本機 commit，尚未進 GitHub。
 - 全部虛構資料，不碰使用者既有正式資料；未讀真實信箱／PDF，未測真實 iPhone／Safari，也未聲稱正式站已更新。
 
-### 接手下一步
+### 本次發布計畫
 
-先供使用者查看候選圖。若使用者本次明確要求「推／合併／部署」，fetch main／handoff、保留其他新修改，正常合併推送，驗證 Vercel success 與正式站實際忽略／覆蓋／重載／復原後更新本文件、索引與長期交接為 completed。若使用者改需求，先更新此計畫再改，不要重做前次已部署聯網資訊或回復舊提示詞。
+已 fetch main 與最新 handoff，main 仍為 1f3c048，是本機 HEAD 2cf9086 的祖先，工作區乾淨，可正常 fast-forward，不使用 force push。程式自前次 106 tests／建置／隔離瀏覽器驗證後未改，沿用通過結果。
+
+使用者已明確回覆「推」。先保存此發布計畫，再正常 push HEAD:main。確認 Vercel success 與正式站 bundle `index-CJmE-beM.js`，在獨立瀏覽器透過正式 UI 建立虛構旅程與原訂單，再驗證實際忽略／混合新增與覆蓋／附件與 ID 保留／住宿雙卡／路線／復原／重載／多候選，以及複製提示詞包含新流程。完成後同步本文件、索引與長期交接為 completed，舊待審核狀態不再當現況。
