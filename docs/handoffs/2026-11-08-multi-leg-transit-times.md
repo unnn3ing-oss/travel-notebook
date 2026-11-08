@@ -1,10 +1,10 @@
 # 任務交接：交通多段轉乘的發車／抵達時間與備案班次
 
 - 日期：2026-11-08（Asia/Taipei）
-- 狀態：awaiting_review（程式完成並推到工作分支，待使用者確認畫面；未合併 main、未部署）
+- 狀態：released（使用者回覆「推」，已併入 main；部署結果見下方）
 - 正式版基準：c39e99e6970bb412cdca2becf01295cb23ffe7f8（origin/main，與本地 HEAD 相同）
 - 工作分支：claude/zealous-sagan-009vbb
-- 本次授權：僅「交接文件 checkpoint」。程式只推到工作分支 `claude/zealous-sagan-009vbb`（本 Session 指定）；**未授權**合併 main 與部署。介面修改完成後附示範資料截圖，待使用者確認。
+- 本次授權：使用者看過截圖與限制後回覆「推」，授權併入 main 並部署。
 - 相關使用者設計／來源：無新設計稿；沿用現有交通表單（`TransitFields.tsx`）與路線頁（`Transit.tsx`）樣式。
 
 ## 使用者需求
@@ -60,7 +60,7 @@
 - 不支援跨午夜；AI 匯入提示詞／importer 尚未解析各段 `dep/arr/alts`（未知欄位會被忽略）。
 - 未測 320px 版面、真實 iPhone／Safari。
 
-下一步：使用者確認畫面後，依該次指示決定是否合併 main／部署；若要擴充 AI 匯入，另開任務。
+已併入 main（先 merge 最新 origin/main 的 Drive 錯誤訊息修正，136 tests／建置通過）。下一步：若要擴充 AI 匯入解析各段時間，另開任務。
 
 ## Checkpoint 紀錄
 

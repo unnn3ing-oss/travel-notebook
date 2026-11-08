@@ -6,6 +6,7 @@
 
 | 任務 | 文件 | 狀態 |
 | --- | --- | --- |
+| 交通多段轉乘的發車／抵達時間與備案班次 | [2026-11-08-multi-leg-transit-times.md](2026-11-08-multi-leg-transit-times.md) | released；已併入 main，部署結果見文件 |
 | Drive 403 與空清單提示 | [2026-11-08-drive-error-feedback.md](2026-11-08-drive-error-feedback.md) | completed；已部署，正式站模擬錯誤與重試恢復通過 |
 | 電腦 AI 匯入與 Google Drive 備份 | [2026-11-08-desktop-import-drive-backup.md](2026-11-08-desktop-import-drive-backup.md) | completed；已部署並驗證正式站桌機匯入／還原入口／Google SDK；真實帳號待使用者授權 |
 | AI 匯入重複行程忽略／覆蓋 | [2026-11-08-import-ignore-overwrite.md](2026-11-08-import-ignore-overwrite.md) | completed；已部署並驗證正式站忽略／覆蓋／復原 |
