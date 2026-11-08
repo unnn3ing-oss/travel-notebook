@@ -61,3 +61,8 @@
 - 未測 320px 版面、真實 iPhone／Safari。
 
 下一步：使用者確認畫面後，依該次指示決定是否合併 main／部署；若要擴充 AI 匯入，另開任務。
+
+## Checkpoint 紀錄
+
+- 計畫 checkpoint：`handoff/2026-11-08-multi-leg-transit-times-20261108-130552-544969`（74a4726d83f1d8ceeba7b7b3dda8926e4596365c，改程式前保存）。
+- 程式 commit：`claude/zealous-sagan-009vbb` @ 50cae5f3c4bd4bc72d8794b7297da6fb1d4d1291（已推送；未進 main、未部署）。
