@@ -13,6 +13,7 @@ export function GoogleDriveBackup({onBackup}:{onBackup?:(at:string)=>void}){
   const clientId=configuredClientId();
   const [api,setAPI]=useState<GoogleAPI>(),[sdkError,setSDKError]=useState(''),[retry,setRetry]=useState(0);
   const [session,setSession]=useState<DriveSession>(),[files,setFiles]=useState<DriveFile[]>([]),[pageToken,setPageToken]=useState<string>();
+  const [listState,setListState]=useState<'idle'|'loading'|'success'|'error'>('idle');
   const [busy,setBusy]=useState(''),[note,setNote]=useState(''),[last,setLast]=useState(readLast);
   const [pending,setPending]=useState<{file:DriveFile;backup:PreparedBackup}>();
   const operation=useRef<AbortController|null>(null),mounted=useRef(true),working=useRef(false);
@@ -23,15 +24,19 @@ export function GoogleDriveBackup({onBackup}:{onBackup?:(at:string)=>void}){
     return()=>{active=false;};
   },[clientId,retry]);
   useEffect(()=>{
-    if(!session)return;const timer=setTimeout(()=>{operation.current?.abort();working.current=false;setBusy('');setSession(undefined);setFiles([]);setPageToken(undefined);setPending(undefined);setNote('Google 連線已到期，請重新連接。');},Math.max(0,session.expiresAt-Date.now()));return()=>clearTimeout(timer);
+    if(!session)return;const timer=setTimeout(()=>{operation.current?.abort();working.current=false;setBusy('');setSession(undefined);setFiles([]);setListState('idle');setPageToken(undefined);setPending(undefined);setNote('Google 連線已到期，請重新連接。');},Math.max(0,session.expiresAt-Date.now()));return()=>clearTimeout(timer);
   },[session]);
   async function run(label:string,task:(signal:AbortSignal)=>Promise<void>){
     if(working.current)return;working.current=true;operation.current?.abort();const controller=new AbortController();operation.current=controller;setBusy(label);setNote('');
-    try{await task(controller.signal);}catch(error){if(mounted.current&&!controller.signal.aborted){if(error instanceof DriveError&&error.code==='auth'){setSession(undefined);setFiles([]);setPageToken(undefined);setPending(undefined);}setNote(error instanceof DriveError||error instanceof BackupError?error.message:'備份操作未完成，請確認檔案或網路後重試；本機資料尚未變更。');}}
+    try{await task(controller.signal);}catch(error){if(mounted.current&&!controller.signal.aborted){if(error instanceof DriveError&&error.code==='auth'){setSession(undefined);setFiles([]);setListState('idle');setPageToken(undefined);setPending(undefined);}setNote(error instanceof DriveError||error instanceof BackupError?error.message:'備份操作未完成，請確認檔案或網路後重試；本機資料尚未變更。');}}
     finally{if(mounted.current&&operation.current===controller){working.current=false;setBusy('');}}
   }
-  async function list(s:DriveSession,signal:AbortSignal,append=false){const result=await listDriveBackups(s,{signal,pageToken:append?pageToken:undefined});if(!signal.aborted&&mounted.current){setFiles(old=>append?[...old,...result.files.filter(f=>!old.some(o=>o.id===f.id))]:result.files);setPageToken(result.nextPageToken);}}
-  function disconnect(){operation.current?.abort();working.current=false;setBusy('');setSession(undefined);setFiles([]);setPageToken(undefined);setPending(undefined);setNote('已中斷此頁連線；Google 備份與本機資料都保留。');}
+  async function list(s:DriveSession,signal:AbortSignal,append=false){
+    setListState('loading');
+    try{const result=await listDriveBackups(s,{signal,pageToken:append?pageToken:undefined});if(!signal.aborted&&mounted.current){setFiles(old=>append?[...old,...result.files.filter(f=>!old.some(o=>o.id===f.id))]:result.files);setPageToken(result.nextPageToken);setListState('success');}}
+    catch(error){if(!signal.aborted&&mounted.current)setListState('error');throw error;}
+  }
+  function disconnect(){operation.current?.abort();working.current=false;setBusy('');setSession(undefined);setFiles([]);setListState('idle');setPageToken(undefined);setPending(undefined);setNote('已中斷此頁連線；Google 備份與本機資料都保留。');}
   return <section className="drive-backup" aria-labelledby="drive-h">
     <div className="drive-heading"><h2 id="drive-h">Google Drive 備份</h2><span className="drive-state">{session?'已連接':clientId?'尚未連接':'尚未啟用'}</span></div>
     <p>手動保存一份完整備份，包含行程、筆記與附件；可在另一台裝置連接同一帳號後下載或還原。</p>
@@ -45,7 +50,8 @@ export function GoogleDriveBackup({onBackup}:{onBackup?:(at:string)=>void}){
         })}>備份到 Google Drive</button><button className="btn" disabled={!!busy} onClick={()=>run('讀取清單中…',signal=>list(session,signal))}>重新整理清單</button></div>
         <button className="drive-disconnect" onClick={disconnect}>中斷此頁連線</button>
         <h3>可用備份</h3>
-        {!files.length&&!busy&&<p>此帳號還沒有這個 App 建立的備份。</p>}
+        {!files.length&&!busy&&listState==='success'&&<p>此帳號還沒有這個 App 建立的備份。</p>}
+        {!files.length&&!busy&&listState==='error'&&<p>備份清單尚未讀取成功，無法確認是否有備份。請依下方提示處理後重新整理清單。</p>}
         <ul className="drive-files">{files.map(file=><li key={file.id}><b>{file.name}</b><small>{stamp(file.createdTime)}・{size(file.size)}</small><div className="drive-buttons"><button className="btn" disabled={!!busy} aria-label={'下載 '+file.name} onClick={()=>run('下載中…',async signal=>{const blob=await downloadDriveBackup(session,file,{signal});prepareBackup(await blob.text());if(!signal.aborted){download(file.name,blob);setNote('已下載備份檔，包含附件。');}})}>下載</button><button className="btn" disabled={!!busy} aria-label={'還原 '+file.name} onClick={()=>run('檢查備份中…',async signal=>{const blob=await downloadDriveBackup(session,file,{signal});const backup=prepareBackup(await blob.text());if(!signal.aborted)setPending({file,backup});})}>還原</button></div></li>)}</ul>
         {pageToken&&<button className="btn" disabled={!!busy} onClick={()=>run('讀取清單中…',signal=>list(session,signal,true))}>載入更多備份</button>}
       </>}

@@ -46,7 +46,14 @@ async function request(session:DriveSession,url:string,options:RequestInit={},si
   try{
     const response=await fetcher(url,{...options,headers:{...options.headers,Authorization:'Bearer '+session.accessToken},signal:signal?AbortSignal.any([signal,AbortSignal.timeout(60000)]):AbortSignal.timeout(60000),credentials:'omit',referrerPolicy:'no-referrer'});
     if(response.status===401)throw new DriveError('Google 連線已到期，請重新連接。','auth');
-    if(response.status===403)throw new DriveError('Google 拒絕備份存取，請重新連接並確認已授予權限。','forbidden');
+    if(response.status===403){
+      let reasons:string[]=[];
+      try{const error=object(object(await response.json()).error);reasons=[...(Array.isArray(error.errors)?error.errors:[]),...(Array.isArray(error.details)?error.details:[])].map(value=>object(value).reason).filter((v):v is string=>typeof v==='string');}catch{/* An unreadable error body must still produce a safe fallback. */}
+      if(reasons.some(r=>r==='SERVICE_DISABLED'||r==='accessNotConfigured'))throw new DriveError('此網站的 Google Drive API 尚未啟用。請網站擁有者在建立 OAuth 用戶端的同一個 Google Cloud 專案啟用 Google Drive API，稍候幾分鐘後重新整理清單。','configuration');
+      if(reasons.some(r=>['rateLimitExceeded','userRateLimitExceeded','dailyLimitExceeded','RATE_LIMIT_EXCEEDED','QUOTA_EXCEEDED'].includes(r)))throw new DriveError('Google Drive 請求次數已達限制，請稍後再試。','limit');
+      if(reasons.includes('storageQuotaExceeded'))throw new DriveError('Google Drive 儲存空間不足，請先釋放空間後再試。','limit');
+      throw new DriveError('Google 拒絕備份存取。請確認已授予備份權限，以及帳號或組織是否限制此 App；若權限未完整授予，請中斷後重新連接。','forbidden');
+    }
     if(!response.ok)throw new DriveError('Google Drive 暫時無法完成操作，請稍後重試。','network');
     return response;
   }catch(error){if(error instanceof DriveError)throw error;if(signal?.aborted)throw new DriveError('操作已取消。','cancelled');throw new DriveError('無法連接 Google Drive，請確認網路後重試。','network');}
