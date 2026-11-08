@@ -1,6 +1,6 @@
 # 電腦 AI 匯入與 Google Drive 備份：候選畫面
 
-2026-11-08（Asia/Taipei）。尚未合併／部署，供本次審核。旅程、訂位、附件均為虛構，不含使用者真實備份或 token。公開 OAuth client ID 由網站擁有者提供，不是 secret。
+2026-11-08（Asia/Taipei）。已獲本次「推」授權，隨 eca3a1d 併入 main／部署；這些畫面是發布前候選截圖。旅程、訂位、附件均為虛構，不含使用者真實備份或 token。公開 OAuth client ID 由網站擁有者提供，不是 secret。
 
 | 畫面 | 實際驗證 |
 | --- | --- |

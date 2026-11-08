@@ -1,7 +1,7 @@
 # 任務交接：電腦 AI 匯入與 Google Drive 備份
 
 - 日期：2026-11-08（Asia/Taipei）
-- 狀態：in_progress；使用者本次「推」已授權併入／部署，正在發布驗證
+- 狀態：completed；已併入 GitHub main／Vercel 部署，正式站驗證通過
 - 正式版基準：40bffc16e324005c552aec5a25278b36eeecb00e
 - 工作分支：work
 - 本次授權：電腦 AI 匯入優先；App 內 Google Drive 上傳／下載／還原及 OAuth 設定說明。使用者提供公開網頁 client ID。未授權這批程式推送 main／部署，前次「推」不沿用。
@@ -64,3 +64,11 @@
 ## 本次發布授權
 
 使用者於本輪明確指示「推」，授權這批電腦 AI 匯入與 Drive 備份程式、指南與截圖推 main 並由 Vercel 部署。以本段取代先前待審核限制；遠端 main 核對仍為 40bffc16e324005c552aec5a25278b36eeecb00e，工作區乾淨。發布後仍不聲稱已完成真實 Google 帳號授權。
+
+## 最終發布結果（取代前述待審核／僅本機狀態）
+
+使用者本次「推」授權已執行，eca3a1df2debcdd30b5390d0849381a61b002e2d 已正常推送 main，包含兩階段程式、指南、截圖與交接。Vercel status success：https://vercel.com/itsjeann/travel-notebook/H1VuHoGSBye32auBQzPR1EbWwaFx 。正式站 https://travel-notebook-chi.vercel.app/ 已載入 index-BJ0lA-Fu.js／index-tMJT2XFX.css。程式現在可從 GitHub 恢復，沒有本次待審核或僅舊工作區的應用修改。
+
+正式站隔離 Chromium 使用虛構旅程驗證：1366 桌機複製提示詞、忽略不寫、混合新增／覆蓋、原 ID／PDF／未知值保留、住宿雙卡／退房筆記與交通、復原、重複不增卡、重載保存、多候選指定與 320／390 無溢出、無 pageerror，均通過。空資料庫首次還原入口可用，無旅程時沒有刪除旅程操作；真實 Google SDK HTTP200、連接按鈕就緒、授權前 Drive 請求 0，本機備份成功下載；320／390／1366 無溢出、無 pageerror。
+
+沒有實際 Google 帳號 OAuth／雲端上傳／下載／還原測試，這部分仍是先前模擬驗證；使用者需自行授權測試帳號。沒有真實 iPhone／Safari 測試。後續純文件 commit 不改上述 app bundle。
