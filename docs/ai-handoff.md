@@ -2,6 +2,10 @@
 
 更新日期：2026-11-08（Asia/Taipei）。先讀根目錄 [AGENTS.md](../AGENTS.md)；Claude 另有 [CLAUDE.md](../CLAUDE.md) 入口。
 
+## 目前待審核修正
+
+[Drive 403／空清單提示](handoffs/2026-11-08-drive-error-feedback.md) 本機 5b9e6bc8663a354596fca8eb1cd2cd8b7bcd1bd0，121 tests／建置／模擬啟用後重試通過，未推程式／未部署。使用者確認 API 尚未啟用或不確定，已給同專案啟用步驟；未讀到實際私有錯誤回應。區分 SERVICE_DISABLED、配額與權限錯誤，讀取失敗不再顯示沒有備份。需等本次「推」，前次發布授權不沿用。
+
 ## 最新發布：電腦匯入與 Google Drive 備份
 
 [電腦 AI 匯入與 Google Drive 備份](handoffs/2026-11-08-desktop-import-drive-backup.md) 已獲本次「推」授權，隨 eca3a1df2debcdd30b5390d0849381a61b002e2d 併入 main／部署。120 tests／建置通過，Vercel success，正式站 bundle index-BJ0lA-Fu.js。程式、[設定指南](google-drive-setup.md)與[截圖](handoff-assets/desktop-import-drive/README.md)已在 GitHub，沒有本次未推送／待審核應用變更。正式站桌機複製／忽略覆蓋／附件雙卡保留／復原／重載、多候選、首次開啟還原、本機備份下載與無溢出／pageerror 通過。真實 Google SDK200，公開 client ID 已作網站預設，VITE_GOOGLE_CLIENT_ID 可覆寫／空值停用。尚無真實 Google 帳號 OAuth／Drive 端到端測試，需使用者完成授權；不可把 mock 結果說成已連接使用者帳號。先前 checkpoint 的「僅本機／待審核」已被此結果取代。
