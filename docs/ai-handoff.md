@@ -2,6 +2,10 @@
 
 更新日期：2026-11-08（Asia/Taipei）。先讀根目錄 [AGENTS.md](../AGENTS.md)；Claude 另有 [CLAUDE.md](../CLAUDE.md) 入口。
 
+## 最新修正：Drive 錯誤提示
+
+[Drive 403／空清單提示](handoffs/2026-11-08-drive-error-feedback.md) 已獲本次「推」，隨 bf1c3fa3125c57ecef5b23ae194da40dfe9a147f 併入 main／部署。121 tests／建置通過，Vercel success，正式 bundle index-9k9LmVWD.js。正式站隔離 Chromium 模擬 SERVICE_DISABLED→清楚提示同專案啟用 API、沒有誤報空備份→重試成功，無 pageerror。程式／圖／指南已在 GitHub，沒有本次待審核或未推應用修改。使用者確認 API 未啟用／不確定，已提供設定連結；未查私人 Console、未替使用者啟用或登入 Google。這次驗證的 Google API 回應為模擬，實際帳號仍需使用者操作。
+
 ## 最新發布：電腦匯入與 Google Drive 備份
 
 [電腦 AI 匯入與 Google Drive 備份](handoffs/2026-11-08-desktop-import-drive-backup.md) 已獲本次「推」授權，隨 eca3a1df2debcdd30b5390d0849381a61b002e2d 併入 main／部署。120 tests／建置通過，Vercel success，正式站 bundle index-BJ0lA-Fu.js。程式、[設定指南](google-drive-setup.md)與[截圖](handoff-assets/desktop-import-drive/README.md)已在 GitHub，沒有本次未推送／待審核應用變更。正式站桌機複製／忽略覆蓋／附件雙卡保留／復原／重載、多候選、首次開啟還原、本機備份下載與無溢出／pageerror 通過。真實 Google SDK200，公開 client ID 已作網站預設，VITE_GOOGLE_CLIENT_ID 可覆寫／空值停用。尚無真實 Google 帳號 OAuth／Drive 端到端測試，需使用者完成授權；不可把 mock 結果說成已連接使用者帳號。先前 checkpoint 的「僅本機／待審核」已被此結果取代。

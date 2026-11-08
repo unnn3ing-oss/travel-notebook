@@ -68,7 +68,8 @@
 | origin_mismatch | Google JavaScript 來源是否與瀏覽器的 scheme／主機／port 完全相同，且 Vercel 使用正確 client ID |
 | access_denied／測試帳號無法登入 | 是否為同一專案、加入正確測試使用者、API 已啟用；Workspace 管理政策也可能限制存取 |
 | 登入視窗開不起來 | 允許此網站彈出 Google 視窗，再重新連接 |
-| 403 | 檢查 Drive API、權限與 Google 帳號／組織政策；不改用更廣權限繞過 |
+| Google Drive API 尚未啟用 | 在建立 OAuth 用戶端的同一專案啟用 [Google Drive API](https://console.cloud.google.com/apis/library/drive.googleapis.com?project=875788779288)，等幾分鐘後重新整理清單；請確認上方專案選擇正確 |
+| 403／拒絕存取 | 若 API 已啟用，檢查授權與 Google 帳號／組織政策；不改用更廣權限繞過 |
 | 401／連線到期 | token 是短期的，請重新連接；不儲存密鑰或 refresh token |
 | 上傳未確認成功 | 重新整理清單確認是否已有新檔，再決定是否重試；不把失敗嘗試記為成功 |
 | 備份過大 | 單份含附件的 JSON 上限 50 MB，請先精簡附件 |

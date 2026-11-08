@@ -50,3 +50,13 @@ it('uses the public site client ID by default and supports an explicit disable o
  vi.stubEnv('VITE_GOOGLE_CLIENT_ID','');expect(configuredClientId()).toBe('');
  vi.stubEnv('VITE_GOOGLE_CLIENT_ID',clientId);expect(configuredClientId()).toBe(clientId);
 });
+
+it('distinguishes disabled API and quota errors from authorization failures without exposing server text',async()=>{
+ for(const reason of ['SERVICE_DISABLED','accessNotConfigured']){
+  const fetcher=vi.fn().mockResolvedValue(new Response(JSON.stringify({error:{message:'PRIVATE SERVER TEXT',errors:[{reason}],details:[{reason}]}}),{status:403}));
+  await expect(listDriveBackups(session,{fetcher})).rejects.toMatchObject({code:'configuration',message:expect.stringContaining('Google Drive API 尚未啟用')});
+ }
+ for(const reason of ['rateLimitExceeded','userRateLimitExceeded','storageQuotaExceeded'])await expect(listDriveBackups(session,{fetcher:vi.fn().mockResolvedValue(new Response(JSON.stringify({error:{errors:[{reason}]}}),{status:403}))})).rejects.toMatchObject({code:'limit'});
+ await expect(listDriveBackups(session,{fetcher:vi.fn().mockResolvedValue(new Response(JSON.stringify({error:{details:[{reason:'SERVICE_DISABLED'}]}}),{status:403}))})).rejects.toMatchObject({code:'configuration'});
+ try{await listDriveBackups(session,{fetcher:vi.fn().mockResolvedValue(new Response(JSON.stringify({error:{message:'PRIVATE SERVER TEXT',errors:[{reason:'insufficientPermissions'}]}}),{status:403}))});throw Error('expected rejection');}catch(error){expect(error).toMatchObject({code:'forbidden'});expect((error as Error).message).not.toContain('PRIVATE SERVER TEXT');}
+});
