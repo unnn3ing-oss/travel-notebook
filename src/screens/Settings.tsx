@@ -3,11 +3,12 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
 import { href } from '../lib/route';
 import { addDays, daysBetween, md, weekday } from '../lib/time';
+import { GoogleDriveBackup } from '../components/GoogleDriveBackup';
+import { BackupError, MAX_BACKUP_BYTES, createBackup, prepareBackup, restoreBackup } from '../lib/backup';
 import { BackLink, css, I, Skeleton, SK } from '../design';
 import { dayCards, TYPE_LABEL } from './Plan';
 import type { Trip } from '../types';
 
-const TABLES = ['trips', 'items', 'routes', 'tasks', 'expenses', 'details', 'documents'];
 const TZ: Record<string, string> = { 'Asia/Tokyo': '日本（UTC+9）', 'Asia/Seoul': '韓國（UTC+9）', 'Asia/Bangkok': '泰國（UTC+7）', 'Asia/Taipei': '台灣（UTC+8）', 'Europe/Paris': '法國（UTC+1）' };
 const ROW = 'min-height: 56px; border: 0; border-bottom: 1px solid #DCE1E8; background: transparent; color: #1E2A44; font: inherit; font-size: 15px; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 0; text-decoration: none';
 const read = (k: string) => { try { return localStorage.getItem(k); } catch { return null; } };
@@ -20,7 +21,7 @@ function download(name: string, blob: Blob) {
 }
 
 /** 設計稿「設定與備份」(Settings) */
-export function Settings({ trip }: { trip: Trip }) {
+export function Settings({ trip }: { trip?: Trip }) {
   const input = useRef<HTMLInputElement>(null);
   const [note, setNote] = useState<{ text: string; ok: boolean } | null>(null);
   const [theme, setTheme] = useState(read('travel-theme') || 'system');
@@ -29,30 +30,25 @@ export function Settings({ trip }: { trip: Trip }) {
 
   async function backup() {
     try {
-      const data: Record<string, unknown> = { format: 'travel-notebook', version: 2 };
-      for (const t of TABLES) {
-        const rows = await db.table(t).toArray();
-        data[t] = t === 'documents' ? await Promise.all(rows.map(async (d) => ({ ...d, file: await new Promise<string>((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result)); r.onerror = no; r.readAsDataURL(d.file); }) }))) : rows;
-      }
-      download('旅行手帳備份-' + new Date().toISOString().slice(0, 10) + '.json', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+      const result=await createBackup();
+      download(result.name,result.blob);
       const now = new Date().toISOString();
       write('travel-last-backup', now);
       setLast(now);
       setNote(null);
-    } catch { setNote({ text: '備份失敗，請再試一次。', ok: false }); }
+    } catch(error) { setNote({ text: error instanceof BackupError?error.message:'備份失敗，請再試一次。', ok: false }); }
   }
   async function restore(f: File | undefined) {
     if (!f) return;
     try {
-      const data = JSON.parse(await f.text());
-      if (data.format !== 'travel-notebook' || data.version !== 2 || !TABLES.every((t) => Array.isArray(data[t]) && data[t].every((r: Record<string, unknown>) => typeof r.id === 'string'))) throw Error();
-      if (!data.trips.every((t: Trip) => typeof t.name === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(t.start) && /^\d{4}-\d{2}-\d{2}$/.test(t.end) && t.end >= t.start && t.people >= 1 && typeof t.currency === 'string')) throw Error();
-      for (const d of data.documents) { if (typeof d.file !== 'string' || !d.file.startsWith('data:')) throw Error(); d.file = await (await fetch(d.file)).blob(); }
-      await db.transaction('rw', TABLES.map((t) => db.table(t)), async () => { for (const t of TABLES) { await db.table(t).clear(); await db.table(t).bulkPut(data[t]); } });
+      if(f.size>MAX_BACKUP_BYTES)throw new BackupError('備份超過 50 MB，無法在此裝置還原。');
+      const data=prepareBackup(await f.text());
+      await restoreBackup(data);
       setNote({ text: '已用備份檔還原。', ok: true });
-    } catch { setNote({ text: '沒辦法還原：請選旅行手帳產生的備份檔。', ok: false }); }
+    } catch(error) { setNote({ text: error instanceof BackupError?error.message:'沒辦法還原：請選旅行手帳產生的備份檔。', ok: false }); }
   }
   async function exportIcs() {
+    if(!trip)return;
     const items = (await db.items.where({ tripId: trip.id }).toArray()).filter((i) => i.date && i.start);
     const tz = trip.timezone;
     const dt = (d: string, t: string) => d.replace(/-/g, '') + 'T' + t.replace(':', '') + '00';
@@ -65,6 +61,7 @@ export function Settings({ trip }: { trip: Trip }) {
   }
   function changeTheme(v: string) { setTheme(v); write('travel-theme', v); document.documentElement.dataset.theme = v; }
   async function deleteTrip() {
+    if(!trip)return;
     await db.transaction('rw', db.tables, async () => {
       const ids = await db.items.where({ tripId: trip.id }).primaryKeys();
       await db.routes.where('itemId').anyOf(ids).delete();
@@ -75,34 +72,36 @@ export function Settings({ trip }: { trip: Trip }) {
     location.hash = href('');
   }
   const CF = {
-    restore: ['用備份檔還原？', '目前手機裡的資料會被備份檔的內容取代。建議先按「備份成檔案」存一份現在的資料。', '選擇檔案並還原'],
-    del: ['刪除「' + trip.name + '」？', '行程、預訂、備案、筆記和花費都會一起刪除，而且無法復原。', '刪除旅程'],
+    restore: ['用備份檔還原？', '目前這台裝置的資料會被備份檔的內容取代。建議先按「備份成檔案」存一份現在的資料。', '選擇檔案並還原'],
+    del: ['刪除「' + (trip?.name||'旅程') + '」？', '行程、預訂、備案、筆記和花費都會一起刪除，而且無法復原。', '刪除旅程'],
   };
   const ago = last ? (() => { const m = Math.round((Date.now() - new Date(last).getTime()) / 60000); return m < 2 ? '剛剛' : m < 60 ? m + ' 分鐘前' : m < 1440 ? Math.round(m / 60) + ' 小時前' : Math.round(m / 1440) + ' 天前'; })() : '';
 
   return (
     <main style={css('flex: 1; padding: 52px 20px 32px; display: flex; flex-direction: column; gap: 24px')}>
-      <BackLink to={href('essentials')} />
+      <BackLink to={href(trip?'essentials':'')} />
       <h1 style={css('margin: 0; font-size: 28px; font-weight: 700')}>設定與備份</h1>
 
       <section aria-labelledby="bk-h" style={css('display: flex; flex-direction: column; gap: 10px')}>
         <h2 id="bk-h" style={css('margin: 0; font-size: 16px; font-weight: 700')}>資料備份</h2>
         <div style={css('padding: 14px; border-radius: 14px; display: flex; flex-direction: column; gap: 6px; ' + (last ? 'background: #DDF1E8; color: #1F7A5C' : 'background: #F9E1DF; color: #B83A32'))}>
-          <p style={css('margin: 0; font-size: 14px; line-height: 1.6')}>{last ? '已存好一份備份。換手機或手機遺失時，可以用這個檔案還原。' : '資料只存在這支手機。換手機、清除 Safari 資料或手機遺失，資料就會不見。出發前至少備份一次。'}</p>
+          <p style={css('margin: 0; font-size: 14px; line-height: 1.6')}>{last ? '已保存一份備份。更換裝置時，可從檔案或 Google Drive 還原。' : '資料只存在這台裝置。更換裝置、清除瀏覽器資料或裝置遺失，資料就會不見。出發前至少備份一次。'}</p>
           <p className="num" style={css('margin: 0; font-size: 13px; font-weight: 700')}>{last ? '上次備份：' + ago : '還沒備份過'}</p>
         </div>
         <button onClick={backup} style={css('height: 52px; border-radius: 14px; border: 0; background: #1E2A44; color: #FFFFFF; font: inherit; font-size: 16px; font-weight: 700')}>備份成檔案</button>
-        <p style={css('margin: 0; font-size: 13px; color: #5B6578')}>會存成一個 .json 檔，可以放到 iCloud 雲碟或傳給自己。檔案裡有訂單編號，不要分享給別人。</p>
+        <p style={css('margin: 0; font-size: 13px; color: #5B6578')}>會存成一個 .json 檔，可以放到 Google Drive、iCloud 雲碟或傳給自己。檔案裡有訂單編號，不要分享給別人。</p>
         <button onClick={() => setConfirm('restore')} style={css('height: 48px; border-radius: 12px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 15px')}>從備份檔還原</button>
         <input ref={input} type="file" accept="application/json,.json" className="visually-hidden" onChange={(e) => { restore(e.target.files?.[0]); e.target.value = ''; }} />
         {note && <p role="status" style={css('margin: 0; padding: 12px 14px; border-radius: 12px; font-size: 14px; font-weight: 700; ' + (note.ok ? 'background: #DDF1E8; color: #1F7A5C' : 'background: #F9E1DF; color: #B83A32'))}>{note.text}</p>}
       </section>
 
-      <section aria-labelledby="ex-h" style={css('display: flex; flex-direction: column')}>
+      <GoogleDriveBackup onBackup={at=>{write('travel-last-backup',at);setLast(at);}} />
+
+      {trip&&<section aria-labelledby="ex-h" style={css('display: flex; flex-direction: column')}>
         <h2 id="ex-h" style={css('margin: 0 0 4px; font-size: 16px; font-weight: 700')}>匯出</h2>
         <button onClick={exportIcs} style={css(ROW)}>加到 iPhone 行事曆<span style={css('font-size: 13px; color: #5B6578')}>.ics 檔</span></button>
         <a href={href('print')} style={css(ROW)}>行程表 PDF<span style={css('font-size: 13px; color: #5B6578')}>可以印出來或傳給同行的人</span></a>
-      </section>
+      </section>}
 
       <section aria-labelledby="look-h" style={css('display: flex; flex-direction: column; gap: 10px')}>
         <h2 id="look-h" style={css('margin: 0; font-size: 16px; font-weight: 700')}>外觀</h2>
@@ -111,13 +110,13 @@ export function Settings({ trip }: { trip: Trip }) {
         </div>
       </section>
 
-      <section aria-labelledby="more-h" style={css('display: flex; flex-direction: column')}>
+      {trip&&<section aria-labelledby="more-h" style={css('display: flex; flex-direction: column')}>
         <h2 id="more-h" style={css('margin: 0 0 4px; font-size: 16px; font-weight: 700')}>其他</h2>
         <a href={href('reminders')} style={css(ROW)}>提醒設定{I.chev}</a>
         <a href={href('')} style={css(ROW)}>切換旅程{I.chev}</a>
         <div style={css(ROW)}>這趟旅程的時區<span style={css('font-size: 14px; color: #5B6578')}>{trip.timezone ? TZ[trip.timezone] ?? trip.timezone : '跟手機時間一樣'}</span></div>
         <button onClick={() => setConfirm('del')} style={css('min-height: 56px; border: 0; background: transparent; color: #B83A32; font: inherit; font-size: 15px; font-weight: 700; text-align: left; padding: 0')}>刪除「{trip.name}」</button>
-      </section>
+      </section>}
 
       {confirmKind && (
         <div style={css('position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 20px')}>

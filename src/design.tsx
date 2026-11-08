@@ -119,7 +119,7 @@ export function DSheet({ title, sub, onClose, children, wide=false }: { title: s
   return (
     <div className={'dsheet'+(wide?' dsheet-wide':'')} style={css('position: fixed; inset: 0; z-index: 40; display: flex; flex-direction: column; justify-content: flex-end; align-items: center')}>
       <div aria-hidden="true" onClick={onClose} style={css('position: absolute; inset: 0; background: rgba(30,42,68,0.55)')} />
-      <section ref={ref} role="dialog" aria-modal="true" aria-labelledby="dsheet-h" style={{...css('position: relative; width: 100%; box-sizing: border-box; max-height: 92dvh; overflow-y: auto; background: #FFFFFF; border-radius: 24px 24px 0 0; padding: 10px 20px max(34px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 16px'),maxWidth:wide?880:480}}>
+      <section ref={ref} role="dialog" aria-modal="true" aria-labelledby="dsheet-h" style={{...css('position: relative; width: 100%; box-sizing: border-box; max-height: 92dvh; overflow-y: auto; background: #FFFFFF; border-radius: 24px 24px 0 0; padding: 10px 20px max(34px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 16px'),maxWidth:480}}>
         <span aria-hidden="true" style={css('align-self: center; width: 40px; height: 5px; flex-shrink: 0; border-radius: 3px; background: #DCE1E8')} />
         <div style={css('display: flex; justify-content: space-between; align-items: flex-start; gap: 12px')}>
           <div>

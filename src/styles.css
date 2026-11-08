@@ -561,4 +561,10 @@ input::-webkit-datetime-edit { padding: 0; }
 .ti-places li p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
 .board-heading{align-items:flex-start;flex-wrap:wrap}.board-heading>div:first-child{flex:1;min-width:260px}.board-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0}
-@media(min-width:900px){.dsheet-wide{justify-content:center!important;padding:24px;box-sizing:border-box}.dsheet-wide>section{max-height:calc(100dvh - 48px)!important;border-radius:24px!important;padding:24px!important}.dsheet-wide textarea{min-height:180px}}
+@media(min-width:900px){.dsheet-wide{justify-content:center!important;padding:24px;box-sizing:border-box}.dsheet-wide>section{max-width:880px!important;max-height:calc(100dvh - 48px)!important;border-radius:24px!important;padding:24px!important}.dsheet-wide textarea{min-height:180px}}
+
+.drive-backup{display:flex;flex-direction:column;gap:12px;min-width:0}.drive-heading{display:flex;justify-content:space-between;gap:10px;align-items:center}.drive-heading h2,.drive-backup h3{font-size:16px;margin:0}.drive-state{font-size:12px;color:var(--ink-2)}.drive-backup p{font-size:13px;line-height:1.7;margin:0;overflow-wrap:anywhere}.drive-buttons{display:flex;flex-wrap:wrap;gap:8px}.drive-buttons .btn{flex:1;min-width:120px;min-height:44px}.drive-disconnect{border:0;background:none;font:inherit;font-size:13px;align-self:flex-start;color:var(--ink-2);padding:6px 0}.drive-notice{padding:12px;border-radius:12px;background:var(--line-2);color:var(--ink-2)}.drive-backup .drive-footnote,.drive-backup .drive-last{font-size:11px;color:var(--ink-2)}.drive-error{color:var(--warn)}.drive-files{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}.drive-files li{border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0}.drive-files b,.drive-restore-name{font-size:13px;overflow-wrap:anywhere}.drive-files small{font-size:11px;color:var(--ink-2)}
+
+.drive-buttons .btn.danger{background:var(--warn);border-color:var(--warn);color:#fff}
+
+.welcome-backup{display:flex;min-height:44px;align-items:center;justify-content:center;font-size:14px;color:var(--ink-2);margin-top:12px}

@@ -38,7 +38,7 @@ export default function App() {
   const tabs=['today','overview','plan','bookings','essentials','prep'];
   const showNav=!landing&&tabs.includes(page)&&!(page==='bookings'&&arg);
   return <div className={'app'+(landing?' welcome-app':page==='plan'?' planning-app':'')}>
-    {landing?<Welcome trips={trips} today={clock.date} select={select}/>:page==='new'?<NewTrip select={select}/>:page==='past'?<PastTrips trips={trips} today={clock.date} select={select}/>:trip?<>
+    {landing?<Welcome trips={trips} today={clock.date} select={select}/>:page==='new'?<NewTrip select={select}/>:page==='past'?<PastTrips trips={trips} today={clock.date} select={select}/>:page==='settings'?<Settings trip={trip}/>:trip?<>
       {clock.simulated&&<div className="sim" aria-hidden="true">模擬 {clock.date} {clock.time}</div>}
       {page==='today'&&during&&<Today trip={trip} clock={clock}/>}
       {(page==='overview'||(page==='today'&&!during))&&<Overview trip={trip} clock={clock}/>}
@@ -51,7 +51,6 @@ export default function App() {
       {page==='bookings'&&<Bookings key={arg??'list'} trip={trip} mode={arg} id={arg2}/>}
       {page==='essentials'&&<Essentials key={trip.id} trip={trip} clock={clock}/>}
       {page==='library'&&<Library trip={trip}/>}
-      {page==='settings'&&<Settings trip={trip}/>}
       {page==='place'&&arg&&<Place trip={trip} itemId={arg}/>}
       {page==='reminders'&&<Reminders trip={trip} clock={clock}/>}
       {page==='print'&&<PrintView trip={trip}/>}

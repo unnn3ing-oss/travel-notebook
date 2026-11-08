@@ -17,5 +17,6 @@ export function Welcome({ trips, today, select }: { trips: Trip[]; today: string
       <a className={'welcome-action ' + (!upcoming.length ? 'highlighted' : 'outlined')} href={href('new')}><span><strong>開始新旅程</strong><small>設定目的地和日期，開始排行程</small></span><Icon name="plus" size={24} /></a>
       <a className="welcome-action outlined" href={href('past')}><span><strong>回顧過去旅行</strong><small>去過的地方、筆記和花費</small></span><Icon name="chevron" size={22} /></a>
     </div>
+    <a className="welcome-backup" href={href('settings')}>從備份還原</a>
   </main>;
 }
