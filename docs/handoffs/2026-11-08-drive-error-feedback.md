@@ -1,7 +1,7 @@
 # 任務交接：Drive 403 與清單錯誤提示
 
 - 日期：2026-11-08（Asia/Taipei）
-- 狀態：in_progress；已獲本次推送／部署授權
+- 狀態：completed；已發布並驗證正式站
 - 基準：c39e99e，work，工作區乾淨
 - 授權：使用者回報連接後 403 並錯顯示沒有備份；允許修正與驗證，尚無本次推送／部署指示。
 
@@ -30,3 +30,7 @@
 ## 本次發布授權
 
 使用者本輪明確指示「推」，授權 5b9e6bc 修正、截圖與交接併入 main／Vercel 部署，取代上述待審核限制。遠端仍為 c39e99e，工作區乾淨；發布後驗證正式站新版與模擬錯誤／重試流程，不代表已啟用使用者 Google 專案 API。
+
+## 最終發布結果
+
+使用者本次「推」已執行，bf1c3fa3125c57ecef5b23ae194da40dfe9a147f 推 main，包含修正、截圖、指南及交接。Vercel success：https://vercel.com/itsjeann/travel-notebook/12s2uk1itiT5t9DbnFBbnehaxsBo 。正式站已載入 index-9k9LmVWD.js／index-tMJT2XFX.css。隔離 Chromium 在正式站模擬 Google SERVICE_DISABLED：正確提示 API 未啟用、不誤顯示沒有備份、模擬 API 啟用後按重新整理可恢復空清單，無 pageerror。121 tests／建置結果見上文；沒有實際登入或替使用者啟用 API。先前「未推／待審核」為歷史狀態，現在程式與圖片已在 GitHub，無本次未推送應用修改。

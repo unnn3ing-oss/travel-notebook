@@ -2,9 +2,9 @@
 
 更新日期：2026-11-08（Asia/Taipei）。先讀根目錄 [AGENTS.md](../AGENTS.md)；Claude 另有 [CLAUDE.md](../CLAUDE.md) 入口。
 
-## 目前待審核修正
+## 最新修正：Drive 錯誤提示
 
-[Drive 403／空清單提示](handoffs/2026-11-08-drive-error-feedback.md) 本機 5b9e6bc8663a354596fca8eb1cd2cd8b7bcd1bd0，121 tests／建置／模擬啟用後重試通過，未推程式／未部署。使用者確認 API 尚未啟用或不確定，已給同專案啟用步驟；未讀到實際私有錯誤回應。區分 SERVICE_DISABLED、配額與權限錯誤，讀取失敗不再顯示沒有備份。需等本次「推」，前次發布授權不沿用。
+[Drive 403／空清單提示](handoffs/2026-11-08-drive-error-feedback.md) 已獲本次「推」，隨 bf1c3fa3125c57ecef5b23ae194da40dfe9a147f 併入 main／部署。121 tests／建置通過，Vercel success，正式 bundle index-9k9LmVWD.js。正式站隔離 Chromium 模擬 SERVICE_DISABLED→清楚提示同專案啟用 API、沒有誤報空備份→重試成功，無 pageerror。程式／圖／指南已在 GitHub，沒有本次待審核或未推應用修改。使用者確認 API 未啟用／不確定，已提供設定連結；未查私人 Console、未替使用者啟用或登入 Google。這次驗證的 Google API 回應為模擬，實際帳號仍需使用者操作。
 
 ## 最新發布：電腦匯入與 Google Drive 備份
 
