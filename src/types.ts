@@ -58,6 +58,21 @@ export interface Item {
   to?: string;
 }
 
+/** 某一段的一個班次（HH:mm，同一天、不跨午夜） */
+export interface LegTime { dep: string; arr: string; info?: string }
+export interface Leg {
+  mode: Mode;
+  label: string;
+  minutes: number;
+  fare?: number;
+  place?: string;
+  /** 這一段預計的發車／抵達時間；沒填代表只知道所需分鐘 */
+  dep?: string;
+  arr?: string;
+  /** 錯過主班次時的備案班次 */
+  alts?: LegTime[];
+}
+
 export interface Route {
   id: string;
   itemId: string;
@@ -68,7 +83,7 @@ export interface Route {
   walk: number;
   /** where you board; '' when unknown */
   place: string;
-  legs: { mode: Mode; label: string; minutes: number; fare?: number; place?: string }[];
+  legs: Leg[];
   departures: { dep: string; arr: string; info: string }[];
   fare: number | null; // per person, local currency
   booking?: BookingStatus;

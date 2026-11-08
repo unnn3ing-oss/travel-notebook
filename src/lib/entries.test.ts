@@ -37,6 +37,21 @@ describe('dedicated entry data',()=>{
   expect(result.item.start).toBe('14:26');expect(result.routes.map(r=>r.primary)).toEqual([true,false]);expect(result.routes[0]).toMatchObject({minutes:24,fare:240,walk:5,place:'32 號月台'});expect(result.routes[1]).toMatchObject({minutes:30,fare:450});
   const changed=transitEntry(base,{from:'京都',to:'嵐山',date:trip.start,arriveBy:'14:50',routes:[b,a]},trip);expect(changed.item.start).toBe('14:20');expect(changed.routes[0].id).toBe('backup');
  });
+ it('builds a timed multi-leg route with backup departures for the first leg',()=>{
+  const narita={mode:'train' as const,label:'京成 Skyliner 往日暮里',minutes:0,fare:2580,place:'成田機場第 1 航廈站',dep:'10:30',arr:'11:10',alts:[{dep:'11:00',arr:'11:40',info:'錯過就搭下一班'}]};
+  const yamanote={mode:'train' as const,label:'JR 山手線 往新宿',minutes:0,fare:200,place:'日暮里站 3 號月台',dep:'11:20',arr:'11:35',alts:[{dep:'11:50',arr:'12:05'}]};
+  const r=transitEntry(base,{from:'成田機場',to:'新宿',date:trip.start,arriveBy:'13:00',routes:[route('main',[{mode:'walk',label:'到月台',minutes:5},narita,yamanote])]},trip);
+  expect(r.routes[0].legs.map(l=>l.minutes)).toEqual([5,40,15]);
+  expect(r.routes[0]).toMatchObject({minutes:60,fare:2780,walk:5,place:'成田機場第 1 航廈站'});
+  expect(r.routes[0].departures.map(d=>[d.dep,d.arr])).toEqual([['10:30','11:35'],['11:00','12:05']]);
+  expect(r.item.start).toBe('10:25');expect(r.item.end).toBe('13:00');
+  expect(()=>transitEntry(base,{from:'a',to:'b',date:trip.start,arriveBy:'13:00',routes:[route('main',[{...narita,arr:'10:00'}])]},trip)).toThrow('晚於');
+  expect(()=>transitEntry(base,{from:'a',to:'b',date:trip.start,arriveBy:'13:00',routes:[route('main',[{...narita,alts:[{dep:'11:00',arr:''}]}])]},trip)).toThrow('備案 1');
+ });
+ it('keeps legacy untimed routes unchanged',()=>{
+  const r=transitEntry(base,{from:'京都',to:'嵐山',date:trip.start,arriveBy:'14:50',routes:[route('main',[{mode:'train',label:'JR',minutes:16}])]},trip);
+  expect(r.routes[0].departures).toEqual([]);expect(r.item.start).toBe('14:34');
+ });
  it('inserts incoming cards by time without disturbing the relative manual order of existing cards',()=>{
   const i=(id:string,start:string,order?:number):Item=>({...base,id,start,order});
   const previous=[i('morning','09:00',0),i('evening','18:00',1)];

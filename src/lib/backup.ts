@@ -1,4 +1,6 @@
 import { db } from '../db';
+import { legTimesError } from './legs';
+import type { Leg } from '../types';
 
 export const BACKUP_TABLES = ['trips', 'items', 'routes', 'tasks', 'expenses', 'details', 'documents'] as const;
 export type BackupTable = typeof BACKUP_TABLES[number];
@@ -81,7 +83,7 @@ export function prepareBackup(raw:string):PreparedBackup {
   }
   for(const r of tables.routes){
     if(!['walk','train','subway','tram','bus','car','ferry','rental','plane'].includes(String(r.mode)))return fail();
-    if(r.legs!==undefined&&(!Array.isArray(r.legs)||!r.legs.every(v=>{const l=object(v);return text(l.label)&&finite(l.minutes)&&optionalNumbers(l,['fare'])&&optionalStrings(l,['place']);})))return fail();
+    if(r.legs!==undefined&&(!Array.isArray(r.legs)||!r.legs.every(v=>{const l=object(v);return text(l.label)&&finite(l.minutes)&&optionalNumbers(l,['fare'])&&optionalStrings(l,['place'])&&!legTimesError(l as unknown as Leg);})))return fail();
     if(r.departures!==undefined&&(!Array.isArray(r.departures)||!r.departures.every(v=>{const d=object(v);return time(d.dep)&&time(d.arr)&&text(d.info);})))return fail();
   }
   tables.documents=tables.documents.map(d=>{if(!text(d.name)||d.itemId!==undefined&&!text(d.itemId))return fail();return {...d,file:fileBlob(d.file)};});

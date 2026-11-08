@@ -1,5 +1,6 @@
 import type { FlightDetails, HotelDetails, Item, Route, TicketDetails, Trip } from '../types';
 import { addDays, daysBetween, fmt, toMin } from './time';
+import { legTimesError, minutesBetween, withDerivedDepartures } from './legs';
 
 export type EntryKind = 'flight' | 'hotel' | 'ticket' | 'transit';
 export const isEntryKind = (kind: string): kind is EntryKind => ['flight','hotel','ticket','transit'].includes(kind);
@@ -71,11 +72,15 @@ export function transitEntry(base: Item, draft: TransitDraft, trip: Trip): { ite
   const routes=draft.routes.map((r,k)=>{
     check(r.legs.length, (k===0?'主要':'備用')+'路線至少要有一段。');
     check(r.name.trim(),'請填每條路線的名稱。');
-    check(r.legs.every(l=>l.label.trim()&&number(l.minutes,0,1440)&&number(l.fare??0)), '請確認路段說明、分鐘數與費用。');
-    const summary=routeSummary(r); check(summary.minutes>0&&summary.minutes<1440,'每條路線總時間需介於 1 分鐘與 24 小時之間。');
+    const legs=r.legs.map(l=>({...l,minutes:minutesBetween(l.dep,l.arr)??l.minutes}));
+    check(legs.every(l=>l.label.trim()&&number(l.minutes,0,1440)&&number(l.fare??0)), '請確認路段說明、分鐘數與費用。');
+    for(const l of legs){const e=legTimesError(l);check(!e,'「'+l.label.trim()+'」'+e);}
+    const summary=routeSummary({...r,legs}); check(summary.minutes>0&&summary.minutes<1440,'每條路線總時間需介於 1 分鐘與 24 小時之間。');
     const firstRide=r.legs.findIndex(l=>l.mode!=='walk');
-    return {...r,itemId:base.id,primary:k===0,minutes:summary.minutes,fare:summary.fare,mode:r.legs[firstRide<0?0:firstRide].mode,walk:firstRide<0?0:r.legs.slice(0,firstRide).reduce((n,l)=>n+l.minutes,0),place:r.legs[firstRide]?.place??''};
+    return withDerivedDepartures({...r,legs,itemId:base.id,primary:k===0,minutes:summary.minutes,fare:summary.fare,mode:legs[firstRide<0?0:firstRide].mode,walk:firstRide<0?0:legs.slice(0,firstRide).reduce((n,l)=>n+l.minutes,0),place:legs[firstRide]?.place??''});
   });
-  check(toMin(draft.arriveBy)>=routes[0].minutes,'路線需在前一天出發，請改用前一天的交通卡片設定。');
-  return {item:{...base,type:'transit',title:draft.from.trim()+' → '+draft.to.trim(),booking:routes[0].booking,from:draft.from.trim(),to:draft.to.trim(),date:draft.date,start:fmt(toMin(draft.arriveBy)-routes[0].minutes),end:draft.arriveBy},routes};
+  const mainRide=routes[0].legs.find(l=>l.mode!=='walk');
+  check((mainRide?.dep&&toMin(mainRide.dep)>=routes[0].walk)||toMin(draft.arriveBy)>=routes[0].minutes,'路線需在前一天出發，請改用前一天的交通卡片設定。');
+  const main=routes[0];const mainDep=main.legs.find(l=>l.mode!=='walk')?.dep;const timed=mainDep&&toMin(mainDep)-main.walk>=0?fmt(toMin(mainDep)-main.walk):undefined;
+  return {item:{...base,type:'transit',title:draft.from.trim()+' → '+draft.to.trim(),booking:main.booking,from:draft.from.trim(),to:draft.to.trim(),date:draft.date,start:timed??fmt(toMin(draft.arriveBy)-main.minutes),end:draft.arriveBy},routes};
 }

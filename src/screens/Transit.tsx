@@ -118,7 +118,11 @@ export function Transit({ trip, clock, itemId }: { trip: Trip; clock: Clock; ite
               {cur.legs.map((l, k) => (
                 <li key={k} style={css('display: flex; gap: 12px; min-height: 40px')}>
                   <span aria-hidden="true" style={css('width: 12px; height: 12px; margin-top: 4px; flex-shrink: 0; border-radius: 6px; background: ' + DOT[l.mode])} />
-                  <span style={css('flex: 1; display: flex; justify-content: space-between; gap: 8px; font-size: 14px; padding-bottom: 10px')}><span>{l.label}</span><span className="num" style={css('color: #5B6578; flex-shrink: 0')}>{l.minutes} 分鐘</span></span>
+                  <span style={css('flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font-size: 14px; padding-bottom: 10px')}>
+                    <span style={css('display: flex; justify-content: space-between; gap: 8px')}><span>{l.label}</span><span className="num" style={css('color: #5B6578; flex-shrink: 0')}>{l.minutes} 分鐘</span></span>
+                    {l.dep && l.arr && <span className="num" style={css('font-size: 13px; font-weight: 700')}>{l.dep} 發車 → {l.arr} 抵達</span>}
+                    {!!l.alts?.length && <span className="num" style={css('font-size: 12px; color: #5B6578')}>備案：{l.alts.map((a) => a.dep + ' → ' + a.arr + (a.info ? '（' + a.info + '）' : '')).join('、')}</span>}
+                  </span>
                 </li>
               ))}
             </ol>

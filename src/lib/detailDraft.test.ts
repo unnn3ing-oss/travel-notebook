@@ -32,6 +32,13 @@ describe('same-layout detail editing',()=>{
   const cleared=updateDetailDraft(flight,'flight.bags',0,'託運件數',true);expect(cleared.missingFields).toContain('託運件數');
   expect(updateDetailDraft(cleared,'flight.bags',0,'託運件數').missingFields).not.toContain('託運件數');
  });
+ it('recomputes minutes and departures when a leg time is edited, and keeps manual departures otherwise',()=>{
+  const manual:Route={id:'r',itemId:'main',name:'N',mode:'train',minutes:40,walk:0,place:'',fare:null,primary:true,departures:[{dep:'09:00',arr:'09:40',info:'手動'}],legs:[{mode:'train',label:'成田特快',minutes:40},{mode:'train',label:'山手線',minutes:15}]};
+  expect(updateRouteDraft(manual,{legs:manual.legs.map((l,k)=>k===1?{...l,label:'山手線 內回り'}:l)}).departures).toEqual(manual.departures);
+  const timed=updateRouteDraft(manual,{legs:manual.legs.map((l,k)=>k===0?{...l,dep:'10:30',arr:'11:10',alts:[{dep:'11:00',arr:'11:40'}]}:l)});
+  expect(timed.legs[0].minutes).toBe(40);expect(timed.departures.map(d=>[d.dep,d.arr])).toEqual([['10:30','11:25'],['11:00','11:55']]);
+  const moved=updateRouteDraft(timed,{legs:timed.legs.map((l,k)=>k===0?{...l,arr:'11:20'}:l)});expect(moved.legs[0].minutes).toBe(50);expect(moved.minutes).toBe(65);
+ });
  it('does not change existing route totals when only editing a label',()=>{
   const route:Route={id:'r',itemId:'main',name:'JR',mode:'train',minutes:25,walk:5,place:'32 號月台',fare:240,primary:true,departures:[],legs:[{mode:'walk',label:'步行',minutes:5},{mode:'train',label:'JR',minutes:16},{mode:'walk',label:'出站',minutes:3}]};
   expect(updateRouteDraft(route,{legs:route.legs.map((l,k)=>k===1?{...l,label:'JR 快速'}:l)})).toMatchObject({minutes:25,fare:240,walk:5});

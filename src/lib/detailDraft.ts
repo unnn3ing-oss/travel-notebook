@@ -1,6 +1,7 @@
 import type { Item, Route, Trip } from '../types';
 import { addDays, daysBetween, fmt, toMin } from './time';
 import { flightMinutes, routeSummary } from './entries';
+import { legTimesError, minutesBetween, withDerivedDepartures } from './legs';
 
 export function draftValue(item:Item,path:string):unknown {
   return path.split('.').reduce<unknown>((value,key)=>value&&typeof value==='object'?(value as Record<string,unknown>)[key]:undefined,item);
@@ -58,7 +59,7 @@ export function detailEntries(original:Item,draft:Item,trip:Trip,checkout:Item|u
   }
   if(item.type==='transit'&&routes.length){
     if(routes.filter(r=>r.primary).length!==1)throw Error('請選擇一條主要路線。');
-    for(const r of routes){checkNumber(r.minutes);checkNumber(r.walk);if(r.fare!==null)checkNumber(r.fare);for(const l of r.legs){checkNumber(l.minutes);checkNumber(l.fare??0);}for(const d of r.departures){checkTime(d.dep);checkTime(d.arr);}}
+    for(const r of routes){checkNumber(r.minutes);checkNumber(r.walk);if(r.fare!==null)checkNumber(r.fare);for(const l of r.legs){checkNumber(l.minutes);checkNumber(l.fare??0);const e=legTimesError(l);if(e)throw Error('「'+l.label+'」'+e);}for(const d of r.departures){checkTime(d.dep);checkTime(d.arr);}}
   }
   if(!item.flight&&item.start&&item.end&&item.end<item.start)throw Error('結束時間不能早於開始時間。');
   checkDate(item.cancelBefore??'');
@@ -66,13 +67,15 @@ export function detailEntries(original:Item,draft:Item,trip:Trip,checkout:Item|u
   return [item];
 }
 export function updateRouteDraft(route:Route,patch:Partial<Route>):Route {
-  const r={...route,...patch};if(!patch.legs)return r;
+  let r={...route,...patch};if(!patch.legs)return r;
+  // 發車與抵達都填時，分鐘數跟著時間走；舊資料沒有時間就維持原分鐘。
+  r={...r,legs:r.legs.map((l,k)=>{const m=minutesBetween(l.dep,l.arr);const o=route.legs[k];return m!==undefined&&(!o||o.dep!==l.dep||o.arr!==l.arr)?{...l,minutes:m}:l;})};
   const changedLength=route.legs.length!==r.legs.length;
   const timing=changedLength||r.legs.some((l,k)=>l.minutes!==route.legs[k]?.minutes||l.mode!==route.legs[k]?.mode);
   const fares=changedLength||r.legs.some((l,k)=>l.fare!==route.legs[k]?.fare);
   const places=changedLength||r.legs.some((l,k)=>l.place!==route.legs[k]?.place||l.mode!==route.legs[k]?.mode);
   const summary=routeSummary(r);const ride=r.legs.findIndex(l=>l.mode!=='walk');
-  return {...r,minutes:timing?summary.minutes:r.minutes,fare:fares?summary.fare:r.fare,mode:timing?r.legs[Math.max(0,ride)]?.mode??r.mode:r.mode,walk:timing?(ride>0?r.legs.slice(0,ride).reduce((n,l)=>n+l.minutes,0):0):r.walk,place:places?r.legs[ride]?.place??r.place:r.place};
+  return withDerivedDepartures({...r,minutes:timing?summary.minutes:r.minutes,fare:fares?summary.fare:r.fare,mode:timing?r.legs[Math.max(0,ride)]?.mode??r.mode:r.mode,walk:timing?(ride>0?r.legs.slice(0,ride).reduce((n,l)=>n+l.minutes,0):0):r.walk,place:places?r.legs[ride]?.place??r.place:r.place});
 }
 export function transitStartForRoutes(item:Item,previous:Route[],routes:Route[]):Item {
   const main=routes.find(r=>r.primary);const old=previous.find(r=>r.primary);

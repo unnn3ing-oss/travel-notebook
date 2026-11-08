@@ -39,3 +39,10 @@ it('rolls back cleared tables and partial restore when any table write fails',as
  delete prepared.tables.items[0].id; // Force an IndexedDB key error after trips were already written.
  await expect(restoreBackup(prepared)).rejects.toThrow();expect((await db.trips.get('trip'))?.name).toBe('備份示範');expect(await db.items.count()).toBe(1);expect(await db.documents.count()).toBe(1);
 });
+it('keeps timed route legs with backup departures and rejects malformed leg times',async()=>{
+ await seed();const legs=[{mode:'train',label:'成田特快',minutes:40,dep:'10:30',arr:'11:10',alts:[{dep:'11:00',arr:'11:40',info:'下一班'}]}];
+ await db.routes.update('route',{legs:legs as never,departures:[{dep:'10:30',arr:'11:10',info:'成田特快'}]});
+ const raw=JSON.parse(await(await createBackup()).blob.text());await db.routes.update('route',{legs:[]});await restoreBackup(prepareBackup(JSON.stringify(raw)));
+ expect((await db.routes.get('route'))?.legs).toEqual(legs);
+ const bad=structuredClone(raw);bad.routes[0].legs[0].alts[0].arr='10:00';expect(()=>prepareBackup(JSON.stringify(bad))).toThrow();
+});
