@@ -2,11 +2,9 @@
 
 更新日期：2026-11-08（Asia/Taipei）。先讀根目錄 [AGENTS.md](../AGENTS.md)；Claude 另有 [CLAUDE.md](../CLAUDE.md) 入口。
 
-## 本次待審核工作
-
-[AI 匯入忽略／覆蓋](handoffs/2026-11-08-import-ignore-overwrite.md) 已在本機完成，commit `ade8a016d541bb505504e4b3221c84a13747b941`。重複項預設忽略，可選覆蓋；多候選必選目標。原 ID／附件／未知原值／手動偏好保留，住宿雙卡連動、交通指定卡路線更新、同批交易回滾及 UI 復原均驗證。106 tests／建置、隔離 Chromium 真實預覽與混合新增覆蓋／重載／復原、320／390 無溢出通過。程式與五張候選圖尚未推 GitHub／main／部署，只有 handoff 文件 checkpoint；等待本次發布指示，不能沿用前次聯網資訊的「推」。下方無待發布項目是前次已完成基準。
-
 ## 最新已發布工作
+
+[AI 匯入忽略／覆蓋](handoffs/2026-11-08-import-ignore-overwrite.md) 已獲本次「推」授權，隨 `df6e9f7b87b63028c2f8a9647dd04bab9bbfaa7f` 併入 GitHub main／部署。106 tests／建置通過；Vercel success，正式站 bundle `index-CJmE-beM.js`。正式 UI 建立示範旅程後驗證新提示詞、忽略不寫、3 覆蓋＋1 新增、ID／附件／未知原值保留、住宿雙卡與交通、真正復原、重複匯入不增卡、重載、多候選必選及 320／390 無溢出／pageerror，皆通過。程式、文件、五張圖全在 main，沒有待審核或未推送應用變更；舊 handoff 草稿狀態不能覆蓋此完成結果。
 
 [聯網旅途資訊](handoffs/2026-11-07-online-travel-info.md) 已獲本次「推」授權，隨 `1147d5ef71e66ead48aab272ebc5186387a76280` 併入 GitHub main／部署。89 tests／建置與本機失敗／離線／退避／切城驗證通過，Vercel success，正式站 bundle `index-B4inossp.js`。正式 UI 真實天氣／Wikipedia／地名服務 HTTP200，東京三類資料與 PWA 離線重載、京都人工選城／偏好保存、320／390 無溢出與無 pageerror 均通過。京都該次 0 車站，UI 誠實顯示空結果；不是完整目錄，也沒有即時班次／延誤。程式、說明及截圖全在 main，沒有待審核或未推送應用變更；舊 handoff 草稿狀態不能覆蓋此完成結果。
 
@@ -16,7 +14,7 @@
 
 - Repo：`unnn3ing-oss/travel-notebook`；正式分支 `main`。
 - 網站：https://travel-notebook-chi.vercel.app/
-- 最近一次應用程式發布基準：[`1147d5e`](https://github.com/unnn3ing-oss/travel-notebook/commit/1147d5ef71e66ead48aab272ebc5186387a76280)。後續純文件 commit 不改本次 app bundle；接手仍須以實際遠端 main 為準。
+- 最近一次應用程式發布基準：[`df6e9f7`](https://github.com/unnn3ing-oss/travel-notebook/commit/df6e9f7b87b63028c2f8a9647dd04bab9bbfaa7f)。後續純文件 commit 不改本次 app bundle；接手仍須以實際遠端 main 為準。
 - 使用者已於 2026-11-06 授權本對話全部累積修改併入與部署：航廈 T／PDF 附件提示詞、底部選取色包含文字、機票與小插圖、六款目的地地標、D 方案文字底線切換、訂單狀態右上角。程式與圖片均已保存 GitHub，不再只有舊工作區。
 - 前次精簡筆記提示詞發布曾驗證 69 個應用測試與 TypeScript／Vite／PWA 建置。Vercel 對應 0afb5fb 的 status success，正式站載入 index-W1Os5r1g.js；實測複製按鈕帶入旅程與新版 PDF 補件／短筆記規則，匯入、住宿雙卡、重載保存通過。未執行外部 AI 或讀取真實 PDF，未測真實 iPhone／Safari。
 - 上次介面發布已完成，詳情見 [2026-11-06-release-approved-ui.md](handoffs/2026-11-06-release-approved-ui.md)。該批先前 checkpoint 的「未合併／尚未授權」是歷史狀態，已被實際發布取代；不要據此重做或退回舊版。

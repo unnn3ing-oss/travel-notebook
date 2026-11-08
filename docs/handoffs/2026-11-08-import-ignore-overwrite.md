@@ -1,7 +1,7 @@
 # 任務交接：AI 匯入重複行程選擇忽略／覆蓋
 
 - 日期：2026-11-08（Asia/Taipei）
-- 狀態：releasing；使用者本次回覆「推」，準備合併 main 並驗證 Vercel／正式站
+- 狀態：completed；本次「推」已完成 main 合併、Vercel success 與正式站忽略／覆蓋／復原驗證
 - 正式版基準：1f3c04863f6317cabbef27fc8704c449f7b94276
 - 工作分支：work，原工作區乾淨
 - 本次授權：使用者要求 AI 匯入相同已存在行程時，可選忽略或覆蓋。使用者審閱功能摘要與截圖後已回覆「推」，授權本次 main 合併及自動 Vercel 發布。
@@ -34,7 +34,7 @@
 
 - 修改前 checkpoint：`handoff/2026-11-08-import-ignore-overwrite-20261107-193524-196925`，commit `91209cd2148957e9bad8b233fd69f0ed7e0bcb3a`；確認 pushed 後才改程式。
 - 主要階段 checkpoint：`handoff/2026-11-08-import-ignore-overwrite-20261107-194454-141655`，commit `e714ed3ee50ce84101af13b06a0bbe69d435563f`。
-- 本機完整程式／文件／候選圖：commit `ade8a016d541bb505504e4b3221c84a13747b941`，work 分支。**尚未推應用程式進 GitHub、未合併 main、未部署**；只有 handoff 文件遠端 checkpoint，其他工作區不能靠這份文件還原本機程式 diff。
+- 本機完整程式／文件／候選圖：commit `ade8a016d541bb505504e4b3221c84a13747b941`，work 分支。已隨發布 commit `df6e9f7b87b63028c2f8a9647dd04bab9bbfaa7f` 正常 fast-forward 併入 GitHub main／部署。程式、文件與候選圖已全部保存遠端，先前只有本機的限制已解除。
 - 使用者本次已明確回覆「推」，這批新功能已取得 main 推送／自動部署授權。
 
 ### 已完成
@@ -55,11 +55,21 @@
 - 提示詞兩份文字檔與現行函式一致、欄位文件 JSON 骨架與 IMPORT_SCHEMA 一致。
 - 隔離 Chromium 真正操作 UI：忽略不寫、3 覆蓋＋1 新增、ID／三份 PDF／未知原值／住宿雙卡與手寫退房筆記／交通手動訂票資訊保留；按真正「復原」按鈕恢復所有原卡／路線／排序與附件。
 - 再次混合匯入後重複貼上全部預設忽略，不增卡；重載資料保持。多候選選目標前禁用確認，只更新指定卡。320／390 無水平溢出，無 pageerror。
-- 5 張候選截圖在 docs/handoff-assets/import-ignore-overwrite：default-ignore、choose-overwrite、confirmation-summary、select-target、hotel-updated；已在本機 commit，尚未進 GitHub。
-- 全部虛構資料，不碰使用者既有正式資料；未讀真實信箱／PDF，未測真實 iPhone／Safari，也未聲稱正式站已更新。
+- 5 張候選截圖在 docs/handoff-assets/import-ignore-overwrite：default-ignore、choose-overwrite、confirmation-summary、select-target、hotel-updated；已隨本次發布進 GitHub main。
+- 全部虛構資料，不碰使用者既有正式資料；未讀真實信箱／PDF，未測真實 iPhone／Safari，本次發布後另有正式站驗證，見下方。
 
-### 本次發布計畫
+### 發布與正式站驗證（2026-11-08 Asia/Taipei）
 
-已 fetch main 與最新 handoff，main 仍為 1f3c048，是本機 HEAD 2cf9086 的祖先，工作區乾淨，可正常 fast-forward，不使用 force push。程式自前次 106 tests／建置／隔離瀏覽器驗證後未改，沿用通過結果。
+- 使用者本次明確回覆「推」。發布前已 fetch，main 1f3c048 是本機 2cf9086 祖先，工作區乾淨；正常 fast-forward，沒有 force push。
+- 發布前 checkpoint：`handoff/2026-11-08-import-ignore-overwrite-20261108-113036-938066`，commit `0afc56ed81d15d0676a549773f378f7fdf2a53ae`。
+- 已 push `df6e9f7b87b63028c2f8a9647dd04bab9bbfaa7f` 至 main，GitHub Vercel status success / Deployment has completed，部署 https://vercel.com/itsjeann/travel-notebook/6f6iNs795jC8NgBPvsSMSRe5PMZ9 。
+- 正式站 https://travel-notebook-chi.vercel.app/ 載入 `index-CJmE-beM.js`，與已驗證建置一致。程式自前次 106 tests／建置後未改，沿用通過結果；本次另跑正式站瀏覽器驗證。
+- 隔離 Chromium 透過正式 UI 建立虛構旅程、先匯入 5 筆／6 張原卡，檢查「複製提示詞」帶入當前旅程及新版覆蓋規則。沒有使用開發來源路徑。
+- 示範 PDF／子卡手寫筆記／交通手動訂票資料僅在隔離測試資料庫設定；實際忽略、覆蓋、新增、復原、重載與目標選擇都透過正式 UI 操作。
+- 全部忽略不改原資料；3 覆蓋＋1 新增後原 ID、三份附件、未知原值／提醒、住宿雙卡／退房手寫筆記、交通手動訂票資訊保留。實際「復原」還原原卡、路線、排序與附件。
+- 再匯入相同內容預設全忽略，不增卡；重新載入資料保存。多候選未選目標時禁止確認，選定後僅更新該卡；320／390 無溢出，無 pageerror。
+- 測試腳本一度用錯空旅程入口按鈕名稱，以及原生 IndexedDB 插入合成候選後未重載 Dexie 快取；已修正測試設定並重跑全流程通過，沒有為此修改應用程式。
 
-使用者已明確回覆「推」。先保存此發布計畫，再正常 push HEAD:main。確認 Vercel success 與正式站 bundle `index-CJmE-beM.js`，在獨立瀏覽器透過正式 UI 建立虛構旅程與原訂單，再驗證實際忽略／混合新增與覆蓋／附件與 ID 保留／住宿雙卡／路線／復原／重載／多候選，以及複製提示詞包含新流程。完成後同步本文件、索引與長期交接為 completed，舊待審核狀態不再當現況。
+### 接手下一步
+
+本次已完成，沒有待審核、待推送或待部署的應用變更。收到新需求先檢查 main、工作區與最新相符 handoff，再另存計畫；不能重做或將舊 awaiting_review／releasing 狀態當現況。後續發布紀錄／索引 commit 為純文件，不改這份 app bundle。
