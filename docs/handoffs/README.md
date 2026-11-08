@@ -6,6 +6,7 @@
 
 | 任務 | 文件 | 狀態 |
 | --- | --- | --- |
+| 電腦 AI 匯入與 Google Drive 備份 | [2026-11-08-desktop-import-drive-backup.md](2026-11-08-desktop-import-drive-backup.md) | awaiting_review；120 tests／建置通過，程式僅本機，尚未合併／部署 |
 | AI 匯入重複行程忽略／覆蓋 | [2026-11-08-import-ignore-overwrite.md](2026-11-08-import-ignore-overwrite.md) | completed；已部署並驗證正式站忽略／覆蓋／復原 |
 | 聯網自動收集天氣／車站／景點 | [2026-11-07-online-travel-info.md](2026-11-07-online-travel-info.md) | completed；已部署並驗證正式站真實 API／離線重載 |
 | 重新設計八類型複製提示詞架構 | [2026-11-07-import-prompt-framework.md](2026-11-07-import-prompt-framework.md) | completed；已部署並實測正式站複製與八類匯入 |

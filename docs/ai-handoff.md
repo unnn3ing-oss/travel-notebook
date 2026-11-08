@@ -2,6 +2,10 @@
 
 更新日期：2026-11-08（Asia/Taipei）。先讀根目錄 [AGENTS.md](../AGENTS.md)；Claude 另有 [CLAUDE.md](../CLAUDE.md) 入口。
 
+## 目前待審核工作
+
+[電腦 AI 匯入與 Google Drive 備份](handoffs/2026-11-08-desktop-import-drive-backup.md) 已完成本機實作，awaiting_review。程式 commit 62ed0556bd1ba25294397bbdd934ca08aeeefbb3 與 ddeb3bf0f51184ef815d2339d194ab03785d0e12 僅在 /workspace/travel-notebook 的 work，未推遠端／未合併部署；後述舊任務「沒有待審核」僅指各自發布狀態。120 tests／建置通過，桌機匯入、備份附件、首次開啟還原及模擬 Google 流程通過。使用者公開 client ID 已作網站預設，VITE_GOOGLE_CLIENT_ID 可覆寫／空值停用；真實 Google SDK200，但沒有真實帳號 OAuth／Drive 端到端測試。見 [設定指南](google-drive-setup.md) 與 [候選截圖](handoff-assets/desktop-import-drive/README.md)。需等本次使用者推送／部署指示，勿沿用先前「推」。handoff checkpoint 只有文件，不能恢復未推送程式。
+
 ## 最新已發布工作
 
 [AI 匯入忽略／覆蓋](handoffs/2026-11-08-import-ignore-overwrite.md) 已獲本次「推」授權，隨 `df6e9f7b87b63028c2f8a9647dd04bab9bbfaa7f` 併入 GitHub main／部署。106 tests／建置通過；Vercel success，正式站 bundle `index-CJmE-beM.js`。正式 UI 建立示範旅程後驗證新提示詞、忽略不寫、3 覆蓋＋1 新增、ID／附件／未知原值保留、住宿雙卡與交通、真正復原、重複匯入不增卡、重載、多候選必選及 320／390 無溢出／pageerror，皆通過。程式、文件、五張圖全在 main，沒有待審核或未推送應用變更；舊 handoff 草稿狀態不能覆蓋此完成結果。
