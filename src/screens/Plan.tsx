@@ -100,7 +100,7 @@ export function Plan({ trip, day }: { trip: Trip; day?: string }) {
 
   return (
     <TabPage pad="52px 20px 16px" gap={14}>
-      <div className="desktop-board"><DestinationHeader trip={trip} items={items} period={dayPeriod}/><PlanBoard trip={trip} days={days} items={items} routes={routes} edit={(i) => (i === 'new' ? setSheet('add') : location.hash=href('item',i.id))} /></div>
+      <div className="desktop-board"><DestinationHeader trip={trip} items={items} period={dayPeriod}/><PlanBoard onImport={()=>setSheet('import')} trip={trip} days={days} items={items} routes={routes} edit={(i) => (i === 'new' ? setSheet('add') : location.hash=href('item',i.id))} /></div>
       <div className="mobile-plan">
         <DestinationHeader trip={trip} items={items} period={dayPeriod}/>
         {view==='timeline' && !tripEmpty ? <TimelineDays days={days} sel={sel===POOL?days[0]:sel} items={items} pick={pick}/> : <DayTabs days={days} sel={sel} pick={pick}/>}
@@ -250,7 +250,7 @@ function ImportSheet({ trip, days, items, close, done }: { trip: Trip; days: str
   const changeRow = (index:number, patch:Partial<ImportRow>) => setRes({ rows:rows.map((r,k)=>k===index?{...r,...patch}:r), skipped:res&&'skipped'in res?res.skipped:0 });
   const btn = 'height: 48px; border-radius: 12px; border: 1px solid #DCE1E8; background: #FFFFFF; color: #1E2A44; font: inherit; font-size: 14px';
   return (
-    <DSheet title="用 AI 匯入訂單" onClose={close}>
+    <DSheet wide title="用 AI 匯入訂單" onClose={close}>
       {failure&&<p className="error" role="alert">{failure}</p>}
       {!rows.length ? <>
         <p style={css('margin: 0; font-size: 14px; line-height: 1.6; color: #5B6578')}>複製提示詞，搭配信件、Notion 內容或 PDF／圖片交給 AI 整理。信箱附件讀不到時，直接上傳原始 PDF 到同一個 AI 對話，完成核對後再把 JSON 貼回來。</p>

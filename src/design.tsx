@@ -97,20 +97,29 @@ export const PILL_OK = pill('#DDF1E8', '#1F7A5C');
 export const PILL_NOW = css('font-size: 12px; font-weight: 700; background: var(--ticket); color: var(--on-ticket); padding: 4px 10px; border-radius: 12px');
 
 /** 設計稿的底部面板（同 PlanB）：遮罩 + 圓角白底 + 拉桿 + 右上關閉 */
-export function DSheet({ title, sub, onClose, children }: { title: string; sub?: ReactNode; onClose: () => void; children: ReactNode }) {
+export function DSheet({ title, sub, onClose, children, wide=false }: { title: string; sub?: ReactNode; onClose: () => void; children: ReactNode; wide?: boolean }) {
   const ref = useRef<HTMLElement>(null);
+  const closeRef = useRef(onClose); closeRef.current=onClose;
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
-    ref.current?.querySelector<HTMLElement>('input, select, textarea')?.focus();
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    (ref.current?.querySelector<HTMLElement>('input, select, textarea') || ref.current?.querySelector<HTMLElement>('button'))?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { e.preventDefault(); closeRef.current(); }
+      if (e.key === 'Tab' && ref.current) {
+        const controls=Array.from(ref.current.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')).filter(el=>el.getClientRects().length);
+        const first=controls[0],last=controls.at(-1),active=document.activeElement;
+        if(!first){e.preventDefault();return;}
+        if(!ref.current.contains(active)||e.shiftKey&&active===first||!e.shiftKey&&active===last){e.preventDefault();(e.shiftKey?last:first)?.focus();}
+      }
+    };
     addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
-    return () => { removeEventListener('keydown', onKey); document.body.style.overflow = ''; prev?.focus(); };
-  }, [onClose]);
+    return () => { removeEventListener('keydown', onKey); document.body.style.overflow = ''; if(prev?.isConnected)prev.focus(); };
+  }, []);
   return (
-    <div className="dsheet" style={css('position: fixed; inset: 0; z-index: 40; display: flex; flex-direction: column; justify-content: flex-end; max-width: 480px; margin: 0 auto')}>
+    <div className={'dsheet'+(wide?' dsheet-wide':'')} style={css('position: fixed; inset: 0; z-index: 40; display: flex; flex-direction: column; justify-content: flex-end; align-items: center')}>
       <div aria-hidden="true" onClick={onClose} style={css('position: absolute; inset: 0; background: rgba(30,42,68,0.55)')} />
-      <section ref={ref} role="dialog" aria-modal="true" aria-labelledby="dsheet-h" style={css('position: relative; max-height: 92dvh; overflow-y: auto; background: #FFFFFF; border-radius: 24px 24px 0 0; padding: 10px 20px max(34px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 16px')}>
+      <section ref={ref} role="dialog" aria-modal="true" aria-labelledby="dsheet-h" style={{...css('position: relative; width: 100%; box-sizing: border-box; max-height: 92dvh; overflow-y: auto; background: #FFFFFF; border-radius: 24px 24px 0 0; padding: 10px 20px max(34px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 16px'),maxWidth:wide?880:480}}>
         <span aria-hidden="true" style={css('align-self: center; width: 40px; height: 5px; flex-shrink: 0; border-radius: 3px; background: #DCE1E8')} />
         <div style={css('display: flex; justify-content: space-between; align-items: flex-start; gap: 12px')}>
           <div>
