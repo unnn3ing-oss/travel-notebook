@@ -1,7 +1,7 @@
 # 任務交接：電腦 AI 匯入與 Google Drive 備份
 
 - 日期：2026-11-08（Asia/Taipei）
-- 狀態：awaiting_review；實作與本機驗證完成，未合併／部署
+- 狀態：in_progress；使用者本次「推」已授權併入／部署，正在發布驗證
 - 正式版基準：40bffc16e324005c552aec5a25278b36eeecb00e
 - 工作分支：work
 - 本次授權：電腦 AI 匯入優先；App 內 Google Drive 上傳／下載／還原及 OAuth 設定說明。使用者提供公開網頁 client ID。未授權這批程式推送 main／部署，前次「推」不沿用。
@@ -60,3 +60,7 @@
 4. 首次開啟還原方向：handoff/2026-11-08-desktop-import-drive-backup-20261108-123308-772756，05ab2b1ea7cebe68dae6d279aa00c6d46d4db3eb。
 
 5. 完成 awaiting_review：handoff/2026-11-08-desktop-import-drive-backup-20261108-123948-063575，15bf1801dde5f5d6ac9d1138fd5e7855ad879e12，工具已確認 pushed。遠端文件包含兩個本機程式 SHA 與測試結果，只有此筆發布結果在發布後補記於本機文件。
+
+## 本次發布授權
+
+使用者於本輪明確指示「推」，授權這批電腦 AI 匯入與 Drive 備份程式、指南與截圖推 main 並由 Vercel 部署。以本段取代先前待審核限制；遠端 main 核對仍為 40bffc16e324005c552aec5a25278b36eeecb00e，工作區乾淨。發布後仍不聲稱已完成真實 Google 帳號授權。
